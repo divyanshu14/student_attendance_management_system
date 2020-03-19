@@ -18,7 +18,7 @@ class Admin(models.Model):
     admin_id = models.CharField(max_length=15, unique=True)
 
     def __str__(self):
-        return str(self.admin_id) + ' - ' + str(self.user)
+        return str(self.admin_id) + ' - ' + str(self.user.first_name) + ' ' + str(self.user.last_name)
 
     def save(self, *args, **kwargs):
         self.admin_id = self.admin_id.lower()
@@ -33,7 +33,7 @@ class Student(models.Model):
     entry_number = models.CharField(max_length=15, unique=True)
 
     def __str__(self):
-        return str(self.entry_number) + ' - ' + str(self.user)
+        return str(self.entry_number) + ' - ' + str(self.user.first_name) + ' ' + str(self.user.last_name)
 
     def save(self, *args, **kwargs):
         self.entry_number = self.entry_number.lower()
@@ -48,7 +48,7 @@ class Instructor(models.Model):
     instructor_id = models.CharField(max_length=15, unique=True)
 
     def __str__(self):
-        return str(self.instructor_id) + ' - ' + str(self.user)
+        return str(self.instructor_id) + ' - ' + str(self.user.first_name) + ' ' + str(self.user.last_name)
 
     def save(self, *args, **kwargs):
         self.instructor_id = self.instructor_id.lower()
