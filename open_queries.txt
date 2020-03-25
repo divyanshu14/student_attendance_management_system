@@ -1,0 +1,3 @@
+Should the admin be able to change the attendance in case the underlying face recognition algorithm is not reliable?
+Should the admin be able to add instructors and/or teaching assistants to a course after he has already created that course?
+Should the admin be able to add students to a course after he has already created that course? In that case, should the previous attendances (if any) of that student be marked as all absent?
