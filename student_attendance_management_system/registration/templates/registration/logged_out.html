@@ -1,18 +1,9 @@
-{% extends 'base_generic.html' %} {% load static %} {% block content %}
+{% extends 'base_generic.html' %}
 
-<div>
-    <div class="row">
-        <div class="col l6 offset-l3 m8 offset-m2 s12">
-            <div class="card-panel center hoverable" style="margin-top: 300px; margin-left: 70px; margin-right: 70px; background-image: url(' {% static 'img/blur5.jpg' %} '); background-repeat: no-repeat; background-attachment: fixed; background-size: 100% 100%;">
-                <div class="card-content white-text">
+{% load static %}
 
-                    <h2 class="white-text">Succesfully logged out</h2>
-                    <br>
-                    <a href="{% url 'login' %}" class="btn-large" style="background-color: transparent; font-size: larger;">Log in again</a>
+{% block content %}
 
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+{{ title }}
+
 {% endblock %}

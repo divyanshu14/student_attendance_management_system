@@ -1,63 +1,8 @@
-{% load static %} {% load widget_tweaks %}
+{% load static %}
 
 <link rel="stylesheet" type="text/css" href="{% static 'css/style_generic.css' %}">
-<link rel="icon" href="data:;base64,iVBORw0KGgo=">
+<link rel="shortcut icon" type="image/png" href="{% static 'favicon.png' %}"/>
 
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+{% block content %}
 
-<style>
-    body {
-        background-image: url("{% static 'img/blur.jpg' %}");
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-        background-size: 100% 100%;
-    }
-</style>
-
-<body>
-
-
-    <div class="navbar">
-        <nav style="position:relative;">
-            <div class="container">
-                <a href="" class="brand-logo left">Attendance System</a>
-                <a href="" class="button-collapse right hide-on-med-and-up" data-activates="id"><i class="material-icons">menu</i></a>
-                <ul class="right hide-on-small-only">
-                    <li><a href="">HOME</a></li>
-                    <li><a href="">ABOUT</a></li>
-                    <li><a href="">TEAM</a></li>
-                </ul>
-            </div>
-        </nav>
-    </div>
-
-    <ul id="id" class="sidenav" style="background-image: url(' {% static 'img/blur5.jpg' %} '); background-repeat: no-repeat; background-attachment: fixed; background-size: 100% 100%;">
-        <li><a href="" class="white-text">HOME</a></li>
-        <li><a href="" class="white-text">ABOUT</a></li>
-        <li><a href="" class="white-text">TEAM</a></li>
-    </ul>
-
-    <footer class="page-footer" style="position:fixed; left: 0; width: 100%; bottom: 0px; background-color: transparent; font-size: medium;">
-        <div class="footer-copyright">
-            <div class="container">
-                &copy; All rights reserved. AJDM
-            </div>
-        </div>
-    </footer>
-</body>
-
-<script src="{% static 'js/jquery.js' %}"></script>
-<script src="{% static 'js/materialize.min.js' %}"></script>
-
-
-<script>
-    $(document).ready(function() {
-
-        $('.button-collapse').sideNav();
-
-    });
-</script>
-
-
-
-{% block content %} {% endblock %}
+{% endblock %}

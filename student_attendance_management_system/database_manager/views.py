@@ -62,7 +62,8 @@ def add_students(request, num_students):
     else:
         formset = AddStudentFormSet()
 
-    return render(request, 'database_manager/display_formset.html', {'formset': formset})
+    title = "Add Students"
+    return render(request, 'database_manager/display_formset.html', {'title': title, 'formset': formset})
 
 
 @login_required
@@ -97,7 +98,8 @@ def add_instructors(request, num_instructors):
     else:
         formset = AddInstructorFormSet()
 
-    return render(request, 'database_manager/display_formset.html', {'formset': formset})
+    title = "Add Instructors"
+    return render(request, 'database_manager/display_formset.html', {'title': title, 'formset': formset})
 
 
 @login_required
@@ -122,7 +124,8 @@ def add_courses(request, num_courses):
     else:
         formset = AddCourseFormSet(queryset=Course.objects.none())
 
-    return render(request, 'database_manager/display_formset.html', {'formset': formset})
+    title = "Add Courses"
+    return render(request, 'database_manager/display_formset.html', {'title': title, 'formset': formset})
 
 
 @login_required
@@ -149,7 +152,8 @@ def assign_student_role_to_users(request, num_users):
     else:
         formset = AssignStudentRoleToUsersFormset(queryset=Student.objects.none())
 
-    return render(request, 'database_manager/display_formset.html', {'formset': formset})
+    title = "Assign Student role to Users"
+    return render(request, 'database_manager/display_formset.html', {'title': title, 'formset': formset})
 
 
 @login_required
@@ -176,4 +180,5 @@ def assign_instructor_role_to_users(request, num_users):
     else:
         formset = AssignInstructorRoleToUsersFormset(queryset=Instructor.objects.none())
 
-    return render(request, 'database_manager/display_formset.html', {'formset': formset})
+    title = "Assign Instructor role to Users"
+    return render(request, 'database_manager/display_formset.html', {'title': title, 'formset': formset})
