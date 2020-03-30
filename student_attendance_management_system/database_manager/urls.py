@@ -18,9 +18,11 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('add_students/<int:num_students>', views.add_students, name='add_students'),
-    path('add_instructors/<int:num_instructors>', views.add_instructors, name='add_instructors'),
-    path('add_courses/<int:num_courses>', views.add_courses, name='add_courses'),
-    path('assign_student_role_to_users/<int:num_users>', views.assign_student_role_to_users, name='assign_student_role_to_users'),
-    path('assign_instructor_role_to_users/<int:num_users>', views.assign_instructor_role_to_users, name='assign_instructor_role_to_users'),
+    path('add_students/<int:num_students>/', views.add_students, name='add_students'),
+    path('add_instructors/<int:num_instructors>/', views.add_instructors, name='add_instructors'),
+    path('add_courses/<int:num_courses>/', views.add_courses, name='add_courses'),
+    path('assign_student_role_to_users/<int:num_users>/', views.assign_student_role_to_users, name='assign_student_role_to_users'),
+    path('assign_instructor_role_to_users/<int:num_users>/', views.assign_instructor_role_to_users, name='assign_instructor_role_to_users'),
+    path('view_course_attendance_details/<int:course_id>/', views.view_course_attendance_details, name='view_course_attendance_details'),
+    path('view_student_attendance_details_in_a_course/<int:course_id>/<int:student_id>/', views.view_student_attendance_details_in_a_course, name='view_student_attendance_details_in_a_course'),
 ]

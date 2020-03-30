@@ -1,0 +1,64 @@
+{% extends 'base_generic.html' %}
+
+{% load static %}
+
+{% block content %}
+
+{% if is_admin %}
+
+ADMIN ACTIONS
+<br><br>
+<form method="post">
+{% csrf_token %}
+{{ num_students_to_add_form }}
+<input type="submit" value="Add Students">
+</form>
+<br>
+<form method="post">
+{% csrf_token %}
+{{ num_instructors_to_add_form }}
+<input type="submit" value="Add Instructors">
+</form>
+<br>
+<form method="post">
+{% csrf_token %}
+{{ num_courses_to_add_form }}
+<input type="submit" value="Add Courses">
+</form>
+<br><br>
+
+{% endif %}
+
+{% if is_instructor %}
+
+INSTRUCTOR ACTIONS
+<br><br>
+Instructor for courses:
+<br><br>
+{% for course in instructor_for_courses %}
+<a href="{% url 'view_course_attendance_details' course_id=course.id %}">{{ course }}</a><br>
+{% endfor %}
+<br>
+Teaching assistant for courses:
+<br>
+{% for course in teaching_assistant_for_courses %}
+<a href="{% url 'view_course_attendance_details' course_id=course.id %}">{{ course }}</a><br>
+{% endfor %}
+<br><br>
+
+{% endif %}
+
+{% if is_student %}
+
+STUDENT ACTIONS
+<br><br>
+Registered student for courses:
+<br><br>
+{% for course in registered_student_for_courses %}
+<a href="{% url 'view_student_attendance_details_in_a_course' course_id=course.id student_id=request.user.student.id %}">{{ course }}</a><br>
+{% endfor %}
+<br>
+
+{% endif %}
+
+{% endblock %}

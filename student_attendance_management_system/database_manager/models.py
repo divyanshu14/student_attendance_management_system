@@ -1,5 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
+from django.db.models.signals import pre_delete
 
 
 # every model has inbuilt primary key named id which is AutoField model,
@@ -21,8 +22,23 @@ class Admin(models.Model):
         return str(self.admin_id) + ' - ' + str(self.user.first_name) + ' ' + str(self.user.last_name)
 
     def save(self, *args, **kwargs):
+        '''
+        Avoid bulk saving to ensure that this method gets called.
+        '''
         self.admin_id = self.admin_id.lower()
-        super().save(*args, **kwargs)
+        ret = super().save(*args, **kwargs)
+        admins_group = Group.objects.get(name='Admins')
+        self.user.groups.add(admins_group)
+        return ret
+
+    def delete(self, *args, **kwargs):
+        '''
+        Avoid bulk deletion to ensure that this method gets called.
+        '''
+        ret = super().delete(*args, **kwargs)
+        admins_group = Group.objects.get(name='Admins')
+        self.user.groups.remove(admins_group)
+        return ret
 
 
 class Student(models.Model):
@@ -36,8 +52,23 @@ class Student(models.Model):
         return str(self.entry_number) + ' - ' + str(self.user.first_name) + ' ' + str(self.user.last_name)
 
     def save(self, *args, **kwargs):
+        '''
+        Avoid bulk saving to ensure that this method gets called.
+        '''
         self.entry_number = self.entry_number.lower()
-        super().save(*args, **kwargs)
+        ret = super().save(*args, **kwargs)
+        students_group = Group.objects.get(name='Students')
+        self.user.groups.add(students_group)
+        return ret
+
+    def delete(self, *args, **kwargs):
+        '''
+        Avoid bulk deletion to ensure that this method gets called.
+        '''
+        ret = super().delete(*args, **kwargs)
+        students_group = Group.objects.get(name='Students')
+        self.user.groups.remove(students_group)
+        return ret
 
 
 class Instructor(models.Model):
@@ -51,8 +82,23 @@ class Instructor(models.Model):
         return str(self.instructor_id) + ' - ' + str(self.user.first_name) + ' ' + str(self.user.last_name)
 
     def save(self, *args, **kwargs):
+        '''
+        Avoid bulk saving to ensure that this method gets called.
+        '''
         self.instructor_id = self.instructor_id.lower()
-        super().save(*args, **kwargs)
+        ret = super().save(*args, **kwargs)
+        instructors_group = Group.objects.get(name='Instructors')
+        self.user.groups.add(instructors_group)
+        return ret
+
+    def delete(self, *args, **kwargs):
+        '''
+        Avoid bulk deletion to ensure that this method gets called.
+        '''
+        ret = super().delete(*args, **kwargs)
+        instructors_group = Group.objects.get(name='Instructors')
+        self.user.groups.remove(instructors_group)
+        return ret
 
 
 class Course(models.Model):

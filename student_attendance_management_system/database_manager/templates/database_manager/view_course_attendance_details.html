@@ -1,0 +1,54 @@
+{% extends 'base_generic.html' %}
+
+{% load static %}
+
+{% block content %}
+
+Course Name: {{ related_course.name }}<br>
+Course Code: {{ related_course.code }}<br>
+<br>
+Attendance Policy:<br><br>
+Relative attendance for one lecture: {{ related_course.relative_attendance_for_one_lecture }}<br>
+Relative attendance for one tutorial: {{ related_course.relative_attendance_for_one_tutorial }}<br>
+Relative attendance for one practical: {{ related_course.relative_attendance_for_one_practical }}<br><br>
+
+<br>
+Lectures:<br>
+<br>
+{% for lecture in lectures %}
+    Timestamp: {{ lecture.timestamp }}<br>
+    Attendance Taken By: {{ lecture.attendance_taken_by.instructor }}<br>
+    Present Students Entry Numbers:<br>
+    {% for each_present_student in lecture.present_students.all %}
+        {{ each_present_student.student.entry_number }}<br>
+    {% endfor %}
+    <br>
+{% endfor %}
+
+<br>
+Tutorials:<br>
+<br>
+{% for tutorial in tutorials %}
+    Timestamp: {{ tutorial.timestamp }}<br>
+    Attendance Taken By: {{ tutorial.attendance_taken_by.instructor }}<br>
+    Present Students Entry Numbers:<br>
+    {% for each_present_student in tutorial.present_students.all %}
+        {{ each_present_student.student.entry_number }}<br>
+    {% endfor %}
+    <br>
+{% endfor %}
+
+<br>
+Practicals:<br>
+<br>
+{% for practical in practicals %}
+    Timestamp: {{ practical.timestamp }}<br>
+    Attendance Taken By: {{ practical.attendance_taken_by.instructor }}<br>
+    Present Students Entry Numbers:<br>
+    {% for each_present_student in practical.present_students.all %}
+        {{ each_present_student.student.entry_number }}<br>
+    {% endfor %}
+    <br>
+{% endfor %}
+
+{% endblock %}
