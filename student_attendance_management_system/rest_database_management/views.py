@@ -21,7 +21,7 @@ from rest_framework.authentication import SessionAuthentication
 DEFAULT_PASSWORD = "new_pass_123"
 from rest_framework.response import Response
 import json
-
+from rest_framework.permissions import IsAdminUser
 
 
 class addStudents(mixins.CreateModelMixin, 
@@ -42,7 +42,10 @@ class addStudents(mixins.CreateModelMixin,
     ]
 
     '''
+    
     serializer_class = addStudentsSerializer
+    # authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAdminUser,)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data, many=True)
@@ -65,6 +68,8 @@ class listStudents(APIView):
     '''
     list all the students
     '''
+    # authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAdminUser,)
 
     def get(self, request, *args, **kwargs):
         objects = Student.objects.all()
@@ -100,6 +105,8 @@ class addInstructors(mixins.CreateModelMixin,
     ]
     '''    
     serializer_class = addInstructorSerializer
+    # authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAdminUser,)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data, many=True)
@@ -125,6 +132,9 @@ class listInstructors(APIView):
     '''
     list all the instructors
     '''
+    # authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAdminUser,)
+
     def get(self, request, *args, **kwargs):
         objects = Instructor.objects.all()
         dictInstructor = {}
@@ -140,12 +150,18 @@ class listInstructors(APIView):
 
 class assignUserToStudent(mixins.CreateModelMixin, 
                viewsets.GenericViewSet):
+    # authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAdminUser,)
+
     queryset = Student.objects.all()
     serializer_class = assignUserToStudentSerializer
 
 
 class assignUserToInstructor(mixins.CreateModelMixin, 
                viewsets.GenericViewSet):
+    # authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAdminUser,)
+
     queryset = Student.objects.all()
     serializer_class = assignUserToInstructorSerializer
 
