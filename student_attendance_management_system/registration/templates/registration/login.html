@@ -1,32 +1,82 @@
-{% extends 'base_generic.html' %}
+{% extends 'base_generic.html' %} {% load static %} {% load widget_tweaks %} {% block content %} {% if form.errors %}
+<div class="wrap center white-text" style="position: fixed; left: 860px; bottom: 80px; background-color: black; border-radius: 30%;">
+    <p>&nbsp;&nbsp; Invalid Credentials &nbsp;&nbsp;</p>
+</div>
+{% endif %} {% if next %} {% if user.is_authenticated %}
+<div class="wrap center white-text" style="position: fixed; left: 580px; bottom: 80px; background-color: black; border-radius: 30%;">
+    <p>&nbsp;&nbsp; Your account doesn't have access to this page. To proceed, please login with an account that has access &nbsp;&nbsp;</p>
+</div>
+{% else %}
+<div class="wrap center white-text" style="position: fixed; left: 820px; bottom: 80px; background-color: black; border-radius: 30%;">
+    <p>&nbsp;&nbsp; Please login to see this page &nbsp;&nbsp;</p>
+</div>
+{% endif %} {% endif %} {% if user.is_authenticated %}
 
-{% load static %}
+<div>
+    <div class="row">
+        <div class="col l6 offset-l3 m8 offset-m2 s12">
+            <div class="card-panel center hoverable back-image-class" style="margin-top: 300px; margin-left: 70px; margin-right: 70px;">
+                <div class="card-content white-text">
 
-{% block content %}
+                    <p class="flow-text">You are already logged in.</p>
+                    <br>
+                    <p class="flow-text">Please logout to see this page.</p>
+                    <a href="{% url 'logout' %}" class="btn-large" style="background-color: transparent; font-size: larger;">Logout</a>
 
-{% if form.errors %}
-<p>Your username and password didn't match. Please try again.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<div>
+    <div class="row">
+        <div class="col l6 offset-l3 m8 offset-m2 s12">
+            <div class="card-panel center hoverable back-image-class" style="margin-top: 150px; margin-left: 70px; margin-right: 70px;">
+                <div class="card-content white-text">
+                    <form method="post" action="{% url 'login' %}">
+                        {% csrf_token %}
+                        <h1> Sign In </h1>
+                        <table>
+                            {% for field in form.visible_fields %}
+                            <div class="form-group">
+                                <tr>
+                                    <td> <label for="{{ field.id_for_label }}" class="label-class">{{ field.label }}:</label> </td>
+                                    <td>{% render_field field class="white-text" placeholder=field.label %} </td>
+                                </tr>
+                            </div>
+                            {% endfor %}
+                        </table>
+
+
+                        <input type="submit" value="Sign in" class="btn-large tooltipped" data-tooltip="Click to SignIn" data-position="right" style="background-color: transparent; font-size: larger;">
+
+
+                        <input type="hidden" name="next" value="{{ next }}">
+                    </form>
+
+                    <h6> ----------- OR ----------- </h6>
+
+                    {# Assumes you setup the password_reset view in your URLconf #}
+                    <p><a href="{% url 'password_reset' %}" style="font-size: large;" class="teal-text text-lighten-2 tooltipped" data-tooltip="Click to Reset password" data-position="bottom">Forgot Password?</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endif %}
 
-{% if next %}
-    {% if user.is_authenticated %}
-    <p>Your account doesn't have access to this page. To proceed,
-    please login with an account that has access.</p>
-    {% else %}
-    <p>Please login to see this page.</p>
-    {% endif %}
-{% endif %}
+<script>
+    $(document).ready(function() {
+        setTimeout(function() {
+            $('.wrap p').fadeOut();
+        }, 2000);
+    });
+</script>
 
-<form method="post" action="{% url 'login' %}">
-{% csrf_token %}
-<table>
-    {{ form.as_table }}
-</table>
-<input type="submit" value="login">
-<input type="hidden" name="next" value="{{ next }}">
-</form>
 
-{# Assumes you setup the password_reset view in your URLconf #}
-<p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+
+
 
 {% endblock %}

@@ -1,9 +1,19 @@
-{% extends 'base_generic.html' %}
+{% extends 'base_generic.html' %} {% load static %} {% block content %}
 
-{% load static %}
+<div style="margin-left: 100px;">
+    <div class="card hoverable center back-image-class" style="width: 95%;">
+        <div class="class-content">
+            <h1>Welcome to Student Attendance Management System!</h1>
+        </div>
+    </div>
+</div>
+<br><br> {% if user.is_authenticated %} {% else %}
+<div style="margin-left: 800px;">
+    <div class="card hoverable center back-image-class" style="width: 28%;">
+        <div class="class-content">
+            <p class="flow-text white-text">Click
+                <a href="{% url 'login' %}" class="teal-text text-lighten-2 tooltipped" data-tooltip="Click to SignIn" data-position="bottom" style="background-color: transparent;">here</a> to SignIn</p>
 
-{% block content %}
-
-Welcome to Student Attendance Management System! Click <a href="{% url 'login' %}">here</a> to login.
-
-{% endblock %}
+        </div>
+    </div>
+</div>{% endif %} {% endblock %}

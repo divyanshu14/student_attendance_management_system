@@ -4,62 +4,95 @@
 
 {% block content %}
 
-Course Name: {{ related_course.name }}<br>
-Course Code: {{ related_course.code }}<br>
-<br>
-Attendance Policy:<br><br>
-Relative attendance for one lecture: {{ related_course.relative_attendance_for_one_lecture }}<br>
-Relative attendance for one tutorial: {{ related_course.relative_attendance_for_one_tutorial }}<br>
-Relative attendance for one practical: {{ related_course.relative_attendance_for_one_practical }}<br>
-<br>
-Student: {{ related_student }}<br><br>
+<div style="margin-left: 50px; margin-right: 50px; margin-top:30px;">
+    <div class="card hoverable back-image-class">
+        <div class="class-content">
+        	<br>
+            <h3 class="center">Course Name: {{ related_course.name }}</h3>
+            <h3 class="center">Course Code: {{ related_course.code }}</h3>
+            <h4>&nbsp;&nbsp;&nbsp;Attendance Policy:</h4>
+            <ol class="flow-text white-text" style="margin-left: 30px">
+            	<li>&nbsp;Relative attendance for one lecture: {{ related_course.relative_attendance_for_one_lecture }}</li>
+            	<li>&nbsp;Relative attendance for one tutorial: {{ related_course.relative_attendance_for_one_tutorial }}</li>
+            	<li>&nbsp;Relative attendance for one practical: {{ related_course.relative_attendance_for_one_practical }}</li>
+            </ol>
+
+            <h4 class="center">&nbsp;&nbsp;&nbsp;Student: {{ related_student }}</h4><br>
+        </div>
+    </div>
+</div>
 
 <br>
-Lectures:<br>
-<br>
-{% for lecture in lectures %}
-    Timestamp: {{ lecture.timestamp }}<br>
-    Attendance Taken By: {{ lecture.attendance_taken_by.instructor.user.first_name }}
-    {{ lecture.attendance_taken_by.instructor.user.last_name }}<br>
-    Present/Absent:
-    {% if related_student.user in lecture.present_students.all %}
-        Present
-    {% else %}
-        Absent
-    {% endif %}
-    <br><br>
-{% endfor %}
+
+<div style="margin-left: 50px; margin-right: 50px; margin-top:30px;">
+    <div class="card hoverable back-image-class">
+        <div class="class-content">
+        	<br>
+            <h3 class="center">Lectures</h3>
+            <div class="container">
+
+            <pre class="flow-text white-text">Timestamp 			Attendance Taken By 		Present/Absent</pre>
+            
+			</div>
+            <ol class="white-text flow-text" style="margin-left: 70px">
+            	{% for lecture in lectures %}
+            	<li>
+            		<pre>&nbsp;&nbsp;{{ lecture.timestamp }} 		&nbsp;&nbsp;&nbsp;{{ lecture.attendance_taken_by.instructor.user.first_name }} {{ lecture.attendance_taken_by.instructor.user.last_name }} 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% if related_student.user in lecture.present_students.all %}Present{% else %}Absent{% endif %}</pre>
+            	</li>
+            	{% endfor %}
+            </ol>
+			<br>
+        </div>
+    </div>
+</div>
 
 <br>
-Tutorials:<br>
-<br>
-{% for tutorial in tutorials %}
-    Timestamp: {{ tutorial.timestamp }}<br>
-    Attendance Taken By: {{ tutorial.attendance_taken_by.instructor.user.first_name }}
-    {{ tutorial.attendance_taken_by.instructor.user.last_name }}<br>
-    Present/Absent:
-    {% if related_student.user in tutorial.present_students.all %}
-        Present
-    {% else %}
-        Absent
-    {% endif %}
-    <br><br>
-{% endfor %}
+
+<div style="margin-left: 50px; margin-right: 50px; margin-top:30px;">
+    <div class="card hoverable back-image-class">
+        <div class="class-content">
+        	<br>
+            <h3 class="center">Tutorials</h3>
+            <div class="container">
+
+            <pre class="flow-text white-text">Timestamp 			Attendance Taken By 		Present/Absent</pre>
+            
+			</div>
+            <ol class="white-text flow-text" style="margin-left: 70px">
+            	{% for tutorial in tutorials %}
+            	<li>
+            		<pre>&nbsp;&nbsp;{{ tutorial.timestamp }} 		&nbsp;&nbsp;&nbsp;{{ tutorial.attendance_taken_by.instructor.user.first_name }} {{ tutorial.attendance_taken_by.instructor.user.last_name }} 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% if related_student.user in tutorial.present_students.all %}Present{% else %}Absent{% endif %}</pre>
+            	</li>
+            	{% endfor %}
+            </ol>
+			<br>
+        </div>
+    </div>
+</div>
+
 
 <br>
-Practicals:<br>
-<br>
-{% for practical in practicals %}
-    Timestamp: {{ practical.timestamp }}<br>
-    Attendance Taken By: {{ practical.attendance_taken_by.instructor.user.first_name }}
-    {{ practical.attendance_taken_by.instructor.user.last_name }}<br>
-    Present/Absent:
-    {% if related_student.user in practical.present_students.all %}
-        Present
-    {% else %}
-        Absent
-    {% endif %}
-    <br><br>
-{% endfor %}
+
+<div style="margin-left: 50px; margin-right: 50px; margin-top:30px;">
+    <div class="card hoverable back-image-class">
+        <div class="class-content">
+        	<br>
+            <h3 class="center">Practicals</h3>
+            <div class="container">
+
+            <pre class="flow-text white-text">Timestamp 			Attendance Taken By 		Present/Absent</pre>
+            
+			</div>
+            <ol class="white-text flow-text" style="margin-left: 70px">
+            	{% for practical in practicals %}
+            	<li>
+            		<pre>&nbsp;&nbsp;{{ practical.timestamp }} 		&nbsp;&nbsp;&nbsp;{{ practical.attendance_taken_by.instructor.user.first_name }} {{ practical.attendance_taken_by.instructor.user.last_name }} 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% if related_student.user in practical.present_students.all %}Present{% else %}Absent{% endif %}</pre>
+            	</li>
+            	{% endfor %}
+            </ol>
+			<br>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

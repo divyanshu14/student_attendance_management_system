@@ -1,8 +1,118 @@
-{% load static %}
+{% load static %} {% load widget_tweaks %}
 
+<html style="height: 100%;">
 <link rel="stylesheet" type="text/css" href="{% static 'css/style_generic.css' %}">
-<link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
+<link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" />
 
-{% block content %}
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-{% endblock %}
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<style>
+    body {
+        background-image: url("{% static 'images/blur.jpg' %}");
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-size: 100% 100%;
+        padding: 0;
+        margin: 0;
+        position: relative;
+    }
+    
+    body::after {
+        content: '';
+        display: block;
+        height: 30px;
+    }
+</style>
+
+<body>
+
+    {% if user.is_authenticated %}
+
+    <div class="navbar">
+        <nav>
+            <div class="container">
+                <a href="" class="brand-logo left">Attendance System</a>
+                <a href="" class="button-collapse right hide-on-med-and-up" data-activates="id"><i class="material-icons">menu</i></a>
+                <ul class="right hide-on-small-only">
+                    <li><a href="{% url 'index' %}">HOME</a></li>
+                    <li><a href="{% url 'about' %}">ABOUT</a></li>
+                    <li><a href="{% url 'team' %}">TEAM</a></li>
+                    <li><a href="" class="dropdown-button" data-activates="listid"><i class="material-icons">settings</i></a></li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+
+    <ul id="listid" class="dropdown-content back-image-class">
+        <li><a href="{% url 'profile'%}" class="white-text">View Profile</a></li>
+        <li><a href="{% url 'password_change'%}" class="white-text">Change Password</a></li>
+        <li><a href="{% url 'logout' %}" class="white-text">Logout</a></li>
+    </ul>
+
+    <ul id="id" class="sidenav back-image-class">
+        <li><a href="{% url 'profile'%}" class="white-text">VIEW PROFILE</a></li>
+        <li><a href="{% url 'index' %}" class="white-text">HOME</a></li>
+        <li><a href="{% url 'about' %}" class="white-text">ABOUT</a></li>
+        <li><a href="{% url 'team' %}" class="white-text">TEAM</a></li>
+        <li><a href="{% url 'password_change' %}" class="white-text">CHANGE PASSWORD</a></li>
+        <li><a href="{% url 'logout' %}" class="white-text">LOGOUT</a></li>
+    </ul>
+
+
+    {% else %}
+    <div class="navbar">
+        <nav>
+            <div class="container">
+                <a href="" class="brand-logo left">Attendance System</a>
+                <a href="" class="button-collapse right hide-on-med-and-up" data-activates="id"><i class="material-icons">menu</i></a>
+                <ul class="right hide-on-small-only">
+                    <li><a href="{% url 'index' %}">HOME</a></li>
+                    <li><a href="{% url 'about' %}">ABOUT</a></li>
+                    <li><a href="{% url 'team' %}">TEAM</a></li>
+                    <li><a href="{% url 'login' %}">LOGIN</a></li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+
+    <ul id="id" class="sidenav back-image-class">
+        <li><a href="{% url 'index' %}" class="white-text">HOME</a></li>
+        <li><a href="{% url 'about' %}" class="white-text">ABOUT</a></li>
+        <li><a href="{% url 'team' %}" class="white-text">TEAM</a></li>
+        <li><a href="{% url 'login' %}" class="white-text">LOGIN</a></li>
+    </ul>
+    {% endif %}
+
+    <footer class="page-footer" style="position: absolute; bottom: 0; height: 50px; width: 100%; background-color: transparent; font-size: medium;">
+        <div class="footer-copyright">
+            <div class="container">
+                &copy; All rights reserved. ADJM
+            </div>
+        </div>
+    </footer>
+</body>
+
+<script src="{% static 'js/jquery.js' %}"></script>
+<script src="{% static 'js/materialize.min.js' %}"></script>
+
+
+<script>
+    $(document).ready(function() {
+
+        $('.dropdown-button').dropdown(
+
+            {
+                constrainWidth: false
+            }
+        );
+        $('.button-collapse').sideNav();
+
+    });
+</script>
+
+</html>
+
+{% block content %} {% endblock %}
