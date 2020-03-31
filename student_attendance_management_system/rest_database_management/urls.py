@@ -1,18 +1,16 @@
-
 from django.contrib import admin
 from django.urls import path
 from . import views
 from django.conf.urls import url
 from django.urls import include
-from .views import *
 from rest_framework import routers
 
 router = routers.DefaultRouter()
-router.register(r'add_students', addStudents, basename='add_students')
-router.register(r'add_instructors', addInstructors, basename='add_instructors')
-router.register(r'add_course', addCourses, basename='add_courses')
-router.register(r'assign_user_to_student', assignUserToStudent, basename='assign_user_to_student')
-router.register(r'assign_user_to_instructor', assignUserToInstructor, basename='assign_user_to_instructor')
+router.register(r'add_students', views.addStudents, basename='add_students')
+router.register(r'add_instructors', views.addInstructors, basename='add_instructors')
+router.register(r'add_courses', views.addCourses, basename='add_courses')
+router.register(r'assign_user_to_student', views.assignUserToStudent, basename='assign_user_to_student')
+router.register(r'assign_user_to_instructor', views.assignUserToInstructor, basename='assign_user_to_instructor')
 
 urlpatterns = [
     url(r'', include(router.urls)),
