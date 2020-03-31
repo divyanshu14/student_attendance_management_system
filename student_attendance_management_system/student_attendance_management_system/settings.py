@@ -34,6 +34,8 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'database_manager',
     'registration',
+    'rest_framework',
+    'rest_database_management',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
