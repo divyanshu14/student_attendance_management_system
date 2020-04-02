@@ -13,15 +13,18 @@
                         <ol style="list-style-type: upper-roman;">
                             {{ formset.management_form }}
                             {% for form in formset %}
+
                             <li>
                                 <div style="text-align: left; font-size: large;"><b>&nbsp; Enter details:</b></div>
                                 <table>
                                     {% for field in form.visible_fields %}
+
                                     <div class="form-group">
                                         <tr>
                                             <td> <label for="{{ field.id_for_label }}" class="label-class">{{ field.label }}:</label> </td>
                                             <td>{% render_field field class="white-text" placeholder=field.label %} </td>
                                         </tr>
+                                        {% if field.errors %}<tr><td></td><td class="red-text">{{ field.errors }}</td></tr>{% endif %}
                                     </div>
                                     {% endfor %}
                                 </table>
