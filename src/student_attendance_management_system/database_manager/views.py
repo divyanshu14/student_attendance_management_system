@@ -1,10 +1,11 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import Group
 from django.forms import formset_factory, modelformset_factory
 from .forms import AddStudentForm, AddInstructorForm
-from .models import Student, Instructor, Course, Class
+from .models import Student, Instructor, Course, ClassEvent
 from django.core.exceptions import PermissionDenied
+from django.conf import settings
 
 
 DEFAULT_PASSWORD = "new_pass_123"
@@ -31,6 +32,13 @@ def is_instructor(user):
     return user.groups.filter(name='Instructors').exists()
 
 
+def is_teaching_assistant(user):
+    '''
+    Returns True if the user belongs to Teaching Assistant group, otherwise returns False.
+    '''
+    return user.groups.filter(name='Teaching Assistants').exists()
+
+
 @login_required
 @permission_required('database_manager.add_student', raise_exception=True)
 def add_students(request, num_students):
@@ -47,13 +55,13 @@ def add_students(request, num_students):
         if formset.is_valid():
             # process the data in formset.cleaned_data as required
             for form in formset:
-                user = User.objects.create_user(
-                    form.cleaned_data['entry_number'], form.cleaned_data['email_address'], DEFAULT_PASSWORD)
+                user = settings.AUTH_USER_MODEL.objects.create_user(form.cleaned_data['email_address'],
+                    DEFAULT_PASSWORD
+                )
                 user.first_name = form.cleaned_data['first_name']
                 user.last_name = form.cleaned_data['last_name']
                 user.save()
-                Student.objects.create(
-                    user=user, entry_number=form.cleaned_data['entry_number'])
+                Student.objects.create(user=user, entry_number=form.cleaned_data['entry_number'])
             # show success message
             message = "The students' data has been saved successfully."
             return render(request, 'database_manager/message.html', {'message': message})
@@ -81,13 +89,13 @@ def add_instructors(request, num_instructors):
         if formset.is_valid():
             # process the data in formset.cleaned_data as required
             for form in formset:
-                user = User.objects.create_user(
-                    form.cleaned_data['instructor_id'], form.cleaned_data['email_address'], DEFAULT_PASSWORD)
+                user = settings.AUTH_USER_MODEL.objects.create_user(form.cleaned_data['email_address'],
+                    DEFAULT_PASSWORD
+                )
                 user.first_name = form.cleaned_data['first_name']
                 user.last_name = form.cleaned_data['last_name']
                 user.save()
-                Instructor.objects.create(
-                    user=user, instructor_id=form.cleaned_data['instructor_id'])
+                Instructor.objects.create(user=user, instructor_id=form.cleaned_data['instructor_id'])
             # show success message
             message = "The instructors' data has been saved successfully."
             return render(request, 'database_manager/message.html', {'message': message})
@@ -206,9 +214,9 @@ def view_course_attendance_details(request, course_id):
         num_ta_c = request.user.teaching_assistant_for_courses.filter(id=course_id)
         if len(num_ins_c) + len(num_ta_c) <= 0:
             raise PermissionDenied
-    lectures = Class.objects.filter(course=related_course, class_type='L')
-    tutorials = Class.objects.filter(course=related_course, class_type='T')
-    practicals = Class.objects.filter(course=related_course, class_type='P')
+    lectures = ClassEvent.objects.filter(course=related_course, class_type='L')
+    tutorials = ClassEvent.objects.filter(course=related_course, class_type='T')
+    practicals = ClassEvent.objects.filter(course=related_course, class_type='P')
     context = {'related_course': related_course, 'lectures': lectures,
         'tutorials': tutorials, 'practicals': practicals}
     return render(request, 'database_manager/view_course_attendance_details.html', context)
@@ -235,9 +243,9 @@ def view_student_attendance_details_in_a_course(request, course_id, student_id):
                     raise PermissionDenied
             else:
                 raise PermissionDenied
-    lectures = Class.objects.filter(course=related_course, class_type='L')
-    tutorials = Class.objects.filter(course=related_course, class_type='T')
-    practicals = Class.objects.filter(course=related_course, class_type='P')
+    lectures = ClassEvent.objects.filter(course=related_course, class_type='L')
+    tutorials = ClassEvent.objects.filter(course=related_course, class_type='T')
+    practicals = ClassEvent.objects.filter(course=related_course, class_type='P')
     context = {'related_course': related_course, 'related_student': related_student,
         'lectures': lectures, 'tutorials': tutorials, 'practicals': practicals}
     return render(request, 'database_manager/view_student_attendance_details_in_a_course.html', context)

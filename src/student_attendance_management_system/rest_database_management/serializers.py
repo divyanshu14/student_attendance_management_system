@@ -3,7 +3,7 @@ from rest_framework.serializers import (
 	ModelSerializer,
 )
 from database_manager.models import Student, Course, Instructor
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import Group
 import random
 DEFAULT_PASSWORD = "new_pass_123"
 

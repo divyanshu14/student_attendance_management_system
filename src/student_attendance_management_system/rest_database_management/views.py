@@ -1,5 +1,5 @@
 from rest_framework.views import APIView
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import Group
 from django.http import JsonResponse
 from database_manager.models import Student, Course, Instructor
 from rest_framework.permissions import (
@@ -17,6 +17,7 @@ from rest_framework import viewsets, mixins, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import SessionAuthentication
+from django.conf import settings
 
 DEFAULT_PASSWORD = "new_pass_123"
 from rest_framework.response import Response
@@ -42,7 +43,7 @@ class addStudents(mixins.CreateModelMixin,
     ]
 
     '''
-    
+
     serializer_class = addStudentsSerializer
     # authentication_classes = (TokenAuthentication, )
     permission_classes = (IsAdminUser,)
@@ -51,7 +52,7 @@ class addStudents(mixins.CreateModelMixin,
         serializer = self.get_serializer(data=request.data, many=True)
         serializer.is_valid(raise_exception=True)
         for single_proportion in serializer.validated_data:
-            user = User.objects.create_user(
+            user = settings.AUTH_USER_MODEL.objects.create_user(
                 single_proportion['entry_number'], single_proportion['email_address'], DEFAULT_PASSWORD)
             user.first_name = single_proportion['first_name']
             user.last_name = single_proportion['last_name']
@@ -116,7 +117,7 @@ class addInstructors(mixins.CreateModelMixin,
             print(single_proportion['instructor_id'], '$$$$$$$$')
 
             # create_user takes these fields (username, email, password, **extra_fields)
-            user = User.objects.create_user(
+            user = settings.AUTH_USER_MODEL.objects.create_user(
                 single_proportion['instructor_id'], single_proportion['email_address'], DEFAULT_PASSWORD)
             user.first_name = single_proportion['first_name']
             user.last_name = single_proportion['last_name']
@@ -209,13 +210,13 @@ class addCourses(mixins.CreateModelMixin,
         serializer = self.get_serializer(data=request.data)
         print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
         print(request.data)
-        user = User.objects.all()
+        user = settings.AUTH_USER_MODEL.objects.all()
         serializer.is_valid(raise_exception=True)
         instructors = request.data['instructor_for_courses']
-        userInstructor = User.objects.all().filter(instructors['id'])
+        userInstructor = settings.AUTH_USER_MODEL.objects.all().filter(instructors['id'])
         # Course.object.create()
 
-        # user = User.object.all()
+        # user = settings.AUTH_USER_MODEL.object.all()
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)      
