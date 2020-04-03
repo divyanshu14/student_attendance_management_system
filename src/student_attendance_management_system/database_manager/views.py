@@ -2,8 +2,15 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import Group
 from django.forms import formset_factory, modelformset_factory
-from .forms import AddStudentForm, AddClassEventCoordinatorForm, AddClassEventCoordinatorExistingUserForm
-from .models import Student, ClassEventCoordinator, Instructor, TeachingAssistant, Course, ClassEvent
+from database_manager.forms import (
+    AddStudentForm, AddStudentExistingUserForm, AddInstructorForm,
+    AddInstructorExistingUserForm, AddInstructorExistingClassEventCoordinatorForm,
+    AddTeachingAssistantForm, AddTeachingAssistantExistingUserForm,
+    AddTeachingAssistantExistingClassEventCoordinatorForm
+)
+from database_manager.models import (
+    Student, ClassEventCoordinator, Instructor, TeachingAssistant, Course, ClassEvent
+)
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth import get_user_model
 
@@ -39,6 +46,13 @@ def is_teaching_assistant(user):
     return user.groups.filter(name='Teaching Assistants').exists()
 
 
+# def is_lab_attendant(user):
+#     '''
+#     Returns True if the user belongs to Lab Attendant group, otherwise returns False.
+#     '''
+#     return user.groups.filter(name='Lab Attendants').exists()
+
+
 @login_required
 @permission_required('database_manager.add_student', raise_exception=True)
 def add_students(request, num_students):
@@ -55,12 +69,13 @@ def add_students(request, num_students):
             # process the data in formset.cleaned_data as required
             for form in formset:
                 user = get_user_model().objects.create_user(form.cleaned_data['email_address'],
-                    DEFAULT_PASSWORD
-                )
+                                                            DEFAULT_PASSWORD
+                                                            )
                 user.first_name = form.cleaned_data['first_name']
                 user.last_name = form.cleaned_data['last_name']
                 user.save()
-                Student.objects.create(user=user, entry_number=form.cleaned_data['entry_number'])
+                Student.objects.create(
+                    user=user, entry_number=form.cleaned_data['entry_number'])
             # show success message
             message = "The students' data has been saved successfully."
             return render(request, 'database_manager/message.html', {'message': message})
@@ -78,31 +93,33 @@ def add_instructors(request, num_instructors):
     '''
     View to add instructors.
     '''
-    AddClassEventCoordinatorFormSet = formset_factory(AddClassEventCoordinatorForm, extra=num_instructors)
+    AddInstructorFormSet = formset_factory(
+        AddInstructorForm, extra=num_instructors)
     # if this is a POST request we need to process the formset data
     if request.method == 'POST':
         # create a formset instance and populate it with data from the request:
-        formset = AddClassEventCoordinatorFormSet(request.POST)
+        formset = AddInstructorFormSet(request.POST)
         # check whether it's valid:
         if formset.is_valid():
             # process the data in formset.cleaned_data as required
             for form in formset:
                 user = get_user_model().objects.create_user(form.cleaned_data['email_address'],
-                    DEFAULT_PASSWORD
-                )
+                                                            DEFAULT_PASSWORD
+                                                            )
                 user.first_name = form.cleaned_data['first_name']
                 user.last_name = form.cleaned_data['last_name']
                 user.save()
-                class_event_coordinator = ClassEventCoordinator.objects.create(user=user)
+                class_event_coordinator = ClassEventCoordinator.objects.create(
+                    user=user)
                 Instructor.objects.create(class_event_coordinator=class_event_coordinator,
-                    instructor_id=form.cleaned_data['class_event_coordinator_id']
-                )
+                                          instructor_id=form.cleaned_data['instructor_id']
+                                          )
             # show success message
             message = "The instructors' data has been saved successfully."
             return render(request, 'database_manager/message.html', {'message': message})
     # if a GET (or any other method) we'll create a blank formset
     else:
-        formset = AddClassEventCoordinatorFormSet()
+        formset = AddInstructorFormSet()
 
     title = "Add Instructors"
     return render(request, 'database_manager/display_formset.html', {'title': title, 'formset': formset})
@@ -114,36 +131,75 @@ def add_teaching_assistants(request, num_teaching_assistants):
     '''
     View to add teaching assistants.
     '''
-    AddClassEventCoordinatorFormSet = formset_factory(AddClassEventCoordinatorForm,
-        extra=num_teaching_assistants
-    )
+    AddTeachingAssistantFormSet = formset_factory(AddTeachingAssistantForm,
+                                                  extra=num_teaching_assistants
+                                                  )
     # if this is a POST request we need to process the formset data
     if request.method == 'POST':
         # create a formset instance and populate it with data from the request:
-        formset = AddClassEventCoordinatorFormSet(request.POST)
+        formset = AddTeachingAssistantFormSet(request.POST)
         # check whether it's valid:
         if formset.is_valid():
             # process the data in formset.cleaned_data as required
             for form in formset:
                 user = get_user_model().objects.create_user(form.cleaned_data['email_address'],
-                    DEFAULT_PASSWORD
-                )
+                                                            DEFAULT_PASSWORD
+                                                            )
                 user.first_name = form.cleaned_data['first_name']
                 user.last_name = form.cleaned_data['last_name']
                 user.save()
-                class_event_coordinator = ClassEventCoordinator.objects.create(user=user)
+                class_event_coordinator = ClassEventCoordinator.objects.create(
+                    user=user)
                 TeachingAssistant.objects.create(user=user,
-                    teaching_assistant_id=form.cleaned_data['class_event_coordinator_id']
-                )
+                                                 teaching_assistant_id=form.cleaned_data['teaching_assistant_id']
+                                                 )
             # show success message
             message = "The teaching assistants' data has been saved successfully."
             return render(request, 'database_manager/message.html', {'message': message})
     # if a GET (or any other method) we'll create a blank formset
     else:
-        formset = AddClassEventCoordinatorFormSet()
+        formset = AddTeachingAssistantFormSet()
 
     title = "Add Teaching Assistants"
     return render(request, 'database_manager/display_formset.html', {'title': title, 'formset': formset})
+
+
+# @login_required
+# @permission_required('database_manager.add_lab_attendant', raise_exception=True)
+# def add_lab_attendants(request, num_lab_attendants):
+#     '''
+#     View to add lab attendants.
+#     '''
+#     AddLabAttendantFormSet = formset_factory(AddLabAttendantForm,
+#         extra=num_lab_attendants
+#     )
+#     # if this is a POST request we need to process the formset data
+#     if request.method == 'POST':
+#         # create a formset instance and populate it with data from the request:
+#         formset = AddLabAttendantFormSet(request.POST)
+#         # check whether it's valid:
+#         if formset.is_valid():
+#             # process the data in formset.cleaned_data as required
+#             for form in formset:
+#                 user = get_user_model().objects.create_user(form.cleaned_data['email_address'],
+#                     DEFAULT_PASSWORD
+#                 )
+#                 user.first_name = form.cleaned_data['first_name']
+#                 user.last_name = form.cleaned_data['last_name']
+#                 user.save()
+#                 class_event_coordinator = ClassEventCoordinator.objects.create(user=user)
+#                 LabAttendant.objects.create(user=user,
+#                     lab_attendant_id=form.cleaned_data['lab_attendant_id']
+#                 )
+#             # show success message
+#             message = "The lab attendants' data has been saved successfully."
+#             return render(request, 'database_manager/message.html', {'message': message})
+#     # if a GET (or any other method) we'll create a blank formset
+#     else:
+#         formset = AddLabAttendantFormSet()
+
+#     title = "Add Lab Attendants"
+#     return render(request, 'database_manager/display_formset.html', {'title': title, 'formset': formset})
 
 
 @login_required
@@ -157,8 +213,8 @@ def add_courses(request, num_courses):
             'name', 'code', 'relative_attendance_for_one_lecture',
             'relative_attendance_for_one_tutorial', 'relative_attendance_for_one_practical',
             'instructors', 'teaching_assistants', 'registered_students'
-            )
         )
+    )
     # if this is a POST request we need to process the formset data
     if request.method == 'POST':
         # create a formset instance and populate it with data from the request:
@@ -187,24 +243,25 @@ def assign_student_role_to_users(request, num_users):
     Useful in cases when someone joined the institute as an admin or instructor or teaching assistant
     (and has already been registered), but later got enrolled in some course in the institute.
     '''
-    AssignStudentRoleToUsersFormset = modelformset_factory(Student,
-        extra=num_users, fields=('user', 'entry_number')
-    )
+    AddStudentExistingUserFormSet = formset_factory(
+        AddStudentExistingUserForm, extra=num_users)
     # if this is a POST request we need to process the formset data
     if request.method == 'POST':
         # create a formset instance and populate it with data from the request:
-        formset = AssignStudentRoleToUsersFormset(request.POST)
+        formset = AddStudentExistingUserFormSet(request.POST)
         # check whether it's valid:
         if formset.is_valid():
-            # This calls Student.save() method for each form entry
-            # and does not behave the same as saving a queryset all at once
-            formset.save()
+            for form in formset:
+                Student.objects.create(user=form.cleaned_data['user'],
+                                       entry_number=form.cleaned_data['entry_number']
+                                       )
             # show success message
             message = "The users have been assigned the role of student successfully."
             return render(request, 'database_manager/message.html', {'message': message})
     # if a GET (or any other method) we'll create a blank formset
     else:
-        formset = AssignStudentRoleToUsersFormset(queryset=Student.objects.none())
+        formset = AddStudentExistingUserFormSet(
+            queryset=Student.objects.none())
 
     title = "Assign Student role to Users"
     return render(request, 'database_manager/display_formset.html', {'title': title, 'formset': formset})
@@ -218,27 +275,28 @@ def assign_instructor_role_to_users(request, num_users):
     Useful in cases when someone joined the institute as a student or admin
     (and has already been registered), but later became an instructor in the institute.
     '''
-    AssignInstructorRoleToUsersFormset = formset_factory(AddClassEventCoordinatorExistingUserForm,
-        extra=num_users
-    )
+    AddInstructorExistingUserFormSet = formset_factory(AddInstructorExistingUserForm,
+                                                       extra=num_users
+                                                       )
     # if this is a POST request we need to process the formset data
     if request.method == 'POST':
         # create a formset instance and populate it with data from the request:
-        formset = AssignInstructorRoleToUsersFormset(request.POST)
+        formset = AddInstructorExistingUserFormSet(request.POST)
         # check whether it's valid:
         if formset.is_valid():
             for form in formset:
                 user = form.cleaned_data['user']
-                class_event_coordinator = ClassEventCoordinator.objects.create(user=user)
+                class_event_coordinator = ClassEventCoordinator.objects.create(
+                    user=user)
                 Instructor.objects.create(class_event_coordinator=class_event_coordinator,
-                    instructor_id=form.cleaned_data['class_event_coordinator_id']
-                )
+                                          instructor_id=form.cleaned_data['instructor_id']
+                                          )
             # show success message
             message = "The users have been assigned the role of instructor successfully."
             return render(request, 'database_manager/message.html', {'message': message})
     # if a GET (or any other method) we'll create a blank formset
     else:
-        formset = AssignInstructorRoleToUsersFormset()
+        formset = AddInstructorExistingUserFormSet()
 
     title = "Assign Instructor role to Users"
     return render(request, 'database_manager/display_formset.html', {'title': title, 'formset': formset})
@@ -252,24 +310,29 @@ def assign_instructor_role_to_class_event_coordinator(request, num_class_event_c
     Useful in cases when someone joined the institute as a teaching assistant
     (and has already been registered), but later became an instructor in the institute.
     '''
-    AssignInstructorRoleToClassEventCoordinatorsFormset = modelformset_factory(Instructor,
-        extra=num_class_event_coordinators, fields=('class_event_coordinator', 'instructor_id')
+    AddInstructorExistingClassEventCoordinatorFormSet = formset_factory(
+        AddInstructorExistingClassEventCoordinatorForm,
+        extra=num_class_event_coordinators
     )
     # if this is a POST request we need to process the formset data
     if request.method == 'POST':
         # create a formset instance and populate it with data from the request:
-        formset = AssignInstructorRoleToClassEventCoordinatorsFormset(request.POST)
+        formset = AddInstructorExistingClassEventCoordinatorFormSet(
+            request.POST)
         # check whether it's valid:
         if formset.is_valid():
-            # This calls Instructor.save() method for each form entry
-            # and does not behave the same as saving a queryset all at once
-            formset.save()
+            for form in formset:
+                Instructor.objects.create(
+                    class_event_coordinator=form.cleaned_data['class_event_coordinator'],
+                    instructor_id=form.cleaned_data['instructor_id']
+                )
             # show success message
             message = "The class event coordinators have been assigned the role of instructor successfully."
             return render(request, 'database_manager/message.html', {'message': message})
     # if a GET (or any other method) we'll create a blank formset
     else:
-        formset = AssignInstructorRoleToClassEventCoordinatorsFormset(queryset=Instructor.objects.none())
+        formset = AddInstructorExistingClassEventCoordinatorFormSet(
+            queryset=Instructor.objects.none())
 
     title = "Assign Instructor role to Class Event Coordinators"
     return render(request, 'database_manager/display_formset.html', {'title': title, 'formset': formset})
@@ -283,27 +346,28 @@ def assign_teaching_assistant_role_to_users(request, num_users):
     Useful in cases when someone joined the institute as a student or admin
     (and has already been registered), but later became an teaching assistant in the institute.
     '''
-    AssignTeachingAssistantRoleToUsersFormset = formset_factory(AddClassEventCoordinatorExistingUserForm,
-        extra=num_users
-    )
+    AddTeachingAssistantExistingUserFormSet = formset_factory(AddTeachingAssistantExistingUserForm,
+                                                              extra=num_users
+                                                              )
     # if this is a POST request we need to process the formset data
     if request.method == 'POST':
         # create a formset instance and populate it with data from the request:
-        formset = AssignTeachingAssistantRoleToUsersFormset(request.POST)
+        formset = AddTeachingAssistantExistingUserFormSet(request.POST)
         # check whether it's valid:
         if formset.is_valid():
             for form in formset:
                 user = form.cleaned_data['user']
-                class_event_coordinator = ClassEventCoordinator.objects.create(user=user)
+                class_event_coordinator = ClassEventCoordinator.objects.create(
+                    user=user)
                 TeachingAssistant.objects.create(class_event_coordinator=class_event_coordinator,
-                    teaching_assistant_id=form.cleaned_data['class_event_coordinator_id']
-                )
+                                                 teaching_assistant_id=form.cleaned_data['teaching_assistant_id']
+                                                 )
             # show success message
             message = "The users have been assigned the role of teaching assistant successfully."
             return render(request, 'database_manager/message.html', {'message': message})
     # if a GET (or any other method) we'll create a blank formset
     else:
-        formset = AssignTeachingAssistantRoleToUsersFormset()
+        formset = AddTeachingAssistantExistingUserFormSet()
 
     title = "Assign Teaching Assistant role to Users"
     return render(request, 'database_manager/display_formset.html', {'title': title, 'formset': formset})
@@ -317,24 +381,30 @@ def assign_teaching_assistant_role_to_class_event_coordinator(request, num_class
     Useful in cases when someone joined the institute as an instructor
     (and has already been registered), but later became a teaching assistant in the institute.
     '''
-    AssignTeachingAssistantRoleToClassEventCoordinatorsFormset = modelformset_factory(TeachingAssistant,
-        extra=num_class_event_coordinators, fields=('class_event_coordinator', 'teaching_assistant_id')
+    AddTeachingAssistantExistingClassEventCoordinatorFormSet = formset_factory(
+        AddTeachingAssistantExistingClassEventCoordinatorForm,
+        extra=num_class_event_coordinators, fields=(
+            'class_event_coordinator', 'teaching_assistant_id')
     )
     # if this is a POST request we need to process the formset data
     if request.method == 'POST':
         # create a formset instance and populate it with data from the request:
-        formset = AssignTeachingAssistantRoleToClassEventCoordinatorsFormset(request.POST)
+        formset = AddTeachingAssistantExistingClassEventCoordinatorFormSet(
+            request.POST)
         # check whether it's valid:
         if formset.is_valid():
-            # This calls Instructor.save() method for each form entry
-            # and does not behave the same as saving a queryset all at once
-            formset.save()
+            for form in formset:
+                TeachingAssistant.objects.create(
+                    class_event_coordinator=form.cleaned_data['class_event_coordinator'],
+                    teaching_assistant_id=form.cleaned_data['teaching_assistant_id']
+                )
             # show success message
             message = "The class event coordinators have been assigned the role of taching assistant successfully."
             return render(request, 'database_manager/message.html', {'message': message})
     # if a GET (or any other method) we'll create a blank formset
     else:
-        formset = AssignTeachingAssistantRoleToClassEventCoordinatorsFormset(queryset=TeachingAssistant.objects.none())
+        formset = AddTeachingAssistantExistingClassEventCoordinatorFormSet(
+            queryset=TeachingAssistant.objects.none())
 
     title = "Assign Teaching Assistant role to Class Event Coordinators"
     return render(request, 'database_manager/display_formset.html', {'title': title, 'formset': formset})
@@ -351,16 +421,20 @@ def view_course_attendance_details(request, course_id):
     '''
     related_course = get_object_or_404(Course, id=course_id)
     if (not request.user.is_superuser) and (not hasattr(request.user, 'admin')):
-        num_ins_c = request.user.class_event_coordinator.instructor.course.filter(id=course_id)
-        num_ta_c = request.user.class_event_coordinator.teaching_assistant.course.filter(id=course_id)
-        # num_la_c = request.user.class_event_coordinator.lab_attendant.course.filter(id=course_id)
+        num_ins_c = request.user.classeventcoordinator.instructor.course.filter(
+            id=course_id)
+        num_ta_c = request.user.classeventcoordinator.teaching_assistant.course.filter(
+            id=course_id)
+        # num_la_c = request.user.classeventcoordinator.lab_attendant.course.filter(id=course_id)
         if len(num_ins_c) + len(num_ta_c) <= 0:
             raise PermissionDenied
     lectures = ClassEvent.objects.filter(course=related_course, class_type='L')
-    tutorials = ClassEvent.objects.filter(course=related_course, class_type='T')
-    practicals = ClassEvent.objects.filter(course=related_course, class_type='P')
+    tutorials = ClassEvent.objects.filter(
+        course=related_course, class_type='T')
+    practicals = ClassEvent.objects.filter(
+        course=related_course, class_type='P')
     context = {'related_course': related_course, 'lectures': lectures,
-        'tutorials': tutorials, 'practicals': practicals}
+               'tutorials': tutorials, 'practicals': practicals}
     return render(request, 'database_manager/view_course_attendance_details.html', context)
 
 
@@ -376,9 +450,11 @@ def view_student_attendance_details_in_a_course(request, course_id, student_id):
     related_course = get_object_or_404(Course, id=course_id)
     related_student = get_object_or_404(Student, id=student_id)
     if (not request.user.is_superuser) and (not hasattr(request.user, 'admin')):
-        num_ins_c = request.user.class_event_coordinator.instructor.course.filter(id=course_id)
-        num_ta_c = request.user.class_event_coordinator.teaching_assistant.course.filter(id=course_id)
-        # num_la_c = request.user.class_event_coordinator.lab_attendant.course.filter(id=course_id)
+        num_ins_c = request.user.classeventcoordinator.instructor.course.filter(
+            id=course_id)
+        num_ta_c = request.user.classeventcoordinator.teaching_assistant.course.filter(
+            id=course_id)
+        # num_la_c = request.user.classeventcoordinator.lab_attendant.course.filter(id=course_id)
         if len(num_ins_c) + len(num_ta_c) <= 0:
             if hasattr(request.user, 'student'):
                 if request.user.student.id != student_id:
@@ -388,8 +464,10 @@ def view_student_attendance_details_in_a_course(request, course_id, student_id):
             else:
                 raise PermissionDenied
     lectures = ClassEvent.objects.filter(course=related_course, class_type='L')
-    tutorials = ClassEvent.objects.filter(course=related_course, class_type='T')
-    practicals = ClassEvent.objects.filter(course=related_course, class_type='P')
+    tutorials = ClassEvent.objects.filter(
+        course=related_course, class_type='T')
+    practicals = ClassEvent.objects.filter(
+        course=related_course, class_type='P')
     context = {'related_course': related_course, 'related_student': related_student,
-        'lectures': lectures, 'tutorials': tutorials, 'practicals': practicals}
+               'lectures': lectures, 'tutorials': tutorials, 'practicals': practicals}
     return render(request, 'database_manager/view_student_attendance_details_in_a_course.html', context)

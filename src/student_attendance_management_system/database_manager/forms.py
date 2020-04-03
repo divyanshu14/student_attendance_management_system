@@ -1,38 +1,66 @@
 from django import forms
 from django.contrib.auth import get_user_model
+from database_manager.models import ClassEventCoordinator
 
 
 class AddStudentForm(forms.Form):
     entry_number = forms.CharField(max_length=15)
     first_name = forms.CharField(max_length=30)
-    last_name = forms.CharField(max_length=30)
+    last_name = forms.CharField(max_length=150)
     email_address = forms.EmailField()
-    def clean_entry_number(self):
-        return self.cleaned_data['entry_number'].lower()
 
 
-class AddClassEventCoordinatorForm(forms.Form):
-    # Although ClassEventCoordinator has no class_event_coordinator_id field,
-    # it will be used for the generalization of the ClassEventCoordinator,
-    # i.e. for Instructor, TeachingAssistant, LabAttendant
-    class_event_coordinator_id = forms.CharField(max_length=15)
-    first_name = forms.CharField(max_length=30)
-    last_name = forms.CharField(max_length=30)
-    email_address = forms.EmailField()
-    def clean_entry_number(self):
-        return self.cleaned_data['instructor_id'].lower()
-
-
-class AddCourseForm(forms.Form):
+class AddStudentExistingUserForm(forms.Form):
+    user = forms.ModelChoiceField(get_user_model().objects.filter(student__isnull=True))
     entry_number = forms.CharField(max_length=15)
+
+
+class AddInstructorForm(forms.Form):
+    instructor_id = forms.CharField(max_length=15)
     first_name = forms.CharField(max_length=30)
-    last_name = forms.CharField(max_length=30)
+    last_name = forms.CharField(max_length=150)
     email_address = forms.EmailField()
-    def clean_entry_number(self):
-        return self.cleaned_data['entry_number'].lower()
 
 
-class AddClassEventCoordinatorExistingUserForm(forms.Form):
-    # show only those choices who are not already Class Event Coordinators, but are existing Users
+class AddInstructorExistingUserForm(forms.Form):
+    instructor_id = forms.CharField(max_length=15)
     user = forms.ModelChoiceField(get_user_model().objects.filter(classeventcoordinator__isnull=True))
-    class_event_coordinator_id = forms.CharField(max_length=15)
+
+
+class AddInstructorExistingClassEventCoordinatorForm(forms.Form):
+    instructor_id = forms.CharField(max_length=15)
+    class_event_coordinator = forms.ModelChoiceField(ClassEventCoordinator.objects.filter(instructor__isnull=True))
+
+
+class AddTeachingAssistantForm(forms.Form):
+    teaching_assistant_id = forms.CharField(max_length=15)
+    first_name = forms.CharField(max_length=30)
+    last_name = forms.CharField(max_length=150)
+    email_address = forms.EmailField()
+
+
+class AddTeachingAssistantExistingUserForm(forms.Form):
+    teaching_assistant_id = forms.CharField(max_length=15)
+    user = forms.ModelChoiceField(get_user_model().objects.filter(classeventcoordinator__isnull=True))
+
+
+class AddTeachingAssistantExistingClassEventCoordinatorForm(forms.Form):
+    teaching_assistant_id = forms.CharField(max_length=15)
+    class_event_coordinator = forms.ModelChoiceField(ClassEventCoordinator.objects.filter(teachingassistant__isnull=True))
+
+
+# class AddLabAttendantForm(forms.Form):
+#     lab_attendant_id = forms.CharField(max_length=15)
+#     first_name = forms.CharField(max_length=30)
+#     last_name = forms.CharField(max_length=150)
+#     email_address = forms.EmailField()
+
+
+# class AddLabAttendantExistingUserForm(forms.Form):
+#     lab_attendant_id = forms.CharField(max_length=15)
+#     user = forms.ModelChoiceField(get_user_model().objects.filter(classeventcoordinator__isnull=True))
+
+
+# class AddLabAttendantExistingClassEventCoordinatorForm(forms.Form):
+#     lab_attendant_id = forms.CharField(max_length=15)
+#     class_event_coordinator = forms.ModelChoiceField(ClassEventCoordinator.objects.filter(labattendant__isnull=True))
