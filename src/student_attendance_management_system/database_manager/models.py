@@ -138,7 +138,7 @@ class Admin(models.Model):
     admin_id = models.CharField(max_length=15, unique=True)
 
     def __str__(self):
-        return str(self.admin_id) + ' - ' + str(self.user.first_name) + ' ' + str(self.user.last_name)
+        return str(self.admin_id) + ' - ' + self.user.get_full_name()
 
     def save(self, *args, **kwargs):
         '''
@@ -168,7 +168,7 @@ class Student(models.Model):
     entry_number = models.CharField(max_length=15, unique=True)
 
     def __str__(self):
-        return str(self.entry_number) + ' - ' + str(self.user.first_name) + ' ' + str(self.user.last_name)
+        return str(self.entry_number) + ' - ' + self.user.get_full_name()
 
     def save(self, *args, **kwargs):
         '''
@@ -197,15 +197,19 @@ class ClassEventCoordinator(models.Model):
     '''
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.user.email
 
-class Instructor(ClassEventCoordinator):
+
+class Instructor(models.Model):
     '''
     Model to represent an instructor.
     '''
+    class_event_coordinator = models.OneToOneField(ClassEventCoordinator, on_delete=models.CASCADE)
     instructor_id = models.CharField(max_length=15, unique=True)
 
     def __str__(self):
-        return str(self.instructor_id) + ' - ' + str(self.user.first_name) + ' ' + str(self.user.last_name)
+        return str(self.instructor_id) + ' - ' + self.class_event_coordinator.user.get_full_name()
 
     def save(self, *args, **kwargs):
         '''
@@ -214,7 +218,7 @@ class Instructor(ClassEventCoordinator):
         self.instructor_id = self.instructor_id.lower()
         ret = super().save(*args, **kwargs)
         instructors_group = Group.objects.get(name='Instructors')
-        self.user.groups.add(instructors_group)
+        self.class_event_coordinator.user.groups.add(instructors_group)
         return ret
 
     def delete(self, *args, **kwargs):
@@ -223,18 +227,19 @@ class Instructor(ClassEventCoordinator):
         '''
         ret = super().delete(*args, **kwargs)
         instructors_group = Group.objects.get(name='Instructors')
-        self.user.groups.remove(instructors_group)
+        self.class_event_coordinator.user.groups.remove(instructors_group)
         return ret
 
 
-class TeachingAssistant(ClassEventCoordinator):
+class TeachingAssistant(models.Model):
     '''
     Model to represent a teaching assistant.
     '''
+    class_event_coordinator = models.OneToOneField(ClassEventCoordinator, on_delete=models.CASCADE)
     teaching_assistant_id = models.CharField(max_length=15, unique=True)
 
     def __str__(self):
-        return str(self.teaching_assistant_id) + ' - ' + str(self.user.first_name) + ' ' + str(self.user.last_name)
+        return str(self.teaching_assistant_id) + ' - ' + self.class_event_coordinator.user.get_full_name()
 
     def save(self, *args, **kwargs):
         '''
@@ -243,7 +248,7 @@ class TeachingAssistant(ClassEventCoordinator):
         self.teaching_assistant_id = self.teaching_assistant_id.lower()
         ret = super().save(*args, **kwargs)
         teaching_assistants_group = Group.objects.get(name='Teaching Assistants')
-        self.user.groups.add(teaching_assistants_group)
+        self.class_event_coordinator.user.groups.add(teaching_assistants_group)
         return ret
 
     def delete(self, *args, **kwargs):
@@ -252,18 +257,19 @@ class TeachingAssistant(ClassEventCoordinator):
         '''
         ret = super().delete(*args, **kwargs)
         teaching_assistants_group = Group.objects.get(name='Teaching Assistants')
-        self.user.groups.remove(teaching_assistants_group)
+        self.class_event_coordinator.user.groups.remove(teaching_assistants_group)
         return ret
 
 
-# class LabAttendant(ClassEventCoordinator):
+# class LabAttendant(models.Model):
 #     '''
 #     Model to represent a lab attendant.
 #     '''
+#     class_event_coordinator = models.OneToOneField(ClassEventCoordinator, on_delete=models.CASCADE)
 #     lab_attendant_id = models.CharField(max_length=15, unique=True)
 
 #     def __str__(self):
-#         return str(self.lab_attendant_id) + ' - ' + str(self.user.first_name) + ' ' + str(self.user.last_name)
+#         return str(self.lab_attendant_id) + ' - ' + self.class_event_coordinator.user.get_full_name()
 
 #     def save(self, *args, **kwargs):
 #         '''
@@ -272,7 +278,7 @@ class TeachingAssistant(ClassEventCoordinator):
 #         self.lab_attendant_id = self.lab_attendant_id.lower()
 #         ret = super().save(*args, **kwargs)
 #         lab_attendants_group = Group.objects.get(name='Lab Attendants')
-#         self.user.groups.add(lab_attendants_group)
+#         self.class_event_coordinator.user.groups.add(lab_attendants_group)
 #         return ret
 
 #     def delete(self, *args, **kwargs):
@@ -281,7 +287,7 @@ class TeachingAssistant(ClassEventCoordinator):
 #         '''
 #         ret = super().delete(*args, **kwargs)
 #         lab_attendants_group = Group.objects.get(name='Lab Attendants')
-#         self.user.groups.remove(lab_attendants_group)
+#         self.class_event_coordinator.user.groups.remove(lab_attendants_group)
 #         return ret
 
 

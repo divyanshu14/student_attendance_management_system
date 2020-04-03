@@ -1,5 +1,5 @@
 from django.contrib import admin, messages
-from .models import User, Admin, Student, ClassEventCoordinator, Instructor, Course, ClassEvent, CumulativeAttendance
+from .models import User, Admin, Student, ClassEventCoordinator, Instructor, TeachingAssistant, Course, ClassEvent, CumulativeAttendance
 from django.utils.translation import gettext, gettext_lazy as _
 from django.contrib.auth.forms import (
     AdminPasswordChangeForm, UserChangeForm, UserCreationForm,
@@ -196,6 +196,7 @@ admin.site.register(Admin)
 admin.site.register(Student)
 admin.site.register(ClassEventCoordinator)
 admin.site.register(Instructor)
+admin.site.register(TeachingAssistant)
 admin.site.register(Course)
 admin.site.register(ClassEvent)
 admin.site.register(CumulativeAttendance)
