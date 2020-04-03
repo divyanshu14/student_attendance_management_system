@@ -1,8 +1,10 @@
 {% load static %} {% load widget_tweaks %}
 
 <html style="height: 100%;">
+
 <link rel="stylesheet" type="text/css" href="{% static 'css/style_generic.css' %}">
 <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" />
+
 
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -34,13 +36,13 @@
     <div class="navbar">
         <nav>
             <div class="container">
-                <a href="" class="brand-logo left">Attendance System</a>
+                <a href="{% url 'index' %}" class="brand-logo left">SAMS</a>
                 <a href="" class="button-collapse right hide-on-med-and-up" data-activates="id"><i class="material-icons">menu</i></a>
                 <ul class="right hide-on-small-only">
                     <li><a href="{% url 'index' %}">HOME</a></li>
                     <li><a href="{% url 'about' %}">ABOUT</a></li>
                     <li><a href="{% url 'team' %}">TEAM</a></li>
-                    <li><a href="" class="dropdown-button" data-activates="listid"><i class="material-icons">settings</i></a></li>
+                    <li><a href="" class="dropdown-button" data-activates="listid"><i class="large material-icons">settings</i></a></li>
                 </ul>
             </div>
         </nav>
@@ -66,7 +68,7 @@
     <div class="navbar">
         <nav>
             <div class="container">
-                <a href="" class="brand-logo left">Attendance System</a>
+                <a href="{% url 'index' %}" class="brand-logo left">SAMS</a>
                 <a href="" class="button-collapse right hide-on-med-and-up" data-activates="id"><i class="material-icons">menu</i></a>
                 <ul class="right hide-on-small-only">
                     <li><a href="{% url 'index' %}">HOME</a></li>

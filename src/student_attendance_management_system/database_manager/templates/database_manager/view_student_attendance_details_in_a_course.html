@@ -1,20 +1,16 @@
-{% extends 'base_generic.html' %}
-
-{% load static %}
-
-{% block content %}
+{% extends 'base_generic.html' %} {% load static %} {% block content %}
 
 <div style="margin-left: 50px; margin-right: 50px; margin-top:30px;">
     <div class="card hoverable back-image-class">
         <div class="class-content">
-        	<br>
+            <br>
             <h3 class="center">Course Name: {{ related_course.name }}</h3>
             <h3 class="center">Course Code: {{ related_course.code }}</h3>
             <h4>&nbsp;&nbsp;&nbsp;Attendance Policy:</h4>
             <ol class="flow-text white-text" style="margin-left: 30px">
-            	<li>&nbsp;Relative attendance for one lecture: {{ related_course.relative_attendance_for_one_lecture }}</li>
-            	<li>&nbsp;Relative attendance for one tutorial: {{ related_course.relative_attendance_for_one_tutorial }}</li>
-            	<li>&nbsp;Relative attendance for one practical: {{ related_course.relative_attendance_for_one_practical }}</li>
+                <li>&nbsp;Relative attendance for one lecture: {{ related_course.relative_attendance_for_one_lecture }}</li>
+                <li>&nbsp;Relative attendance for one tutorial: {{ related_course.relative_attendance_for_one_tutorial }}</li>
+                <li>&nbsp;Relative attendance for one practical: {{ related_course.relative_attendance_for_one_practical }}</li>
             </ol>
 
             <h4 class="center">&nbsp;&nbsp;&nbsp;Student: {{ related_student }}</h4><br>
@@ -27,21 +23,26 @@
 <div style="margin-left: 50px; margin-right: 50px; margin-top:30px;">
     <div class="card hoverable back-image-class">
         <div class="class-content">
-        	<br>
-            <h3 class="center">Lectures</h3>
-            <div class="container">
+            <br>
+            <div>
+                <div class="center">
+                    <input type="button" onclick="myFunction('lecture')" class="btn-large white-text" style="background-color: transparent; font-size: x-large; font-weight: 500;" value="* view attendance in lectures" id="lecture_button" />
+                </div>
+                <div id="lecture_list" style="display: none;">
+                    <div class="container">
+                        <pre class="flow-text white-text">Timestamp 			Attendance Taken By 		Present/Absent</pre>
+                    </div>
+                    <ol class="white-text flow-text" style="margin-left: 70px">
+                        {% for lecture in lectures %}
+                        <li>
+                            <pre>&nbsp;&nbsp;{{ lecture.timestamp }} 		&nbsp;&nbsp;&nbsp;{{ lecture.attendance_taken_by.instructor.user.first_name }} {{ lecture.attendance_taken_by.instructor.user.last_name }} 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% if related_student.user in lecture.present_students.all %}Present{% else %}Absent{% endif %}</pre>
+                        </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+            </div>
 
-            <pre class="flow-text white-text">Timestamp 			Attendance Taken By 		Present/Absent</pre>
-            
-			</div>
-            <ol class="white-text flow-text" style="margin-left: 70px">
-            	{% for lecture in lectures %}
-            	<li>
-            		<pre>&nbsp;&nbsp;{{ lecture.timestamp }} 		&nbsp;&nbsp;&nbsp;{{ lecture.attendance_taken_by.instructor.user.first_name }} {{ lecture.attendance_taken_by.instructor.user.last_name }} 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% if related_student.user in lecture.present_students.all %}Present{% else %}Absent{% endif %}</pre>
-            	</li>
-            	{% endfor %}
-            </ol>
-			<br>
+            <br>
         </div>
     </div>
 </div>
@@ -51,21 +52,25 @@
 <div style="margin-left: 50px; margin-right: 50px; margin-top:30px;">
     <div class="card hoverable back-image-class">
         <div class="class-content">
-        	<br>
-            <h3 class="center">Tutorials</h3>
-            <div class="container">
-
-            <pre class="flow-text white-text">Timestamp 			Attendance Taken By 		Present/Absent</pre>
-            
-			</div>
-            <ol class="white-text flow-text" style="margin-left: 70px">
-            	{% for tutorial in tutorials %}
-            	<li>
-            		<pre>&nbsp;&nbsp;{{ tutorial.timestamp }} 		&nbsp;&nbsp;&nbsp;{{ tutorial.attendance_taken_by.instructor.user.first_name }} {{ tutorial.attendance_taken_by.instructor.user.last_name }} 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% if related_student.user in tutorial.present_students.all %}Present{% else %}Absent{% endif %}</pre>
-            	</li>
-            	{% endfor %}
-            </ol>
-			<br>
+            <br>
+            <div>
+                <div class="center">
+                    <input type="button" onclick="myFunction('tutorial')" class="btn-large white-text" style="background-color: transparent; font-size: x-large; font-weight: 500;" value="* view attendance in tutorials" id="tutorial_button" />
+                </div>
+                <div id="tutorial_list" style="display: none;">
+                    <div class="container">
+                        <pre class="flow-text white-text">Timestamp 			Attendance Taken By 		Present/Absent</pre>
+                    </div>
+                    <ol class="white-text flow-text" style="margin-left: 70px">
+                        {% for tutorial in tutorials %}
+                        <li>
+                            <pre>&nbsp;&nbsp;{{ tutorial.timestamp }} 		&nbsp;&nbsp;&nbsp;{{ tutorial.attendance_taken_by.instructor.user.first_name }} {{ tutorial.attendance_taken_by.instructor.user.last_name }} 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% if related_student.user in tutorial.present_students.all %}Present{% else %}Absent{% endif %}</pre>
+                        </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+            </div>
+            <br>
         </div>
     </div>
 </div>
@@ -76,23 +81,86 @@
 <div style="margin-left: 50px; margin-right: 50px; margin-top:30px;">
     <div class="card hoverable back-image-class">
         <div class="class-content">
-        	<br>
-            <h3 class="center">Practicals</h3>
-            <div class="container">
-
-            <pre class="flow-text white-text">Timestamp 			Attendance Taken By 		Present/Absent</pre>
-            
-			</div>
-            <ol class="white-text flow-text" style="margin-left: 70px">
-            	{% for practical in practicals %}
-            	<li>
-            		<pre>&nbsp;&nbsp;{{ practical.timestamp }} 		&nbsp;&nbsp;&nbsp;{{ practical.attendance_taken_by.instructor.user.first_name }} {{ practical.attendance_taken_by.instructor.user.last_name }} 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% if related_student.user in practical.present_students.all %}Present{% else %}Absent{% endif %}</pre>
-            	</li>
-            	{% endfor %}
-            </ol>
-			<br>
+            <br>
+            <div>
+                <div class="center">
+                    <input type="button" onclick="myFunction('practical')" class="btn small white-text" style="background-color: transparent; font-size: x-large; font-weight: 500;" value="* view attendance in practicals" id="practical_button" />
+                </div>
+                <div id="practical_list" style="display: none;">
+                    <div class="container">
+                        <pre class="flow-text white-text">Timestamp 			Attendance Taken By 		Present/Absent</pre>
+                    </div>
+                    <ol class="white-text flow-text" style="margin-left: 70px">
+                        {% for practical in practicals %}
+                        <li>
+                            <pre>&nbsp;&nbsp;{{ practical.timestamp }} 		&nbsp;&nbsp;&nbsp;{{ practical.attendance_taken_by.instructor.user.first_name }} {{ practical.attendance_taken_by.instructor.user.last_name }} 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% if related_student.user in practical.present_students.all %}Present{% else %}Absent{% endif %}</pre>
+                        </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+            </div>
+            <br>
         </div>
     </div>
 </div>
+
+<script>
+    function myFunction(id) {
+
+        if (id === 'lecture') {
+            b_id = "lecture_button";
+            div_id = "lecture_list";
+
+            var x = document.getElementById(div_id);
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+
+            var y = document.getElementById(b_id);
+            if (y.value === "* view attendance in lectures") {
+                y.value = "* hide attendance in lectures";
+            } else {
+                y.value = "* view attendance in lectures";
+            }
+        } else if (id === 'tutorial') {
+            b_id = "tutorial_button";
+            div_id = "tutorial_list";
+
+            var x = document.getElementById(div_id);
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+
+            var y = document.getElementById(b_id);
+            if (y.value === "* view attendance in tutorials") {
+                y.value = "* hide attendance in tutorials";
+            } else {
+                y.value = "* view attendance in tutorials";
+            }
+        } else if (id === 'practical') {
+            b_id = "practical_button";
+            div_id = "practical_list";
+
+            var x = document.getElementById(div_id);
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+
+            var y = document.getElementById(b_id);
+            if (y.value === "* view attendance in practicals") {
+                y.value = "* hide attendance in practicals";
+            } else {
+                y.value = "* view attendance in practicals";
+            }
+        }
+    }
+</script>
+
 
 {% endblock %}

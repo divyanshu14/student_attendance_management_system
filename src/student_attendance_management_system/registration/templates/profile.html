@@ -1,10 +1,24 @@
 {% extends 'base_generic.html' %} {% load static %} {% load widget_tweaks %} {% block content %} {% if is_admin %}
+
 <div>
+
     <div class="row">
         <div class="col l6 offset-l3 m8 offset-m2 s12">
-            <div class="card-panel center hoverable back-image-class" style="margin-top: 150px; margin-left: 70px; margin-right: 70px;">
+            <div class="card-panel hoverable back-image-class" style="margin-top: 50px; margin-left: 70px; margin-right: 70px;">
                 <div class="card-content white-text">
-                    <h1>Admin</h1>
+                    <h3 class="center">Admin Details</h3>
+
+                    <h4>&nbsp;&nbsp;&nbsp;&nbsp;Name: &nbsp;{{ request.user.first_name }} {{ request.user.last_name }}</h4>
+                    <h4>&nbsp;&nbsp;&nbsp;&nbsp;Admin ID: &nbsp;{{ request.user.admin.admin_id }}</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col l6 offset-l3 m8 offset-m2 s12">
+            <div class="card-panel center hoverable back-image-class" style="margin-top: 50px; margin-left: 70px; margin-right: 70px;">
+                <div class="card-content white-text">
                     <form method="post">
                         {% csrf_token %}
 
@@ -60,8 +74,6 @@
                             </div>
                             {% endfor %}
                         </table>
-
-
                         <input type="submit" value="Add Courses" class="btn-large tooltipped" data-tooltip="Click to add Courses" data-position="right" style="background-color: transparent; font-size: larger;">
                     </form>
                 </div>
@@ -71,55 +83,103 @@
 </div>
 
 
-<br><br> {% endif %}
+<br><br>
 
-<br> {% if is_instructor %}
+<br> {% elif is_instructor %}
 
 <div>
+
+    <div class="row">
+        <div class="col l6 offset-l3 m8 offset-m2 s12">
+            <div class="card-panel hoverable back-image-class" style="margin-top: 50px; margin-left: 70px; margin-right: 70px;">
+                <div class="card-content white-text">
+                    <h3 class="center">User Details</h3>
+
+                    <h4>&nbsp;&nbsp;&nbsp;&nbsp;Name: &nbsp;{{ request.user.first_name }} {{ request.user.last_name }}</h4>
+                    <h4>&nbsp;&nbsp;&nbsp;&nbsp;Instructor ID: &nbsp;{{ request.user.instructor.instructor_id }}</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col l6 offset-l3 m8 offset-m2 s12">
             <div class="card-panel hoverable back-image-class" style="margin-top: 50px; margin-left: 70px; margin-right: 70px;">
                 <div class="card-content white-text">
 
-                    <h1 class="center">INSTRUCTOR</h1>
-                    <br><br>
-                    <h5>Instructor for courses:</h5>
-                    <ol style="text-align: justify; text-justify: inter-word;">
+                    <h2 class="center">COURSES</h2>
+                    <h5>&nbsp;&nbsp;&nbsp;&nbsp;Registered as Instructor for courses:</h5>
+                    <ul style="text-align: justify; text-justify: inter-word;">
                         {% for course in instructor_for_courses %}
-                        <li><a href="{% url 'view_course_attendance_details' course_id=course.id %}" style="font-size: large;" class="teal-text text-lighten-2 tooltipped" data-tooltip="Click to View attendance" data-position="right">&nbsp;{{ course }}</a></li>
+                        <li><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o</b><a href="{% url 'view_course_attendance_details' course_id=course.id %}" style="font-size: x-large;" class="teal-text text-lighten-2 tooltipped" data-tooltip="Click to View attendance"
+                                data-position="right">&nbsp;{{ course }}</a></li>
                         {% endfor %}
-                    </ol><br><br>
-                    <h5>Teaching assistant for courses:</h5>
-                    <ol style="text-align: justify; text-justify: inter-word;">
+                    </ul><br>
+                    <h5>&nbsp;&nbsp;&nbsp;&nbsp;Registered as Teaching assistant for courses:</h5>
+                    <ul style="text-align: justify; text-justify: inter-word;">
                         {% for course in teaching_assistant_for_courses %}
-                        <li><a href="{% url 'view_course_attendance_details' course_id=course.id %}" style="font-size: large;" class="teal-text text-lighten-2 tooltipped" data-tooltip="Click to View attendance" data-position="right">&nbsp;{{ course }}</a></li>
+                        <li><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o</b><a href="{% url 'view_course_attendance_details' course_id=course.id %}" style="font-size: x-large;" class="teal-text text-lighten-2 tooltipped" data-tooltip="Click to View attendance"
+                                data-position="right">&nbsp;{{ course }}</a></li>
                         {% endfor %}
-                    </ol><br>
+                    </ul><br>
 
                 </div>
             </div>
         </div>
     </div>
 </div>
-{% endif %} {% if is_student %}
+{% elif is_student %}
 <div>
+
     <div class="row">
         <div class="col l6 offset-l3 m8 offset-m2 s12">
             <div class="card-panel hoverable back-image-class" style="margin-top: 50px; margin-left: 70px; margin-right: 70px;">
                 <div class="card-content white-text">
-                    <h1 class="center">STUDENT</h1>
-                    <br><br>
-                    <h5>Student registered for courses:</h5>
+                    <h3 class="center">User Details</h3>
 
-                    <ol style="text-align: justify; text-justify: inter-word;">
+                    <h4>&nbsp;&nbsp;&nbsp;&nbsp;Name: &nbsp;{{ request.user.first_name }} {{ request.user.last_name }}</h4>
+                    <h4>&nbsp;&nbsp;&nbsp;&nbsp;Entry No: &nbsp;{{ request.user.student.entry_number }}</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col l6 offset-l3 m8 offset-m2 s12">
+            <div class="card-panel hoverable back-image-class" style="margin-top: 50px; margin-left: 70px; margin-right: 70px;">
+                <div class="card-content white-text">
+                    <h3 class="center">Student registered for courses</h3>
+
+                    <ul style="text-align: justify; text-justify: inter-word;">
                         {% for course in registered_student_for_courses %}
-                        <li><a href="{% url 'view_student_attendance_details_in_a_course' course_id=course.id student_id=request.user.student.id %}" style="font-size: large;" class="teal-text text-lighten-2 tooltipped" data-tooltip="Click to View attendance"
-                                data-position="right">&nbsp;{{ course }}</a></li>
+                        <li><b>&nbsp;&nbsp;&nbsp;&nbsp;o</b><a href="{% url 'view_student_attendance_details_in_a_course' course_id=course.id student_id=request.user.student.id %}" style="font-size: x-large;" class="teal-text text-lighten-2 tooltipped" data-tooltip="Click to View attendance"
+                                data-position="right">&nbsp;&nbsp;{{ course }}</a></li>
                         {% endfor %}
-                    </ol>
+                    </ul>
 
                 </div>
             </div>
         </div>
     </div>
-</div>{% endif %} {% endblock %}
+</div>
+
+{% else %}
+
+<div>
+    <div class="row">
+        <div class="col l6 offset-l3 m8 offset-m2 s12">
+            <div class="card-panel center hoverable back-image-class" style="margin-top: 300px; margin-left: 70px; margin-right: 70px;">
+                <div class="card-content white-text">
+
+                    <p class="flow-text">You are an unauthorised user.</p>
+                    <br>
+                    <p class="flow-text">Please logout from this page.</p>
+                    <a href="{% url 'logout' %}" class="btn-large" style="background-color: transparent; font-size: larger;">Logout</a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endif %} {% endblock %}
