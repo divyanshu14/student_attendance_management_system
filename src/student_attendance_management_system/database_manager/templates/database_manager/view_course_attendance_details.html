@@ -30,14 +30,14 @@
             <ol class="white-text flow-text" style="margin-left: 70px">
                 {% for lecture in lectures %}
                 <li>
-                    <pre>&nbsp;Timestamp: {{ lecture.timestamp }}         Attendance Taken By: {{ lecture.attendance_taken_by.instructor }}</pre>
+                    <pre>&nbsp;Timestamp: {{ lecture.timestamp }}         Attendance Taken By: {{ lecture.attendance_taken_by }}</pre>
 
                     <div style="width: 100%; text-align: justify; text-justify: inter-word;">
                         <input type="button" onclick="myFunction({{lecture.id}})" class="btn small white-text" style="background-color: transparent; font-size: smaller; font-weight: 500;" value="* see entry no. of students present" id="{{ lecture.id }}_button" />
                         <div id="{{lecture.id}}_list" style="display: none;">
                             <ol type="a" style="margin-left: 50px">
                                 {% for each_present_student in lecture.present_students.all %}
-                                <li>&nbsp;{{ each_present_student.student.entry_number }}</li>
+                                <li>&nbsp;{{ each_present_student.entry_number }}</li>
                                 {% endfor %}
                             </ol>
                         </div>
@@ -64,14 +64,14 @@
             <ol class="white-text flow-text" style="margin-left: 70px">
                 {% for tutorial in tutorials %}
                 <li>
-                    <pre class="flow-text">&nbsp;Timestamp: {{ tutorial.timestamp }}         Attendance Taken By: {{ tutorial.attendance_taken_by.instructor }}</pre>
+                    <pre class="flow-text">&nbsp;Timestamp: {{ tutorial.timestamp }}         Attendance Taken By: {{ tutorial.attendance_taken_by }}</pre>
 
                     <div style="width: 100%; text-align: justify; text-justify: inter-word;">
                         <input type="button" onclick="myFunction({{tutorial.id}})" class="btn small white-text" style="background-color: transparent; font-size: smaller; font-weight: 500;" value="* see entry no. of students present" id="{{ tutorial.id }}_button" />
                         <div id="{{tutorial.id}}_list" style="display: none;">
                             <ol type="a" style="margin-left: 50px">
                                 {% for each_present_student in tutorial.present_students.all %}
-                                <li>&nbsp;{{ each_present_student.student.entry_number }}</li>
+                                <li>&nbsp;{{ each_present_student.entry_number }}</li>
                                 {% endfor %}
                             </ol>
                         </div>
@@ -96,14 +96,14 @@
             <ol class="white-text flow-text" style="margin-left: 70px">
                 {% for practical in practicals %}
                 <li>
-                    <pre class="flow-text">&nbsp;Timestamp: {{ practical.timestamp }}         Attendance Taken By: {{ practical.attendance_taken_by.instructor }}</pre>
+                    <pre class="flow-text">&nbsp;Timestamp: {{ practical.timestamp }}         Attendance Taken By: {{ practical.attendance_taken_by }}</pre>
 
                     <div style="width: 100%; text-align: justify; text-justify: inter-word;">
                         <input type="button" onclick="myFunction({{practical.id}})" class="btn small white-text" style="background-color: transparent; font-size: smaller; font-weight: 500;" value="* see entry no. of students present" id="{{ practical.id }}_button" />
                         <div id="{{practical.id}}_list" style="display: none;">
                             <ol type="a" style="margin-left: 50px">
                                 {% for each_present_student in practical.present_students.all %}
-                                <li>&nbsp;{{ each_present_student.student.entry_number }}</li>
+                                <li>&nbsp;{{ each_present_student.entry_number }}</li>
                                 {% endfor %}
                             </ol>
                         </div>

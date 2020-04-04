@@ -126,7 +126,7 @@ def add_instructors(request, num_instructors):
 
 
 @login_required
-@permission_required('database_manager.add_teaching_assistant', raise_exception=True)
+@permission_required('database_manager.add_teachingassistant', raise_exception=True)
 def add_teaching_assistants(request, num_teaching_assistants):
     '''
     View to add teaching assistants.
@@ -165,7 +165,7 @@ def add_teaching_assistants(request, num_teaching_assistants):
 
 
 # @login_required
-# @permission_required('database_manager.add_lab_attendant', raise_exception=True)
+# @permission_required('database_manager.add_labattendant', raise_exception=True)
 # def add_lab_attendants(request, num_lab_attendants):
 #     '''
 #     View to add lab attendants.
@@ -339,7 +339,7 @@ def assign_instructor_role_to_class_event_coordinator(request, num_class_event_c
 
 
 @login_required
-@permission_required('database_manager.add_teaching_assistant', raise_exception=True)
+@permission_required('database_manager.add_teachingassistant', raise_exception=True)
 def assign_teaching_assistant_role_to_users(request, num_users):
     '''
     View to assign teaching assistant role to users.
@@ -374,7 +374,7 @@ def assign_teaching_assistant_role_to_users(request, num_users):
 
 
 @login_required
-@permission_required('database_manager.add_teaching_assistant', raise_exception=True)
+@permission_required('database_manager.add_teachingassistant', raise_exception=True)
 def assign_teaching_assistant_role_to_class_event_coordinator(request, num_class_event_coordinators):
     '''
     View to assign teaching assistant role to class event coordinators.
@@ -421,18 +421,28 @@ def view_course_attendance_details(request, course_id):
     '''
     related_course = get_object_or_404(Course, id=course_id)
     if (not request.user.is_superuser) and (not hasattr(request.user, 'admin')):
-        num_ins_c = request.user.classeventcoordinator.instructor.course.filter(
-            id=course_id)
-        num_ta_c = request.user.classeventcoordinator.teaching_assistant.course.filter(
-            id=course_id)
-        # num_la_c = request.user.classeventcoordinator.lab_attendant.course.filter(id=course_id)
+        try:
+            num_ins_c = request.user.classeventcoordinator.instructor.course_set.filter(
+                id=course_id)
+        except:
+            num_ins_c = Course.objects.none()
+        try:
+            num_ta_c = request.user.classeventcoordinator.teachingassistant.course_set.filter(
+                id=course_id)
+        except:
+            num_ta_c = Course.objects.none()
+        # try:
+        #     num_la_c = request.user.classeventcoordinator.labattendant.course_set.filter(
+        #         id=course_id)
+        # except:
+        #     num_la_c = Course.objects.none()
         if len(num_ins_c) + len(num_ta_c) <= 0:
             raise PermissionDenied
-    lectures = ClassEvent.objects.filter(course=related_course, class_type='L')
+    lectures = ClassEvent.objects.filter(course=related_course, class_event_type='L')
     tutorials = ClassEvent.objects.filter(
-        course=related_course, class_type='T')
+        course=related_course, class_event_type='T')
     practicals = ClassEvent.objects.filter(
-        course=related_course, class_type='P')
+        course=related_course, class_event_type='P')
     context = {'related_course': related_course, 'lectures': lectures,
                'tutorials': tutorials, 'practicals': practicals}
     return render(request, 'database_manager/view_course_attendance_details.html', context)
@@ -450,24 +460,34 @@ def view_student_attendance_details_in_a_course(request, course_id, student_id):
     related_course = get_object_or_404(Course, id=course_id)
     related_student = get_object_or_404(Student, id=student_id)
     if (not request.user.is_superuser) and (not hasattr(request.user, 'admin')):
-        num_ins_c = request.user.classeventcoordinator.instructor.course.filter(
-            id=course_id)
-        num_ta_c = request.user.classeventcoordinator.teaching_assistant.course.filter(
-            id=course_id)
-        # num_la_c = request.user.classeventcoordinator.lab_attendant.course.filter(id=course_id)
+        try:
+            num_ins_c = request.user.classeventcoordinator.instructor.course_set.filter(
+                id=course_id)
+        except:
+            num_ins_c = Course.objects.none()
+        try:
+            num_ta_c = request.user.classeventcoordinator.teachingassistant.course_set.filter(
+                id=course_id)
+        except:
+            num_ta_c = Course.objects.none()
+        # try:
+        #     num_la_c = request.user.classeventcoordinator.labattendant.course_set.filter(
+        #         id=course_id)
+        # except:
+        #     num_la_c = Course.objects.none()
         if len(num_ins_c) + len(num_ta_c) <= 0:
             if hasattr(request.user, 'student'):
                 if request.user.student.id != student_id:
                     raise PermissionDenied
-                elif len(request.user.student.course.filter(id=course_id)) <= 0:
+                elif len(request.user.student.course_set.filter(id=course_id)) <= 0:
                     raise PermissionDenied
             else:
                 raise PermissionDenied
-    lectures = ClassEvent.objects.filter(course=related_course, class_type='L')
+    lectures = ClassEvent.objects.filter(course=related_course, class_event_type='L')
     tutorials = ClassEvent.objects.filter(
-        course=related_course, class_type='T')
+        course=related_course, class_event_type='T')
     practicals = ClassEvent.objects.filter(
-        course=related_course, class_type='P')
+        course=related_course, class_event_type='P')
     context = {'related_course': related_course, 'related_student': related_student,
                'lectures': lectures, 'tutorials': tutorials, 'practicals': practicals}
     return render(request, 'database_manager/view_student_attendance_details_in_a_course.html', context)

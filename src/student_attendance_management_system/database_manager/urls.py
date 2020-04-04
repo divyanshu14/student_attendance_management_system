@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from . import views
+from database_manager import views
 
 urlpatterns = [
     path('add_students/<int:num_students>/', views.add_students, name='add_students'),
