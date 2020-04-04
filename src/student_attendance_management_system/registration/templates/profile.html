@@ -1,6 +1,4 @@
-{% extends 'base_generic.html' %} {% load static %} {% load widget_tweaks %} {% block content %}
-
-{% if is_admin %}
+{% extends 'base_generic.html' %} {% load static %} {% load widget_tweaks %} {% block content %} {% if is_admin %}
 
 <div>
 
@@ -9,9 +7,16 @@
             <div class="card-panel hoverable back-image-class" style="margin-top: 50px; margin-left: 70px; margin-right: 70px;">
                 <div class="card-content white-text">
                     <h3 class="center">Admin Details</h3>
-
-                    <h4>&nbsp;&nbsp;&nbsp;&nbsp;Name: &nbsp;{{ request.user.get_full_name }}</h4>
-                    <h4>&nbsp;&nbsp;&nbsp;&nbsp;Admin ID: &nbsp;{{ request.user.admin.admin_id }}</h4>
+                    <table class="responsive-table white-text flow-text">
+                        <tr>
+                            <td>Name:</td>
+                            <td> {{ request.user.get_full_name }}</td>
+                        </tr>
+                        <tr>
+                            <td>Admin ID:</td>
+                            <td> {{ request.user.admin.admin_id }}</td>
+                        </tr>
+                    </table>
                 </div>
             </div>
         </div>
@@ -19,105 +24,75 @@
 
     <div class="row">
         <div class="col l6 offset-l3 m8 offset-m2 s12">
-            <div class="card-panel center hoverable back-image-class" style="margin-top: 50px; margin-left: 70px; margin-right: 70px;">
+            <div class="card center hoverable back-image-class" style="margin-top: 50px; margin-left: 70px; margin-right: 70px;">
                 <div class="card-content white-text">
-                    <form method="post">
-                        {% csrf_token %}
-
-                        <table>
-                            {% for field in num_students_to_add_form %}
-                            <div class="form-group">
-                                <tr>
-                                    <td> <label for="{{ field.id_for_label }}" class="label-class">{{ field.label }}:</label> </td>
-                                    <td>{% render_field field class="white-text" placeholder=field.label %} </td>
-                                </tr>
-                            </div>
+                    <h3>ADD ...</h3>
+                    <table class="responsive-table centered">
+                        <form method="post">
+                            {% csrf_token %}
+                            <tr>
+                                {% for field in num_students_to_add_form %}
+                                <td>{% render_field field class="white-text" placeholder=field.label %} </td>
+                                {% endfor %}
+                                <td><input type="submit" value="Add Students" class="btn-large tooltipped" data-tooltip="Click to add Students" data-position="right" style="background-color: transparent; font-size: larger;">
+                                </td>
+                            </tr>
+                        </form>
+                        <form method="post">
+                            {% csrf_token %} {% for field in num_instructors_to_add_form %}
+                            <tr>
+                                <td>{% render_field field class="white-text" placeholder=field.label %} </td>
+                                <td><input type="submit" value="Add Instructors" class="btn-large tooltipped" data-tooltip="Click to add Instructors" data-position="right" style="background-color: transparent; font-size: larger;">
+                                </td>
+                            </tr>
                             {% endfor %}
-                        </table>
-
-
-                        <input type="submit" value="Add Students" class="btn-large tooltipped" data-tooltip="Click to add Students" data-position="right" style="background-color: transparent; font-size: larger;">
-                    </form>
-
-                    <br>
-
-                    <form method="post">
-                        {% csrf_token %}
-
-                        <table>
-                            {% for field in num_instructors_to_add_form %}
-                            <div class="form-group">
-                                <tr>
-                                    <td> <label for="{{ field.id_for_label }}" class="label-class">{{ field.label }}:</label> </td>
-                                    <td>{% render_field field class="white-text" placeholder=field.label %} </td>
-                                </tr>
-                            </div>
+                        </form>
+                        <form method="post">
+                            {% csrf_token %} {% for field in num_courses_to_add_form %}
+                            <tr>
+                                <td>{% render_field field class="white-text" placeholder=field.label %} </td>
+                                <td><input type="submit" value="Add Courses" class="btn-large tooltipped" data-tooltip="Click to add Courses" data-position="right" style="background-color: transparent; font-size: larger;">
+                                </td>
+                            </tr>
                             {% endfor %}
-                        </table>
-
-
-                        <input type="submit" value="Add Instructors" class="btn-large tooltipped" data-tooltip="Click to add Instructors" data-position="right" style="background-color: transparent; font-size: larger;">
-                    </form>
-
-                    <br>
-
-
-                    <form method="post">
-                        {% csrf_token %}
-
-                        <table>
-                            {% for field in num_courses_to_add_form %}
-                            <div class="form-group">
-                                <tr>
-                                    <td> <label for="{{ field.id_for_label }}" class="label-class">{{ field.label }}:</label> </td>
-                                    <td>{% render_field field class="white-text" placeholder=field.label %} </td>
-                                </tr>
-                            </div>
+                        </form>
+                        <form method="post">
+                            {% csrf_token %} {% for field in num_teaching_assistants_to_add_form %}
+                            <tr>
+                                <td>{% render_field field class="white-text" placeholder=field.label %} </td>
+                                <td><input type="submit" value="Add Teaching Assistants" class="btn-large tooltipped" data-tooltip="Click to add Teaching Assistants" data-position="right" style="background-color: transparent; font-size: larger;">
+                                </td>
+                            </tr>
                             {% endfor %}
-                        </table>
-                        <input type="submit" value="Add Courses" class="btn-large tooltipped" data-tooltip="Click to add Courses" data-position="right" style="background-color: transparent; font-size: larger;">
-                    </form>
-
-                    <br>
-
-                    <form method="post">
-                        {% csrf_token %}
-
-                        <table>
-                            {% for field in num_teaching_assistants_to_add_form %}
-                            <div class="form-group">
-                                <tr>
-                                    <td> <label for="{{ field.id_for_label }}" class="label-class">{{ field.label }}:</label> </td>
-                                    <td>{% render_field field class="white-text" placeholder=field.label %} </td>
-                                </tr>
-                            </div>
-                            {% endfor %}
-                        </table>
-
-                        <input type="submit" value="Add Teaching Assistants" class="btn-large tooltipped" data-tooltip="Click to add Teaching Assistants" data-position="right" style="background-color: transparent; font-size: larger;">
-                    </form>
-
+                        </form>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<br><br>
-{% endif %}
+<br><br> {% endif %}
 
 <br> {% if is_instructor %}
 
 <div>
-
     <div class="row">
         <div class="col l6 offset-l3 m8 offset-m2 s12">
             <div class="card-panel hoverable back-image-class" style="margin-top: 50px; margin-left: 70px; margin-right: 70px;">
                 <div class="card-content white-text">
                     <h3 class="center">Instructor Details</h3>
 
-                    <h4>&nbsp;&nbsp;&nbsp;&nbsp;Name: &nbsp;{{ request.user.get_full_name }}</h4>
-                    <h4>&nbsp;&nbsp;&nbsp;&nbsp;Instructor ID: &nbsp;{{ request.user.instructor.instructor_id }}</h4>
+                    <table class="responsive-table white-text flow-text">
+                        <tr>
+                            <td>Name:</td>
+                            <td> {{ request.user.get_full_name }}</td>
+                        </tr>
+                        <tr>
+                            <td>Instructor ID:</td>
+                            <td> {{ request.user.instructor.instructor_id }}</td>
+                        </tr>
+                    </table>
                 </div>
             </div>
         </div>
@@ -127,33 +102,42 @@
         <div class="col l6 offset-l3 m8 offset-m2 s12">
             <div class="card-panel hoverable back-image-class" style="margin-top: 50px; margin-left: 70px; margin-right: 70px;">
                 <div class="card-content white-text">
+                    <table class="responsive-table">
+                        <thead>
+                            <h5>Registered as instructor for courses:</h5>
+                        </thead>
 
-                    <h5>&nbsp;&nbsp;&nbsp;&nbsp;Registered as instructor for courses:</h5>
-                    <ul style="text-align: justify; text-justify: inter-word;">
-                        {% for course in instructor_for_courses %}
-                        <li><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o</b><a href="{% url 'view_course_attendance_details' course_id=course.id %}" style="font-size: x-large;" class="teal-text text-lighten-2 tooltipped" data-tooltip="Click to View attendance"
-                                data-position="right">&nbsp;{{ course }}</a></li>
-                        {% endfor %}
-                    </ul><br>
-
+                        <tbody>
+                            {% for course in instructor_for_courses %}
+                            <tr><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o</b><a href="{% url 'view_course_attendance_details' course_id=course.id %}" style="font-size: x-large;" class="teal-text text-lighten-2 tooltipped" data-tooltip="Click to View attendance"
+                                    data-position="right">{{ course }}</a></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <br>
                 </div>
             </div>
         </div>
     </div>
 </div>
-{% endif %}
-
-{% if is_teachingassistant %}
+{% endif %} {% if is_teachingassistant %}
 <div>
-
     <div class="row">
         <div class="col l6 offset-l3 m8 offset-m2 s12">
             <div class="card-panel hoverable back-image-class" style="margin-top: 50px; margin-left: 70px; margin-right: 70px;">
                 <div class="card-content white-text">
                     <h3 class="center">Teaching Assistant Details</h3>
 
-                    <h4>&nbsp;&nbsp;&nbsp;&nbsp;Name: &nbsp;{{ request.user.get_full_name }}</h4>
-                    <h4>&nbsp;&nbsp;&nbsp;&nbsp;Teaching Assistant ID: &nbsp;{{ request.user.teachingassistant.teaching_assistant_id }}</h4>
+                    <table class="responsive-table white-text flow-text">
+                        <tr>
+                            <td>Name:</td>
+                            <td> {{ request.user.get_full_name }}</td>
+                        </tr>
+                        <tr>
+                            <td>Teaching Assistant ID:</td>
+                            <td> {{ request.user.teachingassistant.teaching_assistant_id }}</td>
+                        </tr>
+                    </table>
                 </div>
             </div>
         </div>
@@ -163,22 +147,25 @@
         <div class="col l6 offset-l3 m8 offset-m2 s12">
             <div class="card-panel hoverable back-image-class" style="margin-top: 50px; margin-left: 70px; margin-right: 70px;">
                 <div class="card-content white-text">
+                    <table class="responsive-table">
+                        <thead>
+                            <h5>Registered as teaching assistant for courses:</h5>
+                        </thead>
 
-                    <h5>&nbsp;&nbsp;&nbsp;&nbsp;Registered as teaching assistant for courses:</h5>
-                    <ul style="text-align: justify; text-justify: inter-word;">
-                        {% for course in teaching_assistant_for_courses %}
-                        <li><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o</b><a href="{% url 'view_course_attendance_details' course_id=course.id %}" style="font-size: x-large;" class="teal-text text-lighten-2 tooltipped" data-tooltip="Click to View attendance"
-                                data-position="right">&nbsp;{{ course }}</a></li>
-                        {% endfor %}
-                    </ul><br>
+                        <tbody>
+                            {% for course in teaching_assistant_for_courses %}
+                            <tr><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;o</b><a href="{% url 'view_course_attendance_details' course_id=course.id %}" style="font-size: x-large;" class="teal-text text-lighten-2 tooltipped" data-tooltip="Click to View attendance"
+                                    data-position="right">&nbsp;{{ course }}</a></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <br>
                 </div>
             </div>
         </div>
     </div>
 </div>
-{% endif %}
-
-{% if is_student %}
+{% endif %} {% if is_student %}
 <div>
 
     <div class="row">
@@ -187,8 +174,16 @@
                 <div class="card-content white-text">
                     <h3 class="center">Student Details</h3>
 
-                    <h4>&nbsp;&nbsp;&nbsp;&nbsp;Name: &nbsp;{{ request.user.get_full_name }}</h4>
-                    <h4>&nbsp;&nbsp;&nbsp;&nbsp;Entry number: &nbsp;{{ request.user.student.entry_number }}</h4>
+                    <table class="responsive-table white-text flow-text">
+                        <tr>
+                            <td>Name:</td>
+                            <td> {{ request.user.get_full_name }}</td>
+                        </tr>
+                        <tr>
+                            <td>Entry number:</td>
+                            <td> {{ request.user.student.entry_number }}</td>
+                        </tr>
+                    </table>
                 </div>
             </div>
         </div>
@@ -198,23 +193,28 @@
         <div class="col l6 offset-l3 m8 offset-m2 s12">
             <div class="card-panel hoverable back-image-class" style="margin-top: 50px; margin-left: 70px; margin-right: 70px;">
                 <div class="card-content white-text">
-                    <h3 class="center">Student registered for courses</h3>
 
-                    <ul style="text-align: justify; text-justify: inter-word;">
-                        {% for course in registered_student_for_courses %}
-                        <li><b>&nbsp;&nbsp;&nbsp;&nbsp;o</b><a href="{% url 'view_student_attendance_details_in_a_course' course_id=course.id student_id=request.user.student.id %}" style="font-size: x-large;" class="teal-text text-lighten-2 tooltipped" data-tooltip="Click to View attendance"
-                                data-position="right">&nbsp;&nbsp;{{ course }}</a></li>
-                        {% endfor %}
-                    </ul>
+
+                    <table class="responsive-table">
+                        <thead>
+                            <h3 class="center">Student registered for courses</h3>
+                        </thead>
+
+                        <tbody>
+                            {% for course in registered_student_for_courses %}
+                            <tr><b>&nbsp;&nbsp;&nbsp;&nbsp;o</b><a href="{% url 'view_student_attendance_details_in_a_course' course_id=course.id student_id=request.user.student.id %}" style="font-size: x-large;" class="teal-text text-lighten-2 tooltipped"
+                                    data-tooltip="Click to View attendance" data-position="right">&nbsp;&nbsp;{{ course }}</a></tr>
+                            {% endfor %}
+                        </tbody>
+
+                    </table>
 
                 </div>
             </div>
         </div>
     </div>
 </div>
-{% endif %}
-
-{% if not is_admin and not is_classeventcoordinator and not is_student %}
+{% endif %} {% if not is_admin and not is_classeventcoordinator and not is_student %}
 
 <div>
     <div class="row">

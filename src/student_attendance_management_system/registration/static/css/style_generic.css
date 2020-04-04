@@ -3,32 +3,33 @@
  * Copyright 2014-2017 Materialize
  * MIT License (https://raw.githubusercontent.com/Dogfalo/materialize/master/LICENSE)
  */
- 
-.dropdown-content a:hover{
- background: #014464;
- background: linear-gradient(left, #0272a7, #013953);
- background: -moz-linear-gradient(left, #0272a7, #013953);
- background: -webkit-gradient(linear, 100% 100%, 0% 0%, from(#0272a7), to(#013953));
-color: #f8f9fa;
- -webkit-transition: all 0.2s ease-in-out;
- -moz-transition: all 0.2s ease-in-out;
- transition: all 0.2s ease-in-out; }
- 
- nav ul li:hover {
-   background: #014464;
- background: linear-gradient(left, #0272a7, #013953);
- background: -moz-linear-gradient(left, #0272a7, #013953);
- background: -webkit-gradient(linear, 100% 100%, 0% 0%, from(#0272a7), to(#013953));
-color: #f8f9fa;
- -webkit-transition: all 0.2s ease-in-out;
- -moz-transition: all 0.2s ease-in-out;
- transition: all 0.2s ease-in-out;
+
+.dropdown-content a:hover {
+    background: #014464;
+    background: linear-gradient(left, #0272a7, #013953);
+    background: -moz-linear-gradient(left, #0272a7, #013953);
+    background: -webkit-gradient(linear, 100% 100%, 0% 0%, from(#0272a7), to(#013953));
+    color: #f8f9fa;
+    -webkit-transition: all 0.2s ease-in-out;
+    -moz-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+}
+
+nav ul li:hover {
+    background: #014464;
+    background: linear-gradient(left, #0272a7, #013953);
+    background: -moz-linear-gradient(left, #0272a7, #013953);
+    background: -webkit-gradient(linear, 100% 100%, 0% 0%, from(#0272a7), to(#013953));
+    color: #f8f9fa;
+    -webkit-transition: all 0.2s ease-in-out;
+    -moz-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
 }
 
 input:focus::-webkit-input-placeholder {
     font-size: .75em;
     position: relative;
-    top: -15px; 
+    top: -15px;
     transition: 0.2s ease-out;
 }
 
@@ -36,13 +37,15 @@ input::-webkit-input-placeholder {
     transition: 0.2s ease-in;
 }
 
-input[type="text"]:focus, input[type="password"]:focus {
+input[type="text"]:focus,
+input[type="password"]:focus {
     height: 50px;
     padding-bottom: 0px;
     transition: 0.2s ease-in;
 }
 
-input[type="text"], input[type="password"] {
+input[type="text"],
+input[type="password"] {
     height: 50px;
     transition: 0.2s ease-in;
 }
@@ -56,7 +59,7 @@ input[type="text"], input[type="password"] {
 }
 
 .label-class {
-    font-size: x-large;
+    font-size: large;
     color: white;
     font-weight: 700;
     margin-left: 0px;
@@ -3204,7 +3207,14 @@ table.highlight>tbody>tr {
 }
 
 table.highlight>tbody>tr:hover {
-    background-color: rgba(242, 242, 242, 0.5);
+    background: #014464;
+    background: linear-gradient(left, #0272a7, #013953);
+    background: -moz-linear-gradient(left, #0272a7, #013953);
+    background: -webkit-gradient(linear, 100% 100%, 0% 0%, from(#0272a7), to(#013953));
+    color: #f8f9fa;
+    -webkit-transition: all 0.2s ease-in-out;
+    -moz-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
 }
 
 table.centered thead tr th,
@@ -4612,7 +4622,6 @@ nav ul li {
     padding: 0;
 }
 
-
 nav ul li.active {
     background-color: rgba(0, 0, 0, 0.1);
 }
@@ -5021,14 +5030,11 @@ small {
 
 .card.small .card-image,
 .card.medium .card-image,
-.card.large .card-image {
-}
+.card.large .card-image {}
 
 .card.small .card-image+.card-content,
 .card.medium .card-image+.card-content,
-.card.large .card-image+.card-content {
-    
-}
+.card.large .card-image+.card-content {}
 
 .card.small .card-content,
 .card.medium .card-content,

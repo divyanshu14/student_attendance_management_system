@@ -21,32 +21,65 @@
 
 <br>
 
-<div style="margin-left: 50px; margin-right: 50px; margin-top:30px;">
-    <div class="card hoverable back-image-class">
-        <div class="class-content">
-            <br>
-            <h3 class="center">Lectures</h3>
+<div class="row">
+    <div class="col l12 m12 s12">
+        <div style="margin-left: 50px; margin-right: 50px; margin-top:30px;">
+            <div class="card hoverable back-image-class">
+                <div class="class-content">
+                    <br>
+                    <div class="container">
+                        <table class="responsive-table">
+                            <tr>
+                                <td><b class="center white-text" style="font-size: x-large;">Enter date range:</b></td>
+                                <td><label for="start">Start Date:</label>
+                                    <input type="date" id="start_lec" name="start date" class="white-text btn-large" style="background-color: transparent; font-size: x-large; font-weight: 500;" /></td>
 
-            <ol class="white-text flow-text" style="margin-left: 70px">
-                {% for lecture in lectures %}
-                <li>
-                    <pre>&nbsp;Timestamp: {{ lecture.timestamp }}         Attendance Taken By: {{ lecture.attendance_taken_by }}</pre>
-
-                    <div style="width: 100%; text-align: justify; text-justify: inter-word;">
-                        <input type="button" onclick="myFunction({{lecture.id}})" class="btn small white-text" style="background-color: transparent; font-size: smaller; font-weight: 500;" value="* see entry no. of students present" id="{{ lecture.id }}_button" />
-                        <div id="{{lecture.id}}_list" style="display: none;">
-                            <ol type="a" style="margin-left: 50px">
-                                {% for each_present_student in lecture.present_students.all %}
-                                <li>&nbsp;{{ each_present_student.entry_number }}</li>
-                                {% endfor %}
-                            </ol>
-                        </div>
+                                <td><label for="end">End Date:</label>
+                                    <input type="date" id="end_lec" name="end date" class="white-text btn-large" style="background-color: transparent; font-size: x-large; font-weight: 500;" /></td>
+                                <td>
+                                    <input type="button" onclick="date_range('lecture')" value="GO" class="btn-large tooltipped" data-tooltip="Click to View" data-position="right" style="background-color: transparent; font-size: larger;">
+                                </td>
+                            </tr>
+                        </table>
                     </div>
-                </li>
-                {% endfor %}
-            </ol>
+                    <div class="center" style="overflow: hidden;">
+                        <input type="button" onclick="myFunction1('lecture')" class="btn-large white-text tooltipped" data-tooltip="Click to View list of Lectures" data-position="right" style="background-color: transparent; font-size: x-large; font-weight: 500;" value="* view lectures"
+                            id="lecture_button" />
+                    </div>
 
-            <br>
+                    <div style="overflow: auto;">
+                        <table class="white-text flow-text highlight centered" id="lecture_list" style="display: none;">
+
+                            <thead>
+                                <th>Timestamp</th>
+                                <th>Attendance Taken By</th>
+                                <th>List of students</th>
+                            </thead>
+
+                            <tbody id="lecture_new_list">
+                                {% for lecture in lectures %}
+                                <tr id="{{ lecture.timestamp }}" style="display: none;">
+                                    <td>{{ lecture.timestamp }}</td>
+                                    <td>{{ lecture.attendance_taken_by }} </td>
+                                    <td>
+                                        <input type="button" onclick="myFunction({{lecture.id}})" class="btn small white-text" style="background-color: transparent; font-size: smaller; font-weight: 500;" value="* see entry no. of students present" id="{{ lecture.id }}_button" />
+                                        <div id="{{lecture.id}}_list" style="display: none;">
+                                            <ol type="a" style="margin-left: 50px">
+                                                {% for each_present_student in lecture.present_students.all %}
+                                                <li>&nbsp;{{ each_present_student.entry_number }}</li>
+                                                {% endfor %}
+                                            </ol>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <br>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -55,69 +88,211 @@
 
 <br>
 
-<div style="margin-left: 50px; margin-right: 50px; margin-top:30px;">
-    <div class="card hoverable back-image-class">
-        <div class="class-content">
-            <br>
-            <h3 class="center">Tutorials</h3>
 
-            <ol class="white-text flow-text" style="margin-left: 70px">
-                {% for tutorial in tutorials %}
-                <li>
-                    <pre class="flow-text">&nbsp;Timestamp: {{ tutorial.timestamp }}         Attendance Taken By: {{ tutorial.attendance_taken_by }}</pre>
 
-                    <div style="width: 100%; text-align: justify; text-justify: inter-word;">
-                        <input type="button" onclick="myFunction({{tutorial.id}})" class="btn small white-text" style="background-color: transparent; font-size: smaller; font-weight: 500;" value="* see entry no. of students present" id="{{ tutorial.id }}_button" />
-                        <div id="{{tutorial.id}}_list" style="display: none;">
-                            <ol type="a" style="margin-left: 50px">
-                                {% for each_present_student in tutorial.present_students.all %}
-                                <li>&nbsp;{{ each_present_student.entry_number }}</li>
-                                {% endfor %}
-                            </ol>
-                        </div>
+<div class="row">
+    <div class="col l12 m12 s12">
+        <div style="margin-left: 50px; margin-right: 50px; margin-top:30px;">
+            <div class="card hoverable back-image-class">
+                <div class="class-content">
+                    <br>
+
+                    <div class="container">
+                        <table class="responsive-table">
+                            <tr>
+                                <td><b class="center white-text" style="font-size: x-large;">Enter date range:</b></td>
+                                <td><label for="start">Start Date:</label>
+                                    <input type="date" id="start_tut" name="start date" class="white-text btn-large" style="background-color: transparent; font-size: x-large; font-weight: 500;" /></td>
+
+                                <td><label for="end">End Date:</label>
+                                    <input type="date" id="end_tut" name="end date" class="white-text btn-large" style="background-color: transparent; font-size: x-large; font-weight: 500;" /></td>
+                                <td>
+                                    <input type="button" onclick="date_range('tutorial')" value="GO" class="btn-large tooltipped" data-tooltip="Click to View" data-position="right" style="background-color: transparent; font-size: larger;">
+                                </td>
+                            </tr>
+                        </table>
                     </div>
-                </li>
-                {% endfor %}
-            </ol>
 
-            <br>
+                    <div class="center" style="overflow: hidden;">
+                        <input type="button" onclick="myFunction1('tutorial')" class="btn-large white-text tooltipped" data-tooltip="Click to View list of Tutotrials" data-position="right" style="background-color: transparent; font-size: x-large; font-weight: 500;" value="* view tutorials"
+                            id="tutorial_button" />
+                    </div>
+
+
+                    <div style="overflow: auto;">
+                        <table class="white-text flow-text highlight centered" id="tutorial_list" style="display: none;">
+
+                            <thead>
+                                <th>Timestamp</th>
+                                <th>Attendance Taken By</th>
+                                <th>List of students</th>
+                            </thead>
+
+                            <tbody id="tutorial_new_list">
+                                {% for tutorial in tutorials %}
+                                <tr id="{{ tutorial.timestamp }}" style="display: none;">
+                                    <td>{{ tutorial.timestamp }}</td>
+                                    <td>{{ tutorial.attendance_taken_by }} </td>
+                                    <td>
+                                        <input type="button" onclick="myFunction({{tutorial.id}})" class="btn small white-text" style="background-color: transparent; font-size: smaller; font-weight: 500;" value="* see entry no. of students present" id="{{ tutorial.id }}_button" />
+                                        <div id="{{tutorial.id}}_list" style="display: none;">
+                                            <ol type="a" style="margin-left: 50px">
+                                                {% for each_present_student in tutorial.present_students.all %}
+                                                <li>&nbsp;{{ each_present_student.entry_number }}</li>
+                                                {% endfor %}
+                                            </ol>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <br>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+
 
 <br>
 
-<div style="margin-left: 50px; margin-right: 50px; margin-top:30px;">
-    <div class="card hoverable back-image-class">
-        <div class="class-content">
-            <br>
-            <h3 class="center">Practicals</h3>
 
-            <ol class="white-text flow-text" style="margin-left: 70px">
-                {% for practical in practicals %}
-                <li>
-                    <pre class="flow-text">&nbsp;Timestamp: {{ practical.timestamp }}         Attendance Taken By: {{ practical.attendance_taken_by }}</pre>
 
-                    <div style="width: 100%; text-align: justify; text-justify: inter-word;">
-                        <input type="button" onclick="myFunction({{practical.id}})" class="btn small white-text" style="background-color: transparent; font-size: smaller; font-weight: 500;" value="* see entry no. of students present" id="{{ practical.id }}_button" />
-                        <div id="{{practical.id}}_list" style="display: none;">
-                            <ol type="a" style="margin-left: 50px">
-                                {% for each_present_student in practical.present_students.all %}
-                                <li>&nbsp;{{ each_present_student.entry_number }}</li>
-                                {% endfor %}
-                            </ol>
-                        </div>
+<div class="row">
+    <div class="col l12 m12 s12">
+        <div style="margin-left: 50px; margin-right: 50px; margin-top:30px;">
+            <div class="card hoverable back-image-class">
+                <div class="class-content">
+                    <br>
+
+                    <div class="container" class="responsive-table">
+                        <table>
+                            <tr>
+                                <td><b class="center white-text" style="font-size: x-large;">Enter date range:</b></td>
+                                <td><label for="start">Start Date:</label>
+                                    <input type="date" id="start_prac" name="start date" class="white-text btn-large" style="background-color: transparent; font-size: x-large; font-weight: 500;" /></td>
+
+                                <td><label for="end">End Date:</label>
+                                    <input type="date" id="end_prac" name="end date" class="white-text btn-large" style="background-color: transparent; font-size: x-large; font-weight: 500;" /></td>
+                                <td>
+                                    <input type="button" onclick="date_range('practical')" value="GO" class="btn-large tooltipped" data-tooltip="Click to View" data-position="right" style="background-color: transparent; font-size: larger;">
+                                </td>
+                            </tr>
+                        </table>
                     </div>
-                </li>
-                {% endfor %}
-            </ol>
 
-            <br>
+                    <div class="center" style="overflow: hidden;">
+                        <input type="button" onclick="myFunction1('practical')" class="btn small white-text tooltipped" data-tooltip="Click to View list of Practicals" data-position="right" style="background-color: transparent; font-size: x-large; font-weight: 500;" value="* view practicals"
+                            id="practical_button" />
+                    </div>
+
+                    <div style="overflow: auto;">
+                        <table class="white-text flow-text highlight centered" id="practical_list" style="display: none;">
+
+                            <thead>
+                                <th>Timestamp</th>
+                                <th>Attendance Taken By</th>
+                                <th>List of students</th>
+                            </thead>
+
+                            <tbody id="practical_new_list">
+                                {% for practical in practicals %}
+                                <tr id="{{ practical.timestamp }}" style="display: none;">
+                                    <td>{{ practical.timestamp }}</td>
+                                    <td>{{ practical.attendance_taken_by }} </td>
+                                    <td>
+                                        <input type="button" onclick="myFunction({{practical.id}})" class="btn small white-text" style="background-color: transparent; font-size: smaller; font-weight: 500;" value="* see entry no. of students present" id="{{ practical.id }}_button" />
+                                        <div id="{{practical.id}}_list" style="display: none;">
+                                            <ol type="a" style="margin-left: 50px">
+                                                {% for each_present_student in practical.present_students.all %}
+                                                <li>&nbsp;{{ each_present_student.entry_number }}</li>
+                                                {% endfor %}
+                                            </ol>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <br>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+
+
+
 
 <script>
+    function date_range(type_) {
+        var start_date_id;
+        var end_date_id;
+        var div_id;
+        var new_list_id;
+
+        if (type_ === 'lecture') {
+            start_date_id = "start_lec";
+            end_date_id = "end_lec";
+            div_id = "lecture_list";
+            var b_id = "lecture_button";
+            var y = document.getElementById(b_id);
+            y.value = "* view lectures";
+            new_list_id = "lecture_new_list";
+        } else if (type_ == "tutorial") {
+            start_date_id = "start_tut";
+            end_date_id = "end_tut";
+            div_id = "tutorial_list";
+            var b_id = "tutorial_button";
+            var y = document.getElementById(b_id);
+            y.value = "* view tutorials";
+            new_list_id = "tutorial_new_list";
+        } else if (type_ == "practical") {
+            start_date_id = "start_prac";
+            end_date_id = "end_prac";
+            div_id = "practical_list";
+            var b_id = "practical_button";
+            var y = document.getElementById(b_id);
+            y.value = "* view practicals";
+            new_list_id = "practical_new_list";
+        }
+        var sd = document.getElementById(start_date_id).value;
+        var ed = document.getElementById(end_date_id).value;
+
+        var start_date = new Date(sd);
+        var end_date = new Date(ed);
+
+        if (start_date == "Invalid Date") {
+            start_date = new Date("January 01, 2010");
+        }
+
+        if (end_date == "Invalid Date") {
+            end_date = new Date("December 01, 2050");
+        }
+        start_date.setDate(start_date.getDate() - 1);
+        var x = document.getElementById(div_id);
+        x.style.display = "none";
+        var lis = document.getElementById(new_list_id).getElementsByTagName('tr');
+        for (index = 0; index < lis.length; index++) {
+            var li_d = lis[index].id;
+            var temp_arr = li_d.split(',');
+            var li_d1 = ''.concat(temp_arr[0], temp_arr[1]);
+            var li_date = new Date(li_d1);
+            if (li_date != "Invalid Date") {
+                if (li_date >= start_date && li_date <= end_date) {
+                    lis[index].style.display = "table-row";
+                } else {
+                    lis[index].style.display = "none";
+                }
+            }
+        }
+    }
+
     function myFunction(id) {
 
         var b_id = ''.concat(id, "_button");
@@ -126,7 +301,7 @@
 
         var x = document.getElementById(div_id);
         if (x.style.display === "none") {
-            x.style.display = "block";
+            x.style.display = "table";
         } else {
             x.style.display = "none";
         }
@@ -136,6 +311,62 @@
             y.value = "* hide entry no. of students present";
         } else {
             y.value = "* see entry no. of students present";
+        }
+    }
+
+    function myFunction1(id) {
+
+        if (id === 'lecture') {
+            b_id = "lecture_button";
+            div_id = "lecture_list";
+
+            var x = document.getElementById(div_id);
+            if (x.style.display === "none") {
+                x.style.display = "table";
+            } else {
+                x.style.display = "none";
+            }
+
+            var y = document.getElementById(b_id);
+            if (y.value === "* view lectures") {
+                y.value = "* hide attendance in lectures";
+            } else {
+                y.value = "* view lectures";
+            }
+        } else if (id === 'tutorial') {
+            b_id = "tutorial_button";
+            div_id = "tutorial_list";
+
+            var x = document.getElementById(div_id);
+            if (x.style.display === "none") {
+                x.style.display = "table";
+            } else {
+                x.style.display = "none";
+            }
+
+            var y = document.getElementById(b_id);
+            if (y.value === "* view tutorials") {
+                y.value = "* hide attendance in tutorials";
+            } else {
+                y.value = "* view tutorials";
+            }
+        } else if (id === 'practical') {
+            b_id = "practical_button";
+            div_id = "practical_list";
+
+            var x = document.getElementById(div_id);
+            if (x.style.display === "none") {
+                x.style.display = "table";
+            } else {
+                x.style.display = "none";
+            }
+
+            var y = document.getElementById(b_id);
+            if (y.value === "* view practicals") {
+                y.value = "* hide attendance in practicals";
+            } else {
+                y.value = "* view practicals";
+            }
         }
     }
 </script>
