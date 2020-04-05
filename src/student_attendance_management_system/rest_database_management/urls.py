@@ -4,6 +4,7 @@ from . import views
 from django.conf.urls import url
 from django.urls import include
 from rest_framework import routers
+from rest_framework.authtoken import views as authViews
 
 router = routers.DefaultRouter()
 router.register(r'add_students', views.addStudents, basename='add_students')
@@ -24,7 +25,8 @@ urlpatterns = [
     path('list_instructors/', views.listInstructors.as_view(), name='list_instructors'),
     # path('add_courses', views.addCourses.as_view(), name='add_courses'),
     path('list_courses', views.listCourses.as_view(), name='list_courses'),
-    path('list_teaching_assistant', views.listTeachingAssistant.as_view(), name='list_teaching_assistant')
+    path('list_teaching_assistant', views.listTeachingAssistant.as_view(), name='list_teaching_assistant'),
+    url(r'^login/', authViews.obtain_auth_token)
 ]
 
 

@@ -21,7 +21,6 @@ from .serializers import (
     assignTeachingAssistantToUserSerializer,
     addTeachingAssistantSerializer
 )
-
 import database_manager.models as dbModels
 from rest_framework import viewsets, mixins, status, generics
 from rest_framework.authentication import TokenAuthentication
@@ -41,21 +40,22 @@ class addStudents(mixins.CreateModelMixin,
     Exampple POST request 
 
     [ 
-        { "first_name": "amritpal",
-            "last_name": "singh",
-            "email_address": "amritpal@gmail.com",
-            "entry_number": "2017csb106812"},
+        { "first_name": "Shivam",
+            "last_name": "Prasad",
+            "email_address": "2017csb1110@iitrpr.ac.in",
+            "entry_number": "2017csb1101"},
         { "first_name": "amritpal",
             "last_name": "singh",
             "email_address": "amritpal@gmail.com",
             "entry_number": "2017csb101268"}
     ]
 
+
     '''
 
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAdminUser, IsAuthenticated)
     serializer_class = addStudentsSerializer
-    # authentication_classes = (TokenAuthentication, )
-    permission_classes = (IsAdminUser,)
     queryset = Student.objects.all()
     def create(self, request, *args, **kwargs):
         UserModel = dbModels.User
@@ -92,8 +92,8 @@ class listStudents(APIView):
     '''
     list all the students
     '''
-    # authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAdminUser,)
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAdminUser, IsAuthenticated)
     queryset = Student.objects.all()
     def get(self, request, *args, **kwargs):
         objects = Student.objects.all()
@@ -127,9 +127,9 @@ class addInstructors(mixins.CreateModelMixin,
             "instructor_id": "4"}
     ]
     '''    
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAdminUser, IsAuthenticated)
     serializer_class = addInstructorSerializer
-    # authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAdminUser,)
     queryset = Instructor.objects.all()
     def create(self, request, *args, **kwargs):
         UserModel = dbModels.User
@@ -168,8 +168,9 @@ class addInstructors(mixins.CreateModelMixin,
 
 class addTeachingAssistant(mixins.CreateModelMixin, 
                 viewsets.GenericViewSet):
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAdminUser, IsAuthenticated)
     queryset = TeachingAssistant.objects.all()
-    permission_classes = (IsAdminUser,)
     serializer_class = addTeachingAssistantSerializer
     def create(self, request, *args, **kwargs):
         self.serializer = self.get_serializer(data=request.data, many=True)
@@ -206,8 +207,8 @@ class listInstructors(APIView):
     '''
     list all the instructors
     '''
-    # authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAdminUser,)
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAdminUser, IsAuthenticated)
     queryset = Instructor.objects.all()
     def get(self, request, *args, **kwargs):
         objects = Instructor.objects.all()
@@ -225,7 +226,8 @@ class listInstructors(APIView):
         return Response(jsonInstructor)
 
 class listTeachingAssistant(APIView):
-    permission_classes = (IsAdminUser,)
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAdminUser, IsAuthenticated)
     queryset = TeachingAssistant.objects.all()
 
     def get(self, request, *args, **kwargs):
@@ -246,9 +248,9 @@ class listTeachingAssistant(APIView):
 
 class assignStudentToUser(mixins.CreateModelMixin, 
                viewsets.GenericViewSet):
-    # authentication_classes = (TokenAuthentication,)
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAdminUser, IsAuthenticated)
     UserModel = dbModels.User
-    permission_classes = (IsAdminUser,)
     queryset = Student.objects.all()
     serializer_class = assignStudentToUserSerializer
 
@@ -284,8 +286,8 @@ class assignInstructorToUser(mixins.CreateModelMixin,
                viewsets.GenericViewSet):
     UserModel = dbModels.User
     
-    # authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAdminUser,)
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAdminUser, IsAuthenticated)
     queryset = Instructor.objects.all()
     serializer_class = assignInstructorToUserSerializer
     
@@ -323,7 +325,8 @@ class assignInstructorToUser(mixins.CreateModelMixin,
 
 class assignInstructorToClassEventCoordinator(mixins.CreateModelMixin, 
                 viewsets.GenericViewSet):
-    permission_classes = (IsAdminUser,)
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAdminUser, IsAuthenticated)
     queryset = Instructor.objects.all()
     serializer_class = assignInstructorToUserSerializer # i can use the same.
     
@@ -361,7 +364,8 @@ class assignInstructorToClassEventCoordinator(mixins.CreateModelMixin,
 
 class assignTeachingAssistantToClassEventCoordinator(mixins.CreateModelMixin,
                     viewsets.GenericViewSet):
-    permission_classes = (IsAdminUser,)
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAdminUser, IsAuthenticated)
     queryset = Instructor.objects.all()
     serializer_class = assignTeachingAssistantToUserSerializer # i can use the same.
     
@@ -398,7 +402,8 @@ class assignTeachingAssistantToClassEventCoordinator(mixins.CreateModelMixin,
 
 class assignTeachingAssistantToUser(mixins.CreateModelMixin,
                     viewsets.GenericViewSet):
-    permission_classes = (IsAdminUser,)
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAdminUser, IsAuthenticated)
     queryset = TeachingAssistant.objects.all()
     serializer_class = assignTeachingAssistantToUserSerializer # i can use the same.
     
@@ -449,6 +454,9 @@ class addCourses(mixins.CreateModelMixin,
     "relative_attendance_for_one_practical": 1
     }]
     """
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAdminUser, IsAuthenticated)
+
     queryset = Course.objects.all()
     serializer_class = addCourseSerializer
     
@@ -524,7 +532,8 @@ class addCourses(mixins.CreateModelMixin,
 
 
 class listCourses(APIView):
-    permission_classes = (IsAdminUser,)
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAdminUser, IsAuthenticated)
     queryset = Course.objects.all()
     def get(self, request, *args, **kwargs):
         objects = Course.objects.all()
