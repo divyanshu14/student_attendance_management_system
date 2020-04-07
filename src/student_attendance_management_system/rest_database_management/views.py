@@ -33,12 +33,50 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         response = super(CustomAuthToken, self).post(request, *args, **kwargs)
         token = Token.objects.get(key=response.data['token'])
-        return Response({'token': token.key, 'username': token.user.email, 'isStaff': token.user.is_staff})
+        User = dbModels.User
+        user = get_object_or_404(User, email=token.user.email)
+        # user = dbModels.User.objects.all().filter(email=token.user.email)[0]
+        first_name = user.first_name
+        last_name = user.last_name
+        is_student = False
+        is_teacher = False
+        is_ta = False
+        if Student.objects.all().filter(user=user):
+            is_student = True
+        try:
+            class_event_coordinator = ClassEventCoordinator.objects.all().filter(user=user)[0]
+            # class_event_coordinator = get_object_or_404(ClassEventCoordinator, user=user)
+        except:
+            return Response({'token': token.key,
+                         'username': token.user.email,
+                         'admin_permissions': token.user.is_staff,
+                         'first_name': first_name,
+                         'last_name': last_name,
+                         'is_student': is_student,
+                         'is_teacher': False,
+                         'is_ta': False
+                         })
+ 
+        if Instructor.objects.all().filter(class_event_coordinator=class_event_coordinator):
+            is_teacher = True
+        if TeachingAssistant.objects.all().filter(class_event_coordinator=class_event_coordinator):
+            is_ta = True
+        
+        return Response({'token': token.key,
+                         'username': token.user.email,
+                         'admin_permissions': token.user.is_staff,
+                         'first_name': first_name,
+                         'last_name': last_name,
+                         'is_student': is_student,
+                         'is_teacher': is_teacher,
+                         'is_ta': is_ta
+                         })
 
 
 class addStudents(mixins.CreateModelMixin, 
@@ -263,10 +301,10 @@ class assignStudentToUser(mixins.CreateModelMixin,
     serializer_class = assignStudentToUserSerializer
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data, many=True)
-        serializer.is_valid(raise_exception=True)
+        self.serializer = self.get_serializer(data=request.data, many=True)
+        self.serializer.is_valid(raise_exception=True)
         errors = []
-        for single_proportion in serializer.validated_data:
+        for single_proportion in self.serializer.validated_data:
             try:
                 info = {}
                 email_address = single_proportion['email_address']
@@ -288,7 +326,7 @@ class assignStudentToUser(mixins.CreateModelMixin,
         if x == 1:
             return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(serializer.validated_data, status=status.HTTP_201_CREATED)   
+        return Response(self.serializer.validated_data, status=status.HTTP_201_CREATED)   
 
 class assignInstructorToUser(mixins.CreateModelMixin, 
                viewsets.GenericViewSet):
@@ -300,10 +338,10 @@ class assignInstructorToUser(mixins.CreateModelMixin,
     serializer_class = assignInstructorToUserSerializer
     
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data, many=True)
-        serializer.is_valid(raise_exception=True)
+        self.serializer = self.get_serializer(data=request.data, many=True)
+        self.serializer.is_valid(raise_exception=True)
         errors = []
-        for single_proportion in serializer.validated_data:   
+        for single_proportion in self.serializer.validated_data:   
             info = {}
             try:
                 email_address = single_proportion['email_address']
@@ -327,7 +365,7 @@ class assignInstructorToUser(mixins.CreateModelMixin,
         if x == 1:
             return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(serializer.validated_data, status=status.HTTP_201_CREATED)   
+        return Response(self.serializer.validated_data, status=status.HTTP_201_CREATED)   
 
 
 
@@ -366,7 +404,7 @@ class assignInstructorToClassEventCoordinator(mixins.CreateModelMixin,
         if x == 1:
             return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(serializer.validated_data, status=status.HTTP_201_CREATED)   
+        return Response(self.serializer.validated_data, status=status.HTTP_201_CREATED)   
                 
 
 
@@ -405,7 +443,7 @@ class assignTeachingAssistantToClassEventCoordinator(mixins.CreateModelMixin,
         if x == 1:
             return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(serializer.validated_data, status=status.HTTP_201_CREATED)   
+        return Response(self.serializer.validated_data, status=status.HTTP_201_CREATED)   
                
 
 class assignTeachingAssistantToUser(mixins.CreateModelMixin,
@@ -443,7 +481,7 @@ class assignTeachingAssistantToUser(mixins.CreateModelMixin,
         if x == 1:
             return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(serializer.validated_data, status=status.HTTP_201_CREATED)   
+        return Response(self.serializer.validated_data, status=status.HTTP_201_CREATED)   
            
 
 
