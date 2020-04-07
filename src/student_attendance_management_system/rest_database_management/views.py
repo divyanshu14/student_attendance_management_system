@@ -24,14 +24,22 @@ from .serializers import (
 import database_manager.models as dbModels
 from rest_framework import viewsets, mixins, status, generics
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import SessionAuthentication
 from student_attendance_management_system import settings
 
 DEFAULT_PASSWORD = "new_pass_123"
-from rest_framework.response import Response
 import json
 from rest_framework.permissions import IsAdminUser
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
+
+class CustomAuthToken(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        response = super(CustomAuthToken, self).post(request, *args, **kwargs)
+        token = Token.objects.get(key=response.data['token'])
+        return Response({'token': token.key, 'username': token.user.email, 'isStaff': token.user.is_staff})
+
 
 class addStudents(mixins.CreateModelMixin, 
                viewsets.GenericViewSet):

@@ -26,7 +26,7 @@ urlpatterns = [
     # path('add_courses', views.addCourses.as_view(), name='add_courses'),
     path('list_courses', views.listCourses.as_view(), name='list_courses'),
     path('list_teaching_assistant', views.listTeachingAssistant.as_view(), name='list_teaching_assistant'),
-    url(r'^login/', authViews.obtain_auth_token)
+    url(r'^login/', views.CustomAuthToken.as_view())
 ]
 
 
