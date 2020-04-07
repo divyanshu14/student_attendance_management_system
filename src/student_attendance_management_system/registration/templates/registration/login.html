@@ -38,7 +38,7 @@
                     <form method="post" action="{% url 'login' %}">
                         {% csrf_token %}
                         <h1> Sign In </h1>
-                        <table>
+                        <table class="responsive-table">
                             {% for field in form.visible_fields %}
                             <div class="form-group">
                                 <tr>

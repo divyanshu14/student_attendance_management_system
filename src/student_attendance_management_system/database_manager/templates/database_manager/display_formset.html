@@ -7,16 +7,15 @@
                 <div class="card-content white-text">
                     <form method="post">
                         {% csrf_token %}
-                        <h2> {{ title }} </h2>
+                        <h2 style="font-size: 4vw;"> {{ title }} </h2>
 
 
                         <ol style="list-style-type: upper-roman;">
-                            {{ formset.management_form }}
-                            {% for form in formset %}
+                            {{ formset.management_form }} {% for form in formset %}
 
                             <li>
                                 <div style="text-align: left; font-size: large;"><b>&nbsp; Enter details:</b></div>
-                                <table>
+                                <table class="responsive-table">
                                     {% for field in form.visible_fields %}
 
                                     <div class="form-group">
@@ -24,7 +23,11 @@
                                             <td> <label for="{{ field.id_for_label }}" class="label-class">{{ field.label }}:</label> </td>
                                             <td>{% render_field field class="white-text" placeholder=field.label %} </td>
                                         </tr>
-                                        {% if field.errors %}<tr><td></td><td class="red-text">{{ field.errors }}</td></tr>{% endif %}
+                                        {% if field.errors %}
+                                        <tr>
+                                            <td></td>
+                                            <td class="red-text">{{ field.errors }}</td>
+                                        </tr>{% endif %}
                                     </div>
                                     {% endfor %}
                                 </table>
