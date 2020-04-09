@@ -13,6 +13,12 @@
                 <li>&nbsp;Relative attendance for one tutorial: {{ related_course.relative_attendance_for_one_tutorial }}</li>
                 <li>&nbsp;Relative attendance for one practical: {{ related_course.relative_attendance_for_one_practical }}</li>
             </ol>
+            <h4>&nbsp;&nbsp;&nbsp;Registered Students:</h4>
+            <ol class="flow-text white-text" style="margin-left: 30px">
+            {% for registered_student in related_course.registered_students.all %}
+                <li><a href="{% url 'view_student_attendance_details_in_a_course' course_id=related_course.id student_id=registered_student.id %}">&nbsp;{{ registered_student }}</a></li>
+            {% endfor %}
+            </ol>
             <br>
 
         </div>
