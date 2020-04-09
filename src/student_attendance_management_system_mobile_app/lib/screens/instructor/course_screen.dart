@@ -1,3 +1,4 @@
+import 'package:sams/screens/take_attendance/click_picture.dart';
 import 'package:sams/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:sams/models/course.dart';
@@ -106,7 +107,7 @@ class _InstructorCoursePageState extends State<InstructorCoursePage> with Ticker
   Widget _takeAttendanceButton(context){
     return FloatingActionButton.extended(
       onPressed: () {
-        // Add your onPressed code here!
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>ClickPicture()));
       },
       label: Padding(
         padding: EdgeInsets.only(top:30,bottom: 30),

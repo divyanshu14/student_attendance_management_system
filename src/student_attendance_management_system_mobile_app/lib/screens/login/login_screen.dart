@@ -18,7 +18,7 @@ class _LoginScreenState extends State<LoginScreen> implements LoginScreenContrac
   bool _isLoading=false;
   LoginScreenPresenter _presenter;
   final scaffoldKey = new GlobalKey<ScaffoldState>();
-  final formKey = new GlobalKey<FormState>();
+  final _formKey = new GlobalKey<FormState>();
   String _username,_password;
 
 
@@ -29,7 +29,7 @@ class _LoginScreenState extends State<LoginScreen> implements LoginScreenContrac
   }
 
   void _submit() {
-    final form = formKey.currentState;
+    final form = _formKey.currentState;
 
     if (form.validate()) {
       setState(() => _isLoading = true);
@@ -73,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> implements LoginScreenContrac
       body: Container(
         width: double.infinity,
         child: Form(
-          key: formKey,
+          key: _formKey,
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -127,6 +127,14 @@ class _LoginScreenState extends State<LoginScreen> implements LoginScreenContrac
               labelText: 'Password',
               labelStyle: AppTheme.body1,          
               ),
+            validator: (value) {
+              if (value.isEmpty) {
+                return 'Please enter Password';
+              }
+              return null;
+            },
+            keyboardType: TextInputType.visiblePassword,
+
             onSaved: (value)=>_password=value,
           ),
 
@@ -166,6 +174,13 @@ class _LoginScreenState extends State<LoginScreen> implements LoginScreenContrac
               labelText: 'User Id',
               labelStyle: AppTheme.body1,
             ),
+            keyboardType: TextInputType.emailAddress,
+            validator: (value) {
+              if (value.isEmpty) {
+                return 'Please enter user id';
+              }
+              return null;
+            },
             onSaved: (value)=>_username=value,
           ),
         ),
@@ -196,9 +211,14 @@ class _LoginScreenState extends State<LoginScreen> implements LoginScreenContrac
               Radius.circular(32.0),
             ),
             onTap: () {
-              _submit();
-              // FocusScope.of(context).requestFocus(FocusNode());
-              // Navigator.push(context, MaterialPageRoute(builder: (context)=>NavigationHomeScreen()));
+              if (_formKey.currentState.validate()) {
+                // Scaffold
+                //     .of(context)
+                //     .showSnackBar(SnackBar(content: Text('Processing Data')));
+            //    _submit();
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>NavigationHomeScreen()));
+              }
+                         
             },
             child: Padding(
               padding: const EdgeInsets.only(right:70.0,left:70.0,top: 16.0,bottom: 16.0),
