@@ -1,4 +1,4 @@
-"""student_attendance_management_system URL Configuration
+"""student_attendance_management_system_web_app URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.0/topics/http/urls/
@@ -19,6 +19,6 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('db/', include('database_manager.urls')),
-    path('api/v1/db/', include('rest_database_management.urls')),
+    path('api/v1/db/', include('database_manager_api.urls')),
     path('', include('registration.urls')),
 ]

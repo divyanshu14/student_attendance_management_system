@@ -1,5 +1,5 @@
 """
-WSGI config for student_attendance_management_system project.
+WSGI config for student_attendance_management_system_web_app project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'student_attendance_management_system.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'student_attendance_management_system_web_app.settings')
 
 application = get_wsgi_application()
