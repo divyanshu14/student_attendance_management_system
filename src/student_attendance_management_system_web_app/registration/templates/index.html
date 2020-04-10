@@ -1,19 +1,25 @@
 {% extends 'base_generic.html' %} {% load static %} {% block content %}
-
-<div style="margin-top: 100px; margin-left: 100px;">
-    <div class="card hoverable center back-image-class" style="width: 95%;">
-    	<div class="card-content">
-            <h1>Welcome to Student Attendance Management System!</h1>
+<div>
+    <div class="row">
+        <div class="col l12 m12 s12">
+            <div class="card hoverable center back-image-class" style="margin-top: 100px; margin-left: 30px; margin-right: 30px;">
+                <div class="card-content">
+                    <p class="white-text flow-text" style="font-size: 3vw;">Welcome to Student Attendance Management System!</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 <br><br> {% if user.is_authenticated %} {% else %}
-<div style="margin-left: 800px;">
-    <div class="card hoverable center back-image-class" style="width: 28%;">
-        <div class="card-content">
-            <p class="flow-text white-text">Click
-                <a href="{% url 'login' %}" class="teal-text text-lighten-2 tooltipped" data-tooltip="Click to SignIn" data-position="bottom" style="background-color: transparent;">here</a> to SignIn</p>
-
+<div>
+    <div class="row">
+        <div class="col l3 offset-l5 m4 offset-m4 s6 offset-s3">
+            <div class="card hoverable center back-image-class" style="margin-top: 100px;">
+                <div class="card-content">
+                    <p class="flow-text white-text">Click
+                        <a href="{% url 'login' %}" class="teal-text text-lighten-2 tooltipped" data-tooltip="Click to SignIn" data-position="bottom" style="background-color: transparent;">here</a> to Login</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>{% endif %} {% endblock %}

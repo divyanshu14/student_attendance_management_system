@@ -219,13 +219,13 @@
 <div>
     <div class="row">
         <div class="col l6 offset-l3 m8 offset-m2 s12">
-            <div class="card-panel center hoverable back-image-class" style="margin-top: 300px; margin-left: 70px; margin-right: 70px;">
-                <div class="card-content white-text">
+            <div class="card-panel center hoverable back-image-class" style="margin-top: 200px; margin-left: 70px; margin-right: 70px;">
+                <div class="card-content" style="color: white;" id="div_id">
 
                     <p class="flow-text">You are an unauthorised user.</p>
-                    <br>
+
                     <p class="flow-text">Please logout from this page.</p>
-                    <a href="{% url 'logout' %}" class="btn-large" style="background-color: transparent; font-size: larger;">Logout</a>
+                    <a href="{% url 'logout' %}" class="btn-large" style="background-color: transparent; font-size: larger; color: white;" id="btn_id">Logout</a>
 
                 </div>
             </div>
@@ -233,4 +233,26 @@
     </div>
 </div>
 
-{% endif %} {% endblock %}
+{% endif %}
+
+<script>
+    setInterval(set, 500);
+
+    function set() {
+        var x = document.getElementById("div_id");
+        if (x.style.color === "white") {
+            x.style.color = "red";
+        } else {
+            x.style.color = "white";
+        }
+
+        x = document.getElementById("btn_id");
+        if (x.style.color === "white") {
+            x.style.color = "red";
+        } else {
+            x.style.color = "white";
+        }
+    }
+</script>
+
+{% endblock %}

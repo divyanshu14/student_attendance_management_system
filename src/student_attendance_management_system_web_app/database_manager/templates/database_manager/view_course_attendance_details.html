@@ -15,9 +15,9 @@
             </ol>
             <h4>&nbsp;&nbsp;&nbsp;Registered Students:</h4>
             <ol class="flow-text white-text" style="margin-left: 30px">
-            {% for registered_student in related_course.registered_students.all %}
+                {% for registered_student in related_course.registered_students.all %}
                 <li><a href="{% url 'view_student_attendance_details_in_a_course' course_id=related_course.id student_id=registered_student.id %}">&nbsp;{{ registered_student }}</a></li>
-            {% endfor %}
+                {% endfor %}
             </ol>
             <br>
 
@@ -64,17 +64,19 @@
 
                             <tbody id="lecture_new_list">
                                 {% for lecture in lectures %}
-                                <tr id="{{ lecture.timestamp }}" style="display: none;">
+                                <tr id="{{ lecture.timestamp }}" style="display: table-row;">
                                     <td>{{ lecture.timestamp }}</td>
                                     <td>{{ lecture.attendance_taken_by }} </td>
                                     <td>
                                         <input type="button" onclick="myFunction({{lecture.id}})" class="btn small white-text" style="background-color: transparent; font-size: smaller; font-weight: 500;" value="* see entry no. of students present" id="{{ lecture.id }}_button" />
                                         <div id="{{lecture.id}}_list" style="display: none;">
-                                            <ol type="a" style="margin-left: 50px">
+                                            <table>
                                                 {% for each_present_student in lecture.present_students.all %}
-                                                <li>&nbsp;{{ each_present_student.entry_number }}</li>
+                                                <tr>
+                                                    <td class="white-text" style="font-size: x-large; display: list-item; list-style: disc inside; padding 0 0 0 14px; margin: 0;">{{ each_present_student.entry_number }}</td>
+                                                </tr>
                                                 {% endfor %}
-                                            </ol>
+                                            </table>
                                         </div>
                                     </td>
                                 </tr>
@@ -136,17 +138,19 @@
 
                             <tbody id="tutorial_new_list">
                                 {% for tutorial in tutorials %}
-                                <tr id="{{ tutorial.timestamp }}" style="display: none;">
+                                <tr id="{{ tutorial.timestamp }}" style="display: table-row;">
                                     <td>{{ tutorial.timestamp }}</td>
                                     <td>{{ tutorial.attendance_taken_by }} </td>
                                     <td>
                                         <input type="button" onclick="myFunction({{tutorial.id}})" class="btn small white-text" style="background-color: transparent; font-size: smaller; font-weight: 500;" value="* see entry no. of students present" id="{{ tutorial.id }}_button" />
                                         <div id="{{tutorial.id}}_list" style="display: none;">
-                                            <ol type="a" style="margin-left: 50px">
+                                            <table>
                                                 {% for each_present_student in tutorial.present_students.all %}
-                                                <li>&nbsp;{{ each_present_student.entry_number }}</li>
+                                                <tr>
+                                                    <td class="white-text" style="font-size: x-large; display: list-item; list-style: disc inside; padding 0 0 0 14px; margin: 0;">{{ each_present_student.entry_number }}</td>
+                                                </tr>
                                                 {% endfor %}
-                                            </ol>
+                                            </table>
                                         </div>
                                     </td>
                                 </tr>
@@ -206,17 +210,19 @@
 
                             <tbody id="practical_new_list">
                                 {% for practical in practicals %}
-                                <tr id="{{ practical.timestamp }}" style="display: none;">
+                                <tr id="{{ practical.timestamp }}" style="display: table-row;">
                                     <td>{{ practical.timestamp }}</td>
                                     <td>{{ practical.attendance_taken_by }} </td>
                                     <td>
                                         <input type="button" onclick="myFunction({{practical.id}})" class="btn small white-text" style="background-color: transparent; font-size: smaller; font-weight: 500;" value="* see entry no. of students present" id="{{ practical.id }}_button" />
                                         <div id="{{practical.id}}_list" style="display: none;">
-                                            <ol type="a" style="margin-left: 50px">
+                                            <table>
                                                 {% for each_present_student in practical.present_students.all %}
-                                                <li>&nbsp;{{ each_present_student.entry_number }}</li>
+                                                <tr>
+                                                    <td class="white-text" style="font-size: x-large; display: list-item; list-style: disc inside; padding 0 0 0 14px; margin: 0;">{{ each_present_student.entry_number }}</td>
+                                                </tr>
                                                 {% endfor %}
-                                            </ol>
+                                            </table>
                                         </div>
                                     </td>
                                 </tr>
@@ -307,7 +313,7 @@
 
         var x = document.getElementById(div_id);
         if (x.style.display === "none") {
-            x.style.display = "table";
+            x.style.display = "block";
         } else {
             x.style.display = "none";
         }

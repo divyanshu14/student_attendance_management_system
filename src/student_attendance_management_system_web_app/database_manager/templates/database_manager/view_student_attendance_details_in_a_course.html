@@ -56,7 +56,7 @@
 
                             <tbody id="lecture_new_list">
                                 {% for lecture in lectures %}
-                                <tr id="{{ lecture.timestamp }}" style="display: none;">
+                                <tr id="{{ lecture.timestamp }}" style="display: table-row;">
                                     <td>{{ lecture.timestamp }}</td>
                                     <td>{{ lecture.attendance_taken_by }} </td>
                                     <td>{% if related_student in lecture.present_students.all %} Present{% else %} Absent{% endif %}</td>
@@ -115,7 +115,7 @@
 
                             <tbody id="tutorial_new_list">
                                 {% for tutorial in tutorials %}
-                                <tr id="{{ tutorial.timestamp }}" style="display: none;">
+                                <tr id="{{ tutorial.timestamp }}" style="display:table-row;">
                                     <td>{{ tutorial.timestamp }}</td>
                                     <td>{{ tutorial.attendance_taken_by }} </td>
                                     <td>{% if related_student in tutorial.present_students.all %} Present{% else %} Absent{% endif %}</td>
@@ -175,7 +175,7 @@
 
                             <tbody id="practical_new_list">
                                 {% for practical in practicals %}
-                                <tr id="{{ practical.timestamp }}" style="display: none;">
+                                <tr id="{{ practical.timestamp }}" style="display: table-row;">
                                     <td>{{ practical.timestamp }}</td>
                                     <td>{{ practical.attendance_taken_by }} </td>
                                     <td>{% if related_student in practical.present_students.all %} Present{% else %} Absent{% endif %}</td>
