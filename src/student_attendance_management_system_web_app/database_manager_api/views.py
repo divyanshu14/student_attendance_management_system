@@ -1,6 +1,5 @@
 from rest_framework.views import APIView
 from django.contrib.auth.models import Group
-from django.http import JsonResponse
 from database_manager.models import (
     Student,
     Course, 
@@ -24,7 +23,6 @@ from .serializers import (
 import database_manager.models as dbModels
 from rest_framework import viewsets, mixins, status, generics
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.authentication import SessionAuthentication
 
 DEFAULT_PASSWORD = "new_pass_123"
 import json
@@ -33,6 +31,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+
 
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
@@ -132,26 +131,6 @@ class addStudents(mixins.CreateModelMixin,
         return Response(self.serializer.validated_data, status=status.HTTP_201_CREATED)
 
     
-class listStudents(APIView):
-
-    '''
-    list all the students
-    '''
-    authentication_classes = (TokenAuthentication, )
-    permission_classes = (IsAdminUser, IsAuthenticated)
-    queryset = Student.objects.all()
-    def get(self, request, *args, **kwargs):
-        objects = Student.objects.all()
-        dictStudents = {}
-        index = 1
-        for obj in objects:
-            dictStudents[index] = {'name': str(obj.user.first_name+" "+obj.user.last_name),'email': str(obj.user.email), 'entry_number': obj.entry_number}
-            index+=1
-        print(dictStudents)
-        dictStudentsDump = json.dumps(dictStudents)
-        jsonStudent = json.loads(dictStudentsDump)
-        return Response(jsonStudent)
-
 
 class addInstructors(mixins.CreateModelMixin, 
                viewsets.GenericViewSet):
@@ -247,6 +226,30 @@ class addTeachingAssistant(mixins.CreateModelMixin,
             return Response(errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(self.serializer.validated_data, status=status.HTTP_201_CREATED)
 
+
+class listStudents(APIView):
+
+    '''
+    list all the students
+    '''
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAdminUser, IsAuthenticated)
+    queryset = Student.objects.all()
+    def get(self, request, *args, **kwargs):
+        objects = Student.objects.all()
+        dictStudents = {}
+        index = 1
+        for obj in objects:
+            dictStudents[index] = {'name': str(obj.user.first_name+" "+obj.user.last_name),'email': str(obj.user.email), 'entry_number': obj.entry_number}
+            index+=1
+        print(dictStudents)
+        
+        dictStudentsDump = json.dumps(dictStudents)
+        jsonStudent = json.loads(dictStudentsDump)
+        return Response(jsonStudent)
+        # return JsonResponse(dictStudents)
+
+
 class listInstructors(APIView):
     
     '''
@@ -261,9 +264,7 @@ class listInstructors(APIView):
         index = 1
         for obj in objects:
             dictInstructor[index] = {
-                'name': str(obj.class_event_coordinator.user.first_name+" "+obj.class_event_coordinator.user.last_name),
-                'instructor_id': str(obj.instructor_id),
-                'email': str(obj.class_event_coordinator.user.email)}
+                'name': str(obj.class_event_coordinator.user.first_name+" "+obj.class_event_coordinator.user.last_name), 'instructor_id': str(obj.instructor_id), 'email': str(obj.class_event_coordinator.user.email)}
             index+=1
         print(dictInstructor)
         dictInstructorDump = json.dumps(dictInstructor)
@@ -528,23 +529,30 @@ class addCourses(mixins.CreateModelMixin,
             ta_not_found = []
             student_not_found = []
             for i in range(len(instructors)):
-                if not Instructor.objects.all().filter(instructor_id=str(instructors[i])):
+                try:
+                    Instructor.objects.all().filter(instructor_id=str(instructors[i]))[0]
+                except:
+                    print("############################ ", instructors[i])
                     instructor_not_found.append(instructors[i])
 
             
             for i in range(len(ta_ids)):
-                if not TeachingAssistant.objects.filter(teaching_assistant_id=ta_ids[i]):
+                try:
+                    TeachingAssistant.objects.filter(teaching_assistant_id=ta_ids[i])[0]
+                except:
                     ta_not_found.append(ta_ids[i])
-
+                    
 
             for i in range(len(student_ids)):
-                if not Student.objects.filter(entry_number=student_ids[i]):
+                try:
+                    Student.objects.filter(entry_number=student_ids[i])[0]
+                except:
                     student_not_found.append(student_ids[i])
             
             if(len(instructor_not_found) or len(ta_not_found) or len(student_not_found)):
                 info['instructors'] = str(instructor_not_found) + " These Instructors Were Not Found"  
-                info['teaching_assistant'] = str(ta_not_found) + "These TAs were not found"
-                info['Students'] = str(student_not_found) + "These Students were not Found"
+                info['teaching_assistant'] = str(ta_not_found) + " These TAs were not found"
+                info['Students'] = str(student_not_found) + " These Students were not Found"
                 errors.append(info)
                 continue
             else:
