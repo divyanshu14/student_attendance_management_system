@@ -1,5 +1,6 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
+
 class IsAdminUser(BasePermission):
     """
     Allows access only to admin users.

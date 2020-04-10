@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from database_manager.models import ClassEventCoordinator
+from .models import ClassEventCoordinator
 
 
 class AddStudentForm(forms.Form):

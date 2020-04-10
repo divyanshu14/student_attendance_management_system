@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from registration.forms import (
+from .forms import (
     NumStudentsToAddForm,
     NumInstructorsToAddForm,
     NumTeachingAssistantsToAddForm,

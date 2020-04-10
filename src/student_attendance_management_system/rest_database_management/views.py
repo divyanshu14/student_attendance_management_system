@@ -25,7 +25,6 @@ import database_manager.models as dbModels
 from rest_framework import viewsets, mixins, status, generics
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authentication import SessionAuthentication
-from student_attendance_management_system import settings
 
 DEFAULT_PASSWORD = "new_pass_123"
 import json
