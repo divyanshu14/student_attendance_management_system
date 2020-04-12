@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:sams/models/user.dart';
 import 'package:sams/screens/common/home_screen.dart';
@@ -30,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen> implements LoginScreenContrac
 
   void _submit() {
     final form = _formKey.currentState;
-
+    log('submit');
     if (form.validate()) {
       setState(() => _isLoading = true);
       form.save();
@@ -40,12 +42,12 @@ class _LoginScreenState extends State<LoginScreen> implements LoginScreenContrac
 
   void _showSnackBar(String text) {
     scaffoldKey.currentState
-        .showSnackBar(new SnackBar(content: new Text(text)));
+        .showSnackBar(new SnackBar(content: new Text(text), duration: Duration(seconds: 1), backgroundColor: AppTheme.buildLightTheme().primaryColor,));
   }
 
   @override
   void onLoginError(String errorTxt) {
-    _showSnackBar(errorTxt);
+    _showSnackBar("Invalid Credentials");
     setState(() => _isLoading = false);
   }
 
@@ -211,13 +213,13 @@ class _LoginScreenState extends State<LoginScreen> implements LoginScreenContrac
               Radius.circular(32.0),
             ),
             onTap: () {
-              if (_formKey.currentState.validate()) {
-                // Scaffold
-                //     .of(context)
-                //     .showSnackBar(SnackBar(content: Text('Processing Data')));
-            //    _submit();
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>NavigationHomeScreen()));
-              }
+              // if (_formKey.currentState.validate()) {
+              //   // Scaffold
+              //   //     .of(context)
+              //   //     .showSnackBar(SnackBar(content: Text('Processing Data')));
+              //   // Navigator.push(context, MaterialPageRoute(builder: (context)=>NavigationHomeScreen()));
+              // }
+               _submit();
                          
             },
             child: Padding(

@@ -10,11 +10,11 @@ abstract class LoginScreenContract {
 
 class LoginScreenPresenter {
   LoginScreenContract _view;
-  RestDatasource api = new RestDatasource();
+  RestDatasource _api = new RestDatasource();
   LoginScreenPresenter(this._view);
 
   doLogin(String username, String password) {
-    api.login(username, password).then((User user) {
+    _api.login(username, password).then((User user) {
       log('success');
       _view.onLoginSuccess(user);
     }).catchError((dynamic error) {

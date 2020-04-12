@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:sams/theme/app_theme.dart';
 
 
 
@@ -17,32 +18,31 @@ class ClickPictureState extends State<ClickPicture> {
   CameraDescription currentCamera;
   CameraController _controller;
   Future _initializeControllerFuture;
+  Future _getCameras;
 
-  Future<List<CameraDescription>> getCameras()async {
+  Future<void> getCameras()async {
     this.cameras = await availableCameras();
-    return this.cameras;
+    return initiateCamera(this.cameras);
   }
 
-  void intiateController (){
+  Future<void> initiateController ()async{
     _controller=CameraController(
       this.currentCamera,
       ResolutionPreset.medium
     );
-    _initializeControllerFuture = _controller.initialize();
-
+    return _controller.initialize();
   }
 
-  void intiateCamera( List<CameraDescription> availableCameras){
+  Future<void> initiateCamera( List<CameraDescription> availableCameras)async{
     this.cameras=availableCameras;
     this.currentCamera=this.cameras.first;
-    intiateController();
+    return initiateController();
   }
 
   @override
   void initState(){
     super.initState();
-    getCameras().then(intiateCamera);
-    
+    _getCameras= getCameras();
   }
 
   @override
@@ -53,17 +53,14 @@ class ClickPictureState extends State<ClickPicture> {
 
   @override
   Widget build(BuildContext context) {
-    intiateController();
-
     return Scaffold(
           body:
-
             FutureBuilder<void>(
-              future: _initializeControllerFuture,
+              future: _getCameras,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
                   // If the Future is complete, display the preview.
-                  return cameraScreen();
+                  return cameraScreen(context);
                 } else {
                   // Otherwise, display a loading indicator.
                   return Center(child: CircularProgressIndicator());
@@ -73,61 +70,129 @@ class ClickPictureState extends State<ClickPicture> {
 
     );
   }
-  Widget cameraScreen(){
-    return Stack(
+  Widget cameraScreen(context){
+    return Column(
         children: <Widget>[
-          Align(
+          Expanded(
+            child: Align(
             alignment: Alignment.topCenter,
-          child: AspectRatio(
-            aspectRatio: _controller.value.aspectRatio,
-            child: CameraPreview(_controller)),
+            child: AspectRatio(
+              aspectRatio: _controller.value.aspectRatio,
+              child: CameraPreview(_controller)),
+            ),
           ),
           Align(
             alignment: Alignment.bottomCenter,
-            child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-
-              children: <Widget>[
-                Row(
+            child:    Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.red,
+                    ),
+                    child: InkWell(
+                      onTap: ()=>Navigator.pop(context),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Icon(Icons.cancel,color: Colors.white,),
+                      )
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.cyan.withOpacity(0.5),
+                    ),
+                    child: InkWell(
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Icon(Icons.camera,color: Colors.white,size: 40,),
+                      ),
+                      ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.green,
+                    ),
+                    child: InkWell(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Icon(Icons.done,color: Colors.white,),
+                      )
+                    ),
+                    ),
+                ],
+              ),
+            ),
+            SizedBox(height: 10,),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.cyan.withOpacity(0.5),
-                      ),
                       child: InkWell(
+                        onLongPress: ()=> _showImage(context),
                         child: Padding(
-                          padding: const EdgeInsets.all(40.0),
-                          child: Icon(Icons.camera,color: Colors.white,),
-                        ),
-                        ),
+                          padding: const EdgeInsets.all(10.0),
+                          child: Icon(Icons.image,size: 50,),
+                        )
+                      ),
                     ),
-                  ],
+                    Container(
+                      child: InkWell(
+                        onTap: ()=> _showImage(context),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Icon(Icons.image,size: 50,),
+                        )
+                      ),
+                    ),Container(
+                      child: InkWell(
+                        onTap: ()=> _showImage(context),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Icon(Icons.image,size: 50,),
+                        )
+                      ),
+                    ),Container(
+                      child: InkWell(
+                        onTap: ()=> _showImage(context),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Icon(Icons.image,size: 50,),
+                        )
+                      ),
+                    ),
+                  ]
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.cyan.withOpacity(0.5),
-                      ),
-                      child: InkWell(
-                        child: Padding(
-                          padding: const EdgeInsets.all(40.0),
-                          child: Icon(Icons.camera,color: Colors.white,),
-                        ),
-                        ),
-                    ),
-                  ],                    
-                )
-              ],
-            )
+              )  
           )
         ]
         );
-
   }
+
+  void _showImage(context){
+    Dialog imageDialog= Dialog(
+      backgroundColor: AppTheme.buildLightTheme().cardColor,
+      elevation: 8.0,
+      child: Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+
+        ),
+        child: 
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Icon(Icons.image,size: 100,color: Colors.cyan,),
+            ),
+      ),
+    );
+    showDialog(context: context, builder: (BuildContext context) =>imageDialog);
+    }
 
 }

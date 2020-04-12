@@ -1,3 +1,4 @@
+import 'package:sams/screens/instructor/daily_attendance.dart';
 import 'package:sams/screens/take_attendance/click_picture.dart';
 import 'package:sams/theme/app_theme.dart';
 import 'package:flutter/material.dart';
@@ -65,8 +66,6 @@ class _InstructorCoursePageState extends State<InstructorCoursePage> with Ticker
                     _eventItem('Tutorial'),
                     _eventItem('Labs')
                   ],)
-                  
-
                 ]
               ),
             );
@@ -107,7 +106,7 @@ class _InstructorCoursePageState extends State<InstructorCoursePage> with Ticker
   Widget _takeAttendanceButton(context){
     return FloatingActionButton.extended(
       onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>ClickPicture()));
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>ClickPicture()));
       },
       label: Padding(
         padding: EdgeInsets.only(top:30,bottom: 30),
@@ -202,106 +201,109 @@ class _InstructorCoursePageState extends State<InstructorCoursePage> with Ticker
                 blurRadius: 10.0),
           ],
         ),
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding:
-                  const EdgeInsets.only(top: 16, left: 16, right: 24),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        left: 4, bottom: 0, top: 0),
-                    child: Text(
-                      'Last Attendance',
-                      textAlign: TextAlign.center,
-                      style: AppTheme.body1),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 4, bottom: 8),
-                            child: Text(
-                              '90',
-                              textAlign: TextAlign.center,
-                              style: AppTheme.title
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 8, bottom: 8),
-                            child: Text(
-                              '%',
-                              textAlign: TextAlign.center,
-                              style: AppTheme.title
-                            ),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Icon(
-                                Icons.access_time,
-                                color: AppTheme.grey
-                                    .withOpacity(0.5),
-                                size: 16,
+        child: InkWell(
+          onTap: ()=> Navigator.push(context, MaterialPageRoute(builder: (context)=>DailyAttendance())),
+            child: Column(
+            children: <Widget>[
+              Padding(
+                padding:
+                    const EdgeInsets.only(top: 16, left: 16, right: 24),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 4, bottom: 0, top: 0),
+                      child: Text(
+                        'Last Attendance',
+                        textAlign: TextAlign.center,
+                        style: AppTheme.body1),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 4, bottom: 8),
+                              child: Text(
+                                '90',
+                                textAlign: TextAlign.center,
+                                style: AppTheme.title
                               ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 4.0),
-                                child: Text(
-                                  'Today 8:26 AM',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontFamily:
-                                        AppTheme.fontName,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 14,
-                                    letterSpacing: 0.0,
-                                    color: AppTheme.grey
-                                        .withOpacity(0.5),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 8, bottom: 8),
+                              child: Text(
+                                '%',
+                                textAlign: TextAlign.center,
+                                style: AppTheme.title
+                              ),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(
+                                  Icons.access_time,
+                                  color: AppTheme.grey
+                                      .withOpacity(0.5),
+                                  size: 16,
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.only(left: 4.0),
+                                  child: Text(
+                                    'Today 8:26 AM',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontFamily:
+                                          AppTheme.fontName,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 14,
+                                      letterSpacing: 0.0,
+                                      color: AppTheme.grey
+                                          .withOpacity(0.5),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                top: 4, bottom: 14),
-                            child: Text(
-                              'Lecture',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontFamily: AppTheme.fontName,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 12,
-                                letterSpacing: 0.0,
-                                color: AppTheme.dark,
+                              ],
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 4, bottom: 14),
+                              child: Text(
+                                'Lecture',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontFamily: AppTheme.fontName,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 12,
+                                  letterSpacing: 0.0,
+                                  color: AppTheme.dark,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      )
-                    ],
-                  )
-                ],
+                          ],
+                        )
+                      ],
+                    )
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
