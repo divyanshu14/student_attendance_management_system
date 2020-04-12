@@ -1,4 +1,114 @@
-{% extends 'base_generic.html' %} {% load static %} {% load widget_tweaks %} {% block content %} {% if is_admin %}
+{% extends 'base_generic.html' %} {% load static %} {% load widget_tweaks %} {% block content %}
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#add_students_button').click(function(e) {
+            var num_students = $("#add_students_input").val();
+            if(num_students<1){
+                num_students=1;
+            }
+            window.location.href = "{% url 'add_students' num_students=1 %}".replace(/1/, num_students.toString());
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#add_instructors_button').click(function(e) {
+            var num_instructors = $("#add_instructors_input").val();
+            if(num_instructors<1){
+                num_instructors=1;
+            }
+            window.location.href = "{% url 'add_instructors' num_instructors=1 %}".replace(/1/, num_instructors.toString());
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#add_courses_button').click(function(e) {
+            var num_courses = $("#add_courses_input").val();
+            if(num_courses<1){
+                num_courses=1;
+            }
+            window.location.href = "{% url 'add_courses' num_courses=1 %}".replace(/1/, num_courses.toString());
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#add_teaching_assistants_button').click(function(e) {
+            var num_teaching_assistants = $("#add_teaching_assistants_input").val();
+            if(num_teaching_assistants<1){
+                num_teaching_assistants=1;
+            }
+            window.location.href = "{% url 'add_teaching_assistants' num_teaching_assistants=1 %}".replace(/1/, num_teaching_assistants.toString());
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#assign_student_role_to_users_button').click(function(e) {
+            var num_users = $("#assign_student_role_to_users_input").val();
+            if(num_users<1){
+                num_users=1;
+            }
+            window.location.href = "{% url 'assign_student_role_to_users' num_users=1 %}".replace(/1/, num_users.toString());
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#assign_instructor_role_to_users_button').click(function(e) {
+            var num_users = $("#assign_instructor_role_to_users_input").val();
+            if(num_users<1){
+                num_users=1;
+            }
+            window.location.href = "{% url 'assign_instructor_role_to_users' num_users=1 %}".replace(/1/, num_users.toString());
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#assign_teaching_assistant_role_to_users_button').click(function(e) {
+            var num_users = $("#assign_teaching_assistant_role_to_users_input").val();
+            if(num_users<1){
+                num_users=1;
+            }
+            window.location.href = "{% url 'assign_teaching_assistant_role_to_users' num_users=1 %}".replace(/1/, num_users.toString());
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#assign_instructor_role_to_class_event_coordinators_button').click(function(e) {
+            var num_class_event_coordinators = $("#assign_instructor_role_to_class_event_coordinators_input").val();
+            if(num_class_event_coordinators<1){
+                num_class_event_coordinators=1;
+            }
+            window.location.href = "{% url 'assign_instructor_role_to_class_event_coordinators' num_class_event_coordinators=1 %}".replace(/1/, num_class_event_coordinators.toString());
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#assign_teaching_assistant_role_to_class_event_coordinators_button').click(function(e) {
+            var num_class_event_coordinators = $("#assign_teaching_assistant_role_to_class_event_coordinators_input").val();
+            if(num_class_event_coordinators<1){
+                num_class_event_coordinators=1;
+            }
+            window.location.href = "{% url 'assign_teaching_assistant_role_to_class_event_coordinators' num_class_event_coordinators=1 %}".replace(/1/, num_class_event_coordinators.toString());
+        });
+    });
+</script>
+
+{% if is_admin %}
 
 <div>
 
@@ -26,45 +136,54 @@
         <div class="col l6 offset-l3 m8 offset-m2 s12">
             <div class="card center hoverable back-image-class" style="margin-top: 50px; margin-left: 70px; margin-right: 70px;">
                 <div class="card-content white-text">
-                    <h3>ADD ...</h3>
+                    <h3>Available actions</h3>
                     <table class="responsive-table centered">
-                        <form method="post">
-                            {% csrf_token %}
-                            <tr>
-                                {% for field in num_students_to_add_form %}
-                                <td>{% render_field field class="white-text" placeholder=field.label %} </td>
-                                {% endfor %}
-                                <td><input type="submit" value="Add Students" class="btn-large tooltipped" data-tooltip="Click to add Students" data-position="right" style="background-color: transparent; font-size: larger;">
-                                </td>
-                            </tr>
-                        </form>
-                        <form method="post">
-                            {% csrf_token %} {% for field in num_instructors_to_add_form %}
-                            <tr>
-                                <td>{% render_field field class="white-text" placeholder=field.label %} </td>
-                                <td><input type="submit" value="Add Instructors" class="btn-large tooltipped" data-tooltip="Click to add Instructors" data-position="right" style="background-color: transparent; font-size: larger;">
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </form>
-                        <form method="post">
-                            {% csrf_token %} {% for field in num_courses_to_add_form %}
-                            <tr>
-                                <td>{% render_field field class="white-text" placeholder=field.label %} </td>
-                                <td><input type="submit" value="Add Courses" class="btn-large tooltipped" data-tooltip="Click to add Courses" data-position="right" style="background-color: transparent; font-size: larger;">
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </form>
-                        <form method="post">
-                            {% csrf_token %} {% for field in num_teaching_assistants_to_add_form %}
-                            <tr>
-                                <td>{% render_field field class="white-text" placeholder=field.label %} </td>
-                                <td><input type="submit" value="Add Teaching Assistants" class="btn-large tooltipped" data-tooltip="Click to add Teaching Assistants" data-position="right" style="background-color: transparent; font-size: larger;">
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </form>
+
+                        {% if perms.database_manager.add_student %}
+                        <input type="number" id="add_students_input">
+                        <button type="button" id="add_students_button">Add students</button>
+                        {% endif %}
+
+                        {% if perms.database_manager.add_course %}
+                        <input type="number" id="add_courses_input">
+                        <button type="button" id="add_courses_button">Add courses</button>
+                        {% endif %}
+
+                        {% if perms.database_manager.add_instructor %}
+                        <input type="number" id="add_instructors_input">
+                        <button type="button" id="add_instructors_button">Add instructors</button>
+                        {% endif %}
+
+                        {% if perms.database_manager.add_teachingassistant %}
+                        <input type="number" id="add_teaching_assistants_input">
+                        <button type="button" id="add_teaching_assistants_button">Add teaching assistants</button>
+                        {% endif %}
+
+                        {% if perms.database_manager.add_student %}
+                        <input type="number" id="assign_student_role_to_users_input">
+                        <button type="button" id="assign_student_role_to_users_button">Assign student role to users</button>
+                        {% endif %}
+
+                        {% if perms.database_manager.add_instructor %}
+                        <input type="number" id="assign_instructor_role_to_users_input">
+                        <button type="button" id="assign_instructor_role_to_users_button">Assign instructor role to users</button>
+                        {% endif %}
+
+                        {% if perms.database_manager.add_teachingassistant %}
+                        <input type="number" id="assign_teaching_assistant_role_to_users_input">
+                        <button type="button" id="assign_teaching_assistant_role_to_users_button">Assign teaching assistant role to users</button>
+                        {% endif %}
+
+                        {% if perms.database_manager.add_instructor %}
+                        <input type="number" id="assign_instructor_role_to_class_event_coordinators_input">
+                        <button type="button" id="assign_instructor_role_to_class_event_coordinators_button">Assign instructor role to class event coordinators</button>
+                        {% endif %}
+
+                        {% if perms.database_manager.add_teachingassistant %}
+                        <input type="number" id="assign_teaching_assistant_role_to_class_event_coordinators_input">
+                        <button type="button" id="assign_teaching_assistant_role_to_class_event_coordinators_button">Assign teaching assistant role to class event coordinators</button>
+                        {% endif %}
+
                     </table>
                 </div>
             </div>

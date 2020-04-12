@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.core.mail import send_mail
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
-    
+
 
 # every model has inbuilt primary key named id which is AutoField model,
 # but many times we want another unique CharField identifier

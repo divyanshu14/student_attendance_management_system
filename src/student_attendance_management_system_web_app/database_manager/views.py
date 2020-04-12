@@ -260,8 +260,7 @@ def assign_student_role_to_users(request, num_users):
             return render(request, 'database_manager/message.html', {'message': message})
     # if a GET (or any other method) we'll create a blank formset
     else:
-        formset = AddStudentExistingUserFormSet(
-            queryset=Student.objects.none())
+        formset = AddStudentExistingUserFormSet()
 
     title = "Assign Student role to Users"
     return render(request, 'database_manager/display_formset.html', {'title': title, 'formset': formset})
@@ -304,7 +303,7 @@ def assign_instructor_role_to_users(request, num_users):
 
 @login_required
 @permission_required('database_manager.add_instructor', raise_exception=True)
-def assign_instructor_role_to_class_event_coordinator(request, num_class_event_coordinators):
+def assign_instructor_role_to_class_event_coordinators(request, num_class_event_coordinators):
     '''
     View to assign instructor role to class event coordinators.
     Useful in cases when someone joined the institute as a teaching assistant
@@ -331,8 +330,7 @@ def assign_instructor_role_to_class_event_coordinator(request, num_class_event_c
             return render(request, 'database_manager/message.html', {'message': message})
     # if a GET (or any other method) we'll create a blank formset
     else:
-        formset = AddInstructorExistingClassEventCoordinatorFormSet(
-            queryset=Instructor.objects.none())
+        formset = AddInstructorExistingClassEventCoordinatorFormSet()
 
     title = "Assign Instructor role to Class Event Coordinators"
     return render(request, 'database_manager/display_formset.html', {'title': title, 'formset': formset})
@@ -375,7 +373,7 @@ def assign_teaching_assistant_role_to_users(request, num_users):
 
 @login_required
 @permission_required('database_manager.add_teachingassistant', raise_exception=True)
-def assign_teaching_assistant_role_to_class_event_coordinator(request, num_class_event_coordinators):
+def assign_teaching_assistant_role_to_class_event_coordinators(request, num_class_event_coordinators):
     '''
     View to assign teaching assistant role to class event coordinators.
     Useful in cases when someone joined the institute as an instructor
@@ -383,8 +381,7 @@ def assign_teaching_assistant_role_to_class_event_coordinator(request, num_class
     '''
     AddTeachingAssistantExistingClassEventCoordinatorFormSet = formset_factory(
         AddTeachingAssistantExistingClassEventCoordinatorForm,
-        extra=num_class_event_coordinators, fields=(
-            'class_event_coordinator', 'teaching_assistant_id')
+        extra=num_class_event_coordinators
     )
     # if this is a POST request we need to process the formset data
     if request.method == 'POST':
@@ -403,8 +400,7 @@ def assign_teaching_assistant_role_to_class_event_coordinator(request, num_class
             return render(request, 'database_manager/message.html', {'message': message})
     # if a GET (or any other method) we'll create a blank formset
     else:
-        formset = AddTeachingAssistantExistingClassEventCoordinatorFormSet(
-            queryset=TeachingAssistant.objects.none())
+        formset = AddTeachingAssistantExistingClassEventCoordinatorFormSet()
 
     title = "Assign Teaching Assistant role to Class Event Coordinators"
     return render(request, 'database_manager/display_formset.html', {'title': title, 'formset': formset})
