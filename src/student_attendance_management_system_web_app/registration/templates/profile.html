@@ -1,117 +1,6 @@
-{% extends 'base_generic.html' %} {% load static %} {% load widget_tweaks %} {% block content %}
-
-<script type="text/javascript">
-    $(document).ready(function(){
-        $('#add_students_button').click(function(e) {
-            var num_students = $("#add_students_input").val();
-            if(num_students<1){
-                num_students=1;
-            }
-            window.location.href = "{% url 'add_students' num_students=1 %}".replace(/1/, num_students.toString());
-        });
-    });
-</script>
-
-<script type="text/javascript">
-    $(document).ready(function(){
-        $('#add_instructors_button').click(function(e) {
-            var num_instructors = $("#add_instructors_input").val();
-            if(num_instructors<1){
-                num_instructors=1;
-            }
-            window.location.href = "{% url 'add_instructors' num_instructors=1 %}".replace(/1/, num_instructors.toString());
-        });
-    });
-</script>
-
-<script type="text/javascript">
-    $(document).ready(function(){
-        $('#add_courses_button').click(function(e) {
-            var num_courses = $("#add_courses_input").val();
-            if(num_courses<1){
-                num_courses=1;
-            }
-            window.location.href = "{% url 'add_courses' num_courses=1 %}".replace(/1/, num_courses.toString());
-        });
-    });
-</script>
-
-<script type="text/javascript">
-    $(document).ready(function(){
-        $('#add_teaching_assistants_button').click(function(e) {
-            var num_teaching_assistants = $("#add_teaching_assistants_input").val();
-            if(num_teaching_assistants<1){
-                num_teaching_assistants=1;
-            }
-            window.location.href = "{% url 'add_teaching_assistants' num_teaching_assistants=1 %}".replace(/1/, num_teaching_assistants.toString());
-        });
-    });
-</script>
-
-<script type="text/javascript">
-    $(document).ready(function(){
-        $('#assign_student_role_to_users_button').click(function(e) {
-            var num_users = $("#assign_student_role_to_users_input").val();
-            if(num_users<1){
-                num_users=1;
-            }
-            window.location.href = "{% url 'assign_student_role_to_users' num_users=1 %}".replace(/1/, num_users.toString());
-        });
-    });
-</script>
-
-<script type="text/javascript">
-    $(document).ready(function(){
-        $('#assign_instructor_role_to_users_button').click(function(e) {
-            var num_users = $("#assign_instructor_role_to_users_input").val();
-            if(num_users<1){
-                num_users=1;
-            }
-            window.location.href = "{% url 'assign_instructor_role_to_users' num_users=1 %}".replace(/1/, num_users.toString());
-        });
-    });
-</script>
-
-<script type="text/javascript">
-    $(document).ready(function(){
-        $('#assign_teaching_assistant_role_to_users_button').click(function(e) {
-            var num_users = $("#assign_teaching_assistant_role_to_users_input").val();
-            if(num_users<1){
-                num_users=1;
-            }
-            window.location.href = "{% url 'assign_teaching_assistant_role_to_users' num_users=1 %}".replace(/1/, num_users.toString());
-        });
-    });
-</script>
-
-<script type="text/javascript">
-    $(document).ready(function(){
-        $('#assign_instructor_role_to_class_event_coordinators_button').click(function(e) {
-            var num_class_event_coordinators = $("#assign_instructor_role_to_class_event_coordinators_input").val();
-            if(num_class_event_coordinators<1){
-                num_class_event_coordinators=1;
-            }
-            window.location.href = "{% url 'assign_instructor_role_to_class_event_coordinators' num_class_event_coordinators=1 %}".replace(/1/, num_class_event_coordinators.toString());
-        });
-    });
-</script>
-
-<script type="text/javascript">
-    $(document).ready(function(){
-        $('#assign_teaching_assistant_role_to_class_event_coordinators_button').click(function(e) {
-            var num_class_event_coordinators = $("#assign_teaching_assistant_role_to_class_event_coordinators_input").val();
-            if(num_class_event_coordinators<1){
-                num_class_event_coordinators=1;
-            }
-            window.location.href = "{% url 'assign_teaching_assistant_role_to_class_event_coordinators' num_class_event_coordinators=1 %}".replace(/1/, num_class_event_coordinators.toString());
-        });
-    });
-</script>
-
-{% if is_admin %}
+{% extends 'base_generic.html' %} {% load static %} {% load widget_tweaks %} {% block content %} {% if is_admin %}
 
 <div>
-
     <div class="row">
         <div class="col l6 offset-l3 m8 offset-m2 s12">
             <div class="card-panel hoverable back-image-class" style="margin-top: 50px; margin-left: 70px; margin-right: 70px;">
@@ -136,53 +25,43 @@
         <div class="col l6 offset-l3 m8 offset-m2 s12">
             <div class="card center hoverable back-image-class" style="margin-top: 50px; margin-left: 70px; margin-right: 70px;">
                 <div class="card-content white-text">
-                    <h3>Available actions</h3>
-                    <table class="responsive-table centered">
+                    <h3 style="font-size: 3vw;">Available actions</h3>
+                    <table class="centered">
 
                         {% if perms.database_manager.add_student %}
-                        <input type="number" id="add_students_input">
-                        <button type="button" id="add_students_button">Add students</button>
-                        {% endif %}
-
-                        {% if perms.database_manager.add_course %}
-                        <input type="number" id="add_courses_input">
-                        <button type="button" id="add_courses_button">Add courses</button>
-                        {% endif %}
-
-                        {% if perms.database_manager.add_instructor %}
-                        <input type="number" id="add_instructors_input">
-                        <button type="button" id="add_instructors_button">Add instructors</button>
-                        {% endif %}
-
-                        {% if perms.database_manager.add_teachingassistant %}
-                        <input type="number" id="add_teaching_assistants_input">
-                        <button type="button" id="add_teaching_assistants_button">Add teaching assistants</button>
-                        {% endif %}
-
-                        {% if perms.database_manager.add_student %}
-                        <input type="number" id="assign_student_role_to_users_input">
-                        <button type="button" id="assign_student_role_to_users_button">Assign student role to users</button>
-                        {% endif %}
-
-                        {% if perms.database_manager.add_instructor %}
-                        <input type="number" id="assign_instructor_role_to_users_input">
-                        <button type="button" id="assign_instructor_role_to_users_button">Assign instructor role to users</button>
-                        {% endif %}
-
-                        {% if perms.database_manager.add_teachingassistant %}
-                        <input type="number" id="assign_teaching_assistant_role_to_users_input">
-                        <button type="button" id="assign_teaching_assistant_role_to_users_button">Assign teaching assistant role to users</button>
-                        {% endif %}
-
-                        {% if perms.database_manager.add_instructor %}
-                        <input type="number" id="assign_instructor_role_to_class_event_coordinators_input">
-                        <button type="button" id="assign_instructor_role_to_class_event_coordinators_button">Assign instructor role to class event coordinators</button>
-                        {% endif %}
-
-                        {% if perms.database_manager.add_teachingassistant %}
-                        <input type="number" id="assign_teaching_assistant_role_to_class_event_coordinators_input">
-                        <button type="button" id="assign_teaching_assistant_role_to_class_event_coordinators_button">Assign teaching assistant role to class event coordinators</button>
-                        {% endif %}
+                        <tr><input type="number" id="add_students_input" class="white-text center-align"></tr>
+                        <tr><input type="button" id="add_students_button" value="Add Students" class="btn-large tooltipped" data-tooltip="Click to Add students" data-position="right" style="background-color: transparent; font-size: larger;" /> {% endif %}
+                            {% if perms.database_manager.add_course %}
+                            <tr><input type="number" id="add_courses_input" class="white-text center-align"></tr>
+                            <tr><input type="button" id="add_courses_button" value="Add Courses" class="btn-large tooltipped" data-tooltip="Click to Add courses" data-position="right" style="background-color: transparent; font-size: larger;" />
+                            </tr> {% endif %} {% if perms.database_manager.add_instructor %}
+                            <tr><input type="number" id="add_instructors_input" class="white-text center-align"></tr>
+                            <tr><input type="button" id="add_instructors_button" value="Add Instructors" class="btn-large tooltipped" data-tooltip="Click to Add instructors" data-position="right" style="background-color: transparent; font-size: larger;" />
+                            </tr> {% endif %} {% if perms.database_manager.add_teachingassistant %}
+                            <tr><input type="number" id="add_teaching_assistants_input" class="white-text center-align"></tr>
+                            <tr><input type="button" id="add_teaching_assistants_button" value="Add teaching assistants" class="btn-large tooltipped" data-tooltip="Click to Add teaching assistants" data-position="right" style="background-color: transparent; font-size: larger;"
+                                />
+                            </tr> {% endif %} {% if perms.database_manager.add_student %}
+                            <tr><input type="number" id="assign_student_role_to_users_input" class="white-text center-align"></tr>
+                            <tr><input type="button" id="assign_student_role_to_users_button" value="Assign student role to users" class="btn-large tooltipped" data-tooltip="Click to Assign role" data-position="right" style="background-color: transparent; font-size: larger;"
+                                />
+                            </tr> {% endif %} {% if perms.database_manager.add_instructor %}
+                            <tr><input type="number" id="assign_instructor_role_to_users_input" class="white-text center-align"></tr>
+                            <tr><input type="button" id="assign_instructor_role_to_users_button" value="Assign instructor role to users" class="btn-large tooltipped" data-tooltip="Click to Assign role" data-position="right" style="background-color: transparent; font-size: larger;"
+                                />
+                            </tr> {% endif %} {% if perms.database_manager.add_teachingassistant %}
+                            <tr><input type="number" id="assign_teaching_assistant_role_to_users_input" class="white-text center-align"></tr>
+                            <tr><input type="button" id="assign_teaching_assistant_role_to_users_button" value="Assign teaching assistant role to users" class="btn-large tooltipped" data-tooltip="Click to Assign role" data-position="right" style="background-color: transparent; font-size: larger;"
+                                />
+                            </tr> {% endif %} {% if perms.database_manager.add_instructor %}
+                            <tr><input type="number" id="assign_instructor_role_to_class_event_coordinators_input" class="white-text center-align"></tr>
+                            <tr><input type="button" id="assign_instructor_role_to_class_event_coordinators_button" value="Assign instructor role to class event coordinators" class="btn-large tooltipped" data-tooltip="Click to Assign role" data-position="right"
+                                    style="background-color: transparent; font-size: larger;" />
+                            </tr> {% endif %} {% if perms.database_manager.add_teachingassistant %}
+                            <tr><input type="number" id="assign_teaching_assistant_role_to_class_event_coordinators_input" class="white-text center-align"></tr>
+                            <tr><input type="button" id="assign_teaching_assistant_role_to_class_event_coordinators_button" value="Assign teaching assistant role to class event coordinators" class="btn-large tooltipped" data-tooltip="Click to Assign role"
+                                    data-position="right" style="background-color: transparent; font-size: larger;" />
+                            </tr> {% endif %}
 
                     </table>
                 </div>
@@ -350,11 +229,9 @@
             </div>
         </div>
     </div>
-</div>
+</div>{% endif %}
 
-{% endif %}
-
-<script>
+<script type="text/javascript">
     setInterval(set, 500);
 
     function set() {
@@ -372,6 +249,80 @@
             x.style.color = "white";
         }
     }
+
+    $(document).ready(function() {
+        $('#add_students_button').click(function(e) {
+            var num_students = $("#add_students_input").val();
+            if (num_students < 1) {
+                num_students = 1;
+            }
+            window.location.href = "{% url 'add_students' num_students=1 %}".replace(/1/, num_students.toString());
+        });
+
+        $('#add_instructors_button').click(function(e) {
+            var num_instructors = $("#add_instructors_input").val();
+            if (num_instructors < 1) {
+                num_instructors = 1;
+            }
+            window.location.href = "{% url 'add_instructors' num_instructors=1 %}".replace(/1/, num_instructors.toString());
+        });
+
+        $('#add_courses_button').click(function(e) {
+            var num_courses = $("#add_courses_input").val();
+            if (num_courses < 1) {
+                num_courses = 1;
+            }
+            window.location.href = "{% url 'add_courses' num_courses=1 %}".replace(/1/, num_courses.toString());
+        });
+
+        $('#add_teaching_assistants_button').click(function(e) {
+            var num_teaching_assistants = $("#add_teaching_assistants_input").val();
+            if (num_teaching_assistants < 1) {
+                num_teaching_assistants = 1;
+            }
+            window.location.href = "{% url 'add_teaching_assistants' num_teaching_assistants=1 %}".replace(/1/, num_teaching_assistants.toString());
+        });
+
+        $('#assign_student_role_to_users_button').click(function(e) {
+            var num_users = $("#assign_student_role_to_users_input").val();
+            if (num_users < 1) {
+                num_users = 1;
+            }
+            window.location.href = "{% url 'assign_student_role_to_users' num_users=1 %}".replace(/1/, num_users.toString());
+        });
+
+        $('#assign_instructor_role_to_users_button').click(function(e) {
+            var num_users = $("#assign_instructor_role_to_users_input").val();
+            if (num_users < 1) {
+                num_users = 1;
+            }
+            window.location.href = "{% url 'assign_instructor_role_to_users' num_users=1 %}".replace(/1/, num_users.toString());
+        });
+
+        $('#assign_teaching_assistant_role_to_users_button').click(function(e) {
+            var num_users = $("#assign_teaching_assistant_role_to_users_input").val();
+            if (num_users < 1) {
+                num_users = 1;
+            }
+            window.location.href = "{% url 'assign_teaching_assistant_role_to_users' num_users=1 %}".replace(/1/, num_users.toString());
+        });
+
+        $('#assign_instructor_role_to_class_event_coordinators_button').click(function(e) {
+            var num_class_event_coordinators = $("#assign_instructor_role_to_class_event_coordinators_input").val();
+            if (num_class_event_coordinators < 1) {
+                num_class_event_coordinators = 1;
+            }
+            window.location.href = "{% url 'assign_instructor_role_to_class_event_coordinators' num_class_event_coordinators=1 %}".replace(/1/, num_class_event_coordinators.toString());
+        });
+
+        $('#assign_teaching_assistant_role_to_class_event_coordinators_button').click(function(e) {
+            var num_class_event_coordinators = $("#assign_teaching_assistant_role_to_class_event_coordinators_input").val();
+            if (num_class_event_coordinators < 1) {
+                num_class_event_coordinators = 1;
+            }
+            window.location.href = "{% url 'assign_teaching_assistant_role_to_class_event_coordinators' num_class_event_coordinators=1 %}".replace(/1/, num_class_event_coordinators.toString());
+        });
+    });
 </script>
 
 {% endblock %}
