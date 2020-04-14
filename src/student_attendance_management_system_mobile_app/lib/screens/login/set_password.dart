@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sams/screens/root/navigation_home_screen.dart';
 import 'package:sams/theme/app_theme.dart';
 
 class SetPassword extends StatefulWidget {
@@ -93,19 +94,19 @@ Widget _getConfirmPasswordField(BuildContext context){
       ),
       child: Padding(
         padding: const EdgeInsets.only(
-            left: 16, right: 16, top: 4, bottom: 4),
+              left: 16, right: 16, top: 4, bottom: 4),
         child: TextFormField(
 
           obscureText: true,
           onChanged: (String txt) {},
           style: const TextStyle(
-            fontSize: 18,
+              fontSize: 18,
           ),
           cursorColor: AppTheme.buildLightTheme().primaryColor,
           decoration: InputDecoration(
-            labelText: 'Confirm Password',
-            labelStyle: AppTheme.body1,
-            border: InputBorder.none,
+              labelText: 'Confirm Password',
+              labelStyle: AppTheme.body1,
+              border: InputBorder.none,
           ),
         ),
       ),
@@ -136,8 +137,8 @@ Widget _getConfirmButton(BuildContext context){
             Radius.circular(32.0),
           ),
           onTap: () {
-            FocusScope.of(context).requestFocus(FocusNode());
-            // Navigator.push(context, MaterialPageRoute(builder: (context)=>DashboardPage()));
+            // FocusScope.of(context).requestFocus(FocusNode());
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>NavigationHomeScreen()));
           },
           child: Padding(
             padding: const EdgeInsets.only(right:70.0,left:70.0,top: 16.0,bottom: 16.0),
