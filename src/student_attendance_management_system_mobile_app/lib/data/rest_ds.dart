@@ -1,39 +1,43 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:sams/utils/user_info.dart';
+import 'package:sams/utils/user_token.dart';
+import 'package:sams/models/course.dart';
 import 'package:sams/utils/network_util.dart';
-import 'package:sams/models/user.dart';
 
 class RestDatasource {
-  NetworkUtil _netUtil = new NetworkUtil();
-  static final BASE_URL = "http://192.168.43.132:8000/api/v1/db/";
-  static final LOGIN_URL = BASE_URL + "login/";
-  static final _API_KEY = "somerandomkey";
+  static const BASE_URL = "http://192.168.43.132:8000/api/v1/db/";
+  static const LOGIN_URL = BASE_URL + "login/";
+  static const LIST_COURSES = BASE_URL + "list_courses/";
+  static const _API_KEY = "somerandomkey";
 
-  Future<User> login(String username, String password) {
-    return _netUtil.post(LOGIN_URL, 
-    
+  Future<bool> login(String username, String password) {
+    return NetworkUtil.post(LOGIN_URL, 
     body: {
       "token": _API_KEY,
       "username": username,
       "password": password
     }
     ).then((dynamic res) {
-      log(res.toString());
-      if(res["token"]==null) {
-        log('token not received');
-        throw  Exception (res["non_field_errors"]);
-      }	
-      User user_data= new User.map({
-      "username": username,
-      "password": password}
-      );
-      log(user_data.username);
-      return user_data;
+      log('Response From $LOGIN_URL $res');
+      UserToken.setToken(res["token"]);
+      UserInfo.map(res["user_info"]);
     })
     .catchError((error){
-      throw new Exception(error);
+      throw (error);
     })
     ;
   }
+
+  Future<Course> listCourses(String token){
+    return NetworkUtil.get(LIST_COURSES,
+    headers: {
+      "authorisation": token,
+    }
+    );
+  }
+
+
+
 }

@@ -1,8 +1,6 @@
-
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:sams/models/user.dart';
 import 'package:sams/screens/common/home_screen.dart';
 import 'package:sams/screens/login/forget_password.dart';
 import 'package:sams/screens/root/navigation_home_screen.dart';
@@ -52,8 +50,8 @@ class _LoginScreenState extends State<LoginScreen> implements LoginScreenContrac
   }
 
   @override
-  void onLoginSuccess(User user) async {
-    _showSnackBar('Successful'+user.toString());
+  void onLoginSuccess() async {
+    _showSnackBar('Successful');
     setState(() => _isLoading = false);
     Navigator.push(context, MaterialPageRoute(builder: (context)=>NavigationHomeScreen()));
 

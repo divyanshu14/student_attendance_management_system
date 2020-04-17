@@ -1,10 +1,11 @@
 import 'dart:developer';
 
 import 'package:sams/data/rest_ds.dart';
-import 'package:sams/models/user.dart';
+
+// handles logic behind login screen
 
 abstract class LoginScreenContract {
-  void onLoginSuccess(User user);
+  void onLoginSuccess();
   void onLoginError(String errorTxt);
 }
 
@@ -14,11 +15,11 @@ class LoginScreenPresenter {
   LoginScreenPresenter(this._view);
 
   doLogin(String username, String password) {
-    _api.login(username, password).then((User user) {
+    _api.login(username, password).then((value) {
       log('success');
-      _view.onLoginSuccess(user);
-    }).catchError((dynamic error) {
-      log('unsuccessful');
+      _view.onLoginSuccess();
+    }).catchError((Exception error) {
+      log('Login Login unsuccessful');
     _view.onLoginError(error.toString());
     } );
   }
