@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.serializers import (
 	ModelSerializer,
 )
-from database_manager.models import Student, Course, Instructor, TeachingAssistant
+from database_manager.models import Student, Course, Instructor, TeachingAssistant, User
 from django.contrib.auth.models import Group
 import random
 
@@ -12,30 +12,30 @@ DEFAULT_PASSWORD = "new_pass_123"
 class addStudentsSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(max_length=100, write_only=True)
     last_name = serializers.CharField(max_length=100,  write_only=True)
-    email_address = serializers.EmailField(write_only=True)
+    email = serializers.EmailField(write_only=True)
 
     class Meta:
         model = Student
-        fields = ('first_name', 'last_name', 'email_address', 'entry_number')
+        fields = ('first_name', 'last_name', 'email', 'entry_number')
 
 
 class addInstructorSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(max_length=100, write_only=True)
     last_name = serializers.CharField(max_length=100,  write_only=True)
-    email_address = serializers.EmailField( write_only=True)
+    email = serializers.EmailField( write_only=True)
 
     class Meta:
         model = Instructor
-        fields = ('first_name', 'last_name', 'email_address', 'instructor_id')
+        fields = ('first_name', 'last_name', 'email', 'instructor_id')
         
 
 class addTeachingAssistantSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(max_length=100, write_only=True)
     last_name = serializers.CharField(max_length=100, write_only=True)
-    email_address = serializers.EmailField()
+    email = serializers.EmailField()
     class Meta:
         model = TeachingAssistant
-        fields = ('first_name', 'last_name', 'email_address', 'teaching_assistant_id')
+        fields = ('first_name', 'last_name', 'email', 'teaching_assistant_id')
 
 
 class addCourseSerializer(serializers.ModelSerializer):
@@ -58,17 +58,17 @@ class addCourseSerializer(serializers.ModelSerializer):
 
 
 class assignStudentToUserSerializer(serializers.ModelSerializer):
-    email_address = serializers.EmailField(write_only=True)
+    email = serializers.EmailField(write_only=True)
     class Meta:
         model = Student
-        fields = ('email_address', 'entry_number')
+        fields = ('email', 'entry_number')
 
 
 class assignInstructorToUserSerializer(serializers.ModelSerializer):
-    email_address = serializers.EmailField(write_only=True)
+    email = serializers.EmailField(write_only=True)
     class Meta:
         model = Instructor
-        fields = ('email_address', 'instructor_id')
+        fields = ('email', 'instructor_id')
 
 
 class assignInstructorToClassEventCoordinatorSerializer(serializers.ModelSerializer):
@@ -76,11 +76,16 @@ class assignInstructorToClassEventCoordinatorSerializer(serializers.ModelSeriali
 
 
 class assignTeachingAssistantToUserSerializer(serializers.ModelSerializer): 
-    email_address = serializers.EmailField(write_only=True)
+    email = serializers.EmailField(write_only=True)
     class Meta:
         model = TeachingAssistant
-        fields = ('email_address', 'teaching_assistant_id')
+        fields = ('email', 'teaching_assistant_id')
 
 
 class assignTeachingAssistantToClassEventCoordinatorSerializer(serializers.ModelSerializer):
     pass
+
+class GetUserInfoSerializer(serializers.Serializer):
+    email = serializers.EmailField(write_only=True)
+    password = serializers.CharField(write_only=True, style={'input_type': 'password'})
+    

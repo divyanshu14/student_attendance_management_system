@@ -19,13 +19,15 @@ router.register(r'assign_teaching_assistant_to_class_event_coordinator', views.a
 # router.register(r'list_courses', views.listCourses, basename='list_courses')
 router.register(r'add_courses', views.addCourses, basename='add_courses')
 
+
 urlpatterns = [
     url(r'', include(router.urls)),
     path('list_students/', views.listStudents.as_view(), name='list_students'),
     path('list_instructors/', views.listInstructors.as_view(), name='list_instructors'),
-    # path('add_courses', views.addCourses.as_view(), name='add_courses'),
     path('list_courses', views.listCourses.as_view(), name='list_courses'),
     path('list_teaching_assistant', views.listTeachingAssistant.as_view(), name='list_teaching_assistant'),
+    path('get_user_info/', views.GetUserInfo.as_view(), name='get_user_info'),
+   
     url(r'^login/', views.CustomAuthToken.as_view())
 ]
 

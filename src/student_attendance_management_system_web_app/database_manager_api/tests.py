@@ -23,7 +23,7 @@ print("""
 # data = {"username": "2017csb1110@iitrpr.ac.in", "password": "new_pass_123"}
 
 url_login = 'http://127.0.0.1:8000/api/v1/db/login/'
-data = {"username": "amritpal@gmail.com", "password": "amritpal"}
+data = {"username": "amritpal@gmail.com", "password": "new_pass_123"}
 # print(data)
 r = requests.post(url_login, json=data)
 pprint(r.json())
@@ -32,6 +32,19 @@ token = ''
 if(r.status_code == 200):
     token = json_extractor(r.json(), 'token')
 headers = {'Authorization': f'Token {token}'}
+
+
+
+print("""       
+
+      **  Getting User Info  **      
+        
+""")
+url_user_info = 'http://127.0.0.1:8000/api/v1/db/get_user_info/'
+data = {"email": "amritpal@gmail.com", "password": "new_pass_123"}
+r = requests.get(url_user_info,data=data, headers=headers)
+print(r.status_code)
+pprint(r.json())
 
 
 
@@ -52,8 +65,8 @@ print("""
         
 """)
 url_add = 'http://127.0.0.1:8000/api/v1/db/add_students/'
-data =  [{ "first_name": "Amritpal", "last_name": "Singh", "email_address": "2017csb1068@iitrpr.ac.in", "entry_number": "2017csb1068"},
-        { "first_name": "Ankit", "last_name": "Something", "email_address": "2017csb1069@iitrpr.ac.in", "entry_number": "2017csb1069"} ]
+data =  [{ "first_name": "Amritpal", "last_name": "Singh", "email": "2017csb1068@iitrpr.ac.in", "entry_number": "2017csb1068"},
+        { "first_name": "Ankit", "last_name": "Something", "email": "2017csb1069@iitrpr.ac.in", "entry_number": "2017csb1069"} ]
 # pprint(data)
 r = requests.post(url_add, json=data, headers=headers)
 pprint(r.json())
@@ -79,7 +92,7 @@ print("""
         
 """)
 url_assign_Instructor_to_user = 'http://127.0.0.1:8000/api/v1/db/assign_instructor_to_user/'
-data = [{"email_address": "2017csb1110@iitrpr.ac.in", "instructor_id": "in002"}]
+data = [{"email": "2017csb1110@iitrpr.ac.in", "instructor_id": "in002"}]
 # print(data)
 r = requests.post(url_assign_Instructor_to_user, json=data, headers=headers)
 pprint(r.json())

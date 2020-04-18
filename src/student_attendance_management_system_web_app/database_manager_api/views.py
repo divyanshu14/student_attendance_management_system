@@ -18,7 +18,8 @@ from .serializers import (
     addStudentsSerializer, 
     addInstructorSerializer,
     assignTeachingAssistantToUserSerializer,
-    addTeachingAssistantSerializer
+    addTeachingAssistantSerializer,
+    GetUserInfoSerializer
 )
 import database_manager.models as dbModels
 from rest_framework import viewsets, mixins, status, generics
@@ -31,6 +32,8 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.hashers import make_password
+
 
 
 class CustomAuthToken(ObtainAuthToken):
@@ -52,14 +55,9 @@ class CustomAuthToken(ObtainAuthToken):
             # class_event_coordinator = get_object_or_404(ClassEventCoordinator, user=user)
         except:
             return Response({'token': token.key,
-                         'username': token.user.email,
-                         'admin_permissions': token.user.is_staff,
-                         'first_name': first_name,
-                         'last_name': last_name,
-                         'is_student': is_student,
-                         'is_teacher': False,
-                         'is_ta': False
-                         })
+                            'user_info':{'username': token.user.email,
+                                'is_staff': token.user.is_staff,
+                            }}, status=status.HTTP_200_OK)
  
         if Instructor.objects.all().filter(class_event_coordinator=class_event_coordinator):
             is_teacher = True
@@ -67,14 +65,68 @@ class CustomAuthToken(ObtainAuthToken):
             is_ta = True
         
         return Response({'token': token.key,
-                         'username': token.user.email,
-                         'admin_permissions': token.user.is_staff,
+                        'user_info':{'username': token.user.email,
+                            'is_staff': token.user.is_staff,
+                        }}, status=status.HTTP_200_OK)
+ 
+
+class GetUserInfo(generics.ListAPIView):
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
+    queryset = dbModels.User.objects.all()
+    serializer_class = GetUserInfoSerializer
+    def get(self, request, *args, **kwargs):
+        self.serializer = self.get_serializer(data=request.data)
+        self.serializer.is_valid(raise_exception=True)
+        email = self.serializer.validated_data['email']
+        # password = make_password(self.serializer.validated_data['password'])
+        password = self.serializer.validated_data['password']
+        print("YPOOOOOOOOOOOOOOO")
+        print(password, email)
+        user = get_object_or_404(dbModels.User, email=email)        
+        if not user.check_password(password):
+            return Response({'user_info': {'username': 'User Not Found'}} , status=status.HTTP404)
+
+        # user = dbModels.User.objects.all().filter(email=token.user.email)[0]
+        first_name = user.first_name
+        last_name = user.last_name
+        is_student = False
+        is_teacher = False
+        is_ta = False
+        token = Token.objects.get(user=user)
+        print('STREEEEEEEETSSSSSS')
+        if Student.objects.all().filter(user=user):
+            is_student = True
+        try:
+            class_event_coordinator = ClassEventCoordinator.objects.all().filter(user=user)[0]
+            # class_event_coordinator = get_object_or_404(ClassEventCoordinator, user=user)
+        except:
+            return Response({'user_info': {
+                         'token': token.key,
+                         'username': user.email,
+                         'admin_permissions': user.is_staff,
                          'first_name': first_name,
                          'last_name': last_name,
                          'is_student': is_student,
-                         'is_teacher': is_teacher,
-                         'is_ta': is_ta
-                         })
+                         'is_teacher': False,
+                         'is_ta': False
+                         }}, status=status.HTTP_200_OK)
+
+        if Instructor.objects.all().filter(class_event_coordinator=class_event_coordinator):
+            is_teacher = True
+        if TeachingAssistant.objects.all().filter(class_event_coordinator=class_event_coordinator):
+            is_ta = True
+
+        return Response({'user_info': {
+                         'token': token.key,
+                         'username': user.email,
+                         'admin_permissions': user.is_staff,
+                         'first_name': first_name,
+                         'last_name': last_name,
+                         'is_student': is_student,
+                         'is_teacher': False,
+                         'is_ta': False
+                         }}, status=status.HTTP_200_OK)
 
 
 class addStudents(mixins.CreateModelMixin, 
@@ -86,11 +138,11 @@ class addStudents(mixins.CreateModelMixin,
     [ 
         { "first_name": "Shivam",
             "last_name": "Prasad",
-            "email_address": "2017csb1110@iitrpr.ac.in",
+            "email": "2017csb1110@iitrpr.ac.in",
             "entry_number": "2017csb1101"},
         { "first_name": "amritpal",
             "last_name": "singh",
-            "email_address": "amritpal@gmail.com",
+            "email": "amritpal@gmail.com",
             "entry_number": "2017csb101268"}
     ]
 
@@ -109,7 +161,7 @@ class addStudents(mixins.CreateModelMixin,
         for single_proportion in self.serializer.validated_data:
             info = {}
             try:
-                user = UserModel.objects.create_user(single_proportion['email_address'], DEFAULT_PASSWORD)
+                user = UserModel.objects.create_user(single_proportion['email'], DEFAULT_PASSWORD)
                 user.first_name = single_proportion['first_name']
                 user.last_name = single_proportion['last_name']
                 student_group = Group.objects.get(name='Students')
@@ -117,7 +169,7 @@ class addStudents(mixins.CreateModelMixin,
                 user.save()
                 Student.objects.create(user=user, entry_number=single_proportion['entry_number'])
             except:
-                info = {single_proportion['email_address']: "User Cannot be created"}
+                info = {single_proportion['email']: "User Cannot be created"}
                 errors.append(info)
             
                 print(errors, self.serializer.errors)
@@ -143,11 +195,11 @@ class addInstructors(mixins.CreateModelMixin,
     [ 
         { "first_name": "amritpal",
             "last_name": "singh",
-            "email_address": "amritpal@gmail.com",
+            "email": "amritpal@gmail.com",
             "instructor_id": "3"},
         { "first_name": "amritpal",
             "last_name": "singh",
-            "email_address": "amritpal@gmail.com",
+            "email": "amritpal@gmail.com",
             "instructor_id": "4"}
     ]
     '''    
@@ -165,7 +217,7 @@ class addInstructors(mixins.CreateModelMixin,
             info = {}
             # create_user takes these fields (username, email, password, **extra_fields)
             try:
-                user = UserModel.objects.create_user(single_proportion['email_address'], DEFAULT_PASSWORD)    
+                user = UserModel.objects.create_user(single_proportion['email'], DEFAULT_PASSWORD)    
                 user.first_name = single_proportion['first_name']
                 user.last_name = single_proportion['last_name']
                 instructor_group = Group.objects.get(name='Instructors')
@@ -175,7 +227,7 @@ class addInstructors(mixins.CreateModelMixin,
                 Instructor.objects.create(class_event_coordinator=class_event_coordinator, instructor_id=single_proportion['instructor_id'])
                 errors.append({})
             except:
-                info = {single_proportion['email_address']: "User Cannot be created, Check if The Group exists or not Or if User already exists"}
+                info = {single_proportion['email']: "User Cannot be created, Check if The Group exists or not Or if User already exists"}
                 errors.append(info)
             
         print(errors, self.serializer.errors)
@@ -204,7 +256,7 @@ class addTeachingAssistant(mixins.CreateModelMixin,
         for single_proportion in self.serializer.validated_data:
             info = {}
             try:
-                user = dbModels.User.objects.create_user(single_proportion['email_address'], DEFAULT_PASSWORD)
+                user = dbModels.User.objects.create_user(single_proportion['email'], DEFAULT_PASSWORD)
                 user.first_name = single_proportion['first_name']
                 user.last_name = single_proportion['last_name']
                 ta_group = Group.objects.get(name='Teaching Assistants')
@@ -214,7 +266,7 @@ class addTeachingAssistant(mixins.CreateModelMixin,
                 TeachingAssistant.objects.create(class_event_coordinator=class_event_coordinator, teaching_assistant_id=single_proportion['teaching_assistant_id'])
                 errors.append({})
             except:
-                info = {single_proportion['email_address']: "User Cannot be created"}
+                info = {single_proportion['email']: "User Cannot be created"}
                 errors.append(info)
             
                 print(errors, self.serializer.errors)
@@ -246,7 +298,7 @@ class listStudents(APIView):
         
         dictStudentsDump = json.dumps(dictStudents)
         jsonStudent = json.loads(dictStudentsDump)
-        return Response(jsonStudent)
+        return Response(jsonStudent, status=status.HTTP_200_OK)
         # return JsonResponse(dictStudents)
 
 
@@ -269,7 +321,7 @@ class listInstructors(APIView):
         print(dictInstructor)
         dictInstructorDump = json.dumps(dictInstructor)
         jsonInstructor = json.loads(dictInstructorDump)
-        return Response(jsonInstructor)
+        return Response(jsonInstructor, status=status.HTTP_200_OK)
 
 class listTeachingAssistant(APIView):
     authentication_classes = (TokenAuthentication, )
@@ -288,7 +340,7 @@ class listTeachingAssistant(APIView):
         print(dictTA)
         dictTADump = json.dumps(dictTA)
         jsonTA = json.loads(dictTADump)
-        return Response(jsonTA)
+        return Response(jsonTA, status=status.HTTP_200_OK)
 
 
 
@@ -307,15 +359,15 @@ class assignStudentToUser(mixins.CreateModelMixin,
         for single_proportion in self.serializer.validated_data:
             try:
                 info = {}
-                email_address = single_proportion['email_address']
+                email = single_proportion['email']
                 entry_number = single_proportion['entry_number']
-                user = dbModels.User.objects.all().filter(email=email_address)[0]
+                user = dbModels.User.objects.all().filter(email=email)[0]
                 student_group = Group.objects.get(name='Students')
                 user.groups.add(student_group)
                 user.save()
                 Student.objects.create(user=user, entry_number=entry_number)
             except:
-                info = {single_proportion['email_address']: 'Error Saving this User, Check if the Groups and User Exist or Not'}
+                info = {single_proportion['email']: 'Error Saving this User, Check if the Groups and User Exist or Not'}
                 errors.append(info)
 
                 print(errors, self.serializer.errors)
@@ -344,9 +396,9 @@ class assignInstructorToUser(mixins.CreateModelMixin,
         for single_proportion in self.serializer.validated_data:   
             info = {}
             try:
-                email_address = single_proportion['email_address']
+                email = single_proportion['email']
                 instructor_id = single_proportion['instructor_id']
-                user = dbModels.User.objects.all().filter(email=email_address)[0]
+                user = dbModels.User.objects.all().filter(email=email)[0]
                 instructor_group = Group.objects.get(name='Instructors')
                 user.groups.add(instructor_group)
                 user.save()
@@ -354,7 +406,7 @@ class assignInstructorToUser(mixins.CreateModelMixin,
                 Instructor.objects.create(class_event_coordinator=class_event_coordinator, instructor_id=instructor_id)
  
             except:
-                info = {single_proportion['email_address']: 'Error Saving this User, Check if the Groups and User Exist or Not'}
+                info = {single_proportion['email']: 'Error Saving this User, Check if the Groups and User Exist or Not'}
                 errors.append(info)
 
                 print(errors, self.serializer.errors)
@@ -383,17 +435,17 @@ class assignInstructorToClassEventCoordinator(mixins.CreateModelMixin,
         for single_proportion in self.serializer.validated_data:
             info = {}
             try:
-                email_address = single_proportion['email_address']
+                email = single_proportion['email']
                 instructor_id = single_proportion['instructor_id']
                 instructor_group = Group.objects.get(name='Instructors')
-                user = dbModels.User.objects.all().filter(email=email_address)[0]
+                user = dbModels.User.objects.all().filter(email=email)[0]
                 # class_event_coordinator = dbModels.ClassEventCoordinator.objects.create(user=user)
                 user.groups.add(instructor_group)
                 user.save()
                 class_event_coordinator, created = ClassEventCoordinator.objects.get_or_create(user=user)
                 Instructor.objects.create(class_event_coordinator=class_event_coordinator, instructor_id=instructor_id)
             except:
-                info = {single_proportion['email_address']: 'Error Saving this User, Check if the Groups and User Exist or Not'}
+                info = {single_proportion['email']: 'Error Saving this User, Check if the Groups and User Exist or Not'}
                 errors.append(info)
 
                 print(errors, self.serializer.errors)
@@ -422,17 +474,17 @@ class assignTeachingAssistantToClassEventCoordinator(mixins.CreateModelMixin,
         for single_proportion in self.serializer.validated_data:
             info = {}
             try:
-                email_address = single_proportion['email_address']
+                email = single_proportion['email']
                 teaching_assistant_id = single_proportion['teaching_assistant_id']
                 ta_group = Group.objects.get(name='Teaching Assistants')
-                user = dbModels.User.objects.all().filter(email=email_address)[0]
+                user = dbModels.User.objects.all().filter(email=email)[0]
                 user.groups.add(ta_group)
                 user.save()
                 class_event_coordinator, created = ClassEventCoordinator.objects.get_or_create(user=user)
                 TeachingAssistant.objects.create(class_event_coordinator=class_event_coordinator, teaching_assistant_id=teaching_assistant_id)
 
             except:
-                info = {single_proportion['email_address']: 'Error Saving this User, Check if the Groups and User Exist or Not'}
+                info = {single_proportion['email']: 'Error Saving this User, Check if the Groups and User Exist or Not'}
                 errors.append(info)
 
                 print(errors, self.serializer.errors)
@@ -460,17 +512,17 @@ class assignTeachingAssistantToUser(mixins.CreateModelMixin,
         for single_proportion in self.serializer.validated_data:
             info = {}
             try:
-                email_address = single_proportion['email_address']
+                email = single_proportion['email']
                 teaching_assistant_id = single_proportion['teaching_assistant_id']
                 ta_group = Group.objects.get(name='Teaching Assistants')
-                user = dbModels.User.objects.all().filter(email=email_address)[0]
+                user = dbModels.User.objects.all().filter(email=email)[0]
                 # ClassEventCoordinator = dbModels.ClassEventCoordinator.objects.all(user=user)
                 user.groups.add(ta_group)
                 user.save()
                 class_event_coordinator, created = ClassEventCoordinator.objects.get_or_create(user=user)
                 TeachingAssistant.objects.create(class_event_coordinator=class_event_coordinator, teaching_assistant_id=teaching_assistant_id)
             except:
-                info = {single_proportion['email_address']: 'Error Saving this User, Check if the Groups and User Exist or Not'}
+                info = {single_proportion['email']: 'Error Saving this User, Check if the Groups and User Exist or Not'}
                 errors.append(info)
 
                 print(errors, self.serializer.errors)
@@ -606,7 +658,7 @@ class listCourses(APIView):
             index+=1
         dictCourseDump = json.dumps(dictCourse)
         jsonCourse = json.loads(dictCourseDump)
-        return Response(jsonCourse)
+        return Response(jsonCourse, status=status.HTTP_200_OK)
 
 
 
@@ -633,7 +685,7 @@ class listCourses(APIView):
     "name": "asfasas",
     "code": "asasf",
     "instructor_for_courses": [
-                    {"first_name": "Balwinder", "last_name": "Sodhi", "email_address": "sodhi@gmail.com", "instructor_id": "1"}
+                    {"first_name": "Balwinder", "last_name": "Sodhi", "email": "sodhi@gmail.com", "instructor_id": "1"}
                     ],
 
     "relative_attendance_for_one_lecture": 1,
@@ -657,7 +709,7 @@ class listCourses(APIView):
     "things":[
         { "first_name": "amritpal",
           "last_name": "singh",
-          "email_address": "amritpal@gmail.com",
+          "email": "amritpal@gmail.com",
           "entry_number": "2017csb1068"}
      ]
 }
