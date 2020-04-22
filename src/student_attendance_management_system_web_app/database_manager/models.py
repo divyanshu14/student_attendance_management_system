@@ -326,7 +326,6 @@ class ClassEvent(models.Model):
         ('P', 'Practical')
     )
     class_event_type = models.CharField(max_length=2, choices=CLASS_EVENT_TYPES)
-    # LOGIC : enfore that the user must be an Instructor for that Course
     attendance_taken_by = models.ForeignKey(ClassEventCoordinator, on_delete=models.CASCADE)
     # LOGIC : enfore that the user must be a Student registered for that Course
     present_students = models.ManyToManyField(Student, blank=True)

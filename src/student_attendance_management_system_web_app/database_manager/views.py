@@ -18,41 +18,6 @@ from django.contrib.auth import get_user_model
 DEFAULT_PASSWORD = "new_pass_123"
 
 
-def is_admin(user):
-    '''
-    Returns True if the user belongs to Admin group, otherwise returns False.
-    '''
-    return user.groups.filter(name='Admins').exists()
-
-
-def is_student(user):
-    '''
-    Returns True if the user belongs to Student group, otherwise returns False.
-    '''
-    return user.groups.filter(name='Students').exists()
-
-
-def is_instructor(user):
-    '''
-    Returns True if the user belongs to Instructor group, otherwise returns False.
-    '''
-    return user.groups.filter(name='Instructors').exists()
-
-
-def is_teaching_assistant(user):
-    '''
-    Returns True if the user belongs to Teaching Assistant group, otherwise returns False.
-    '''
-    return user.groups.filter(name='Teaching Assistants').exists()
-
-
-# def is_lab_attendant(user):
-#     '''
-#     Returns True if the user belongs to Lab Attendant group, otherwise returns False.
-#     '''
-#     return user.groups.filter(name='Lab Attendants').exists()
-
-
 @login_required
 @permission_required('database_manager.add_student', raise_exception=True)
 def add_students(request, num_students):

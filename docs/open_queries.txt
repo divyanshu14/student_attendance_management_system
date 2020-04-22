@@ -1,3 +1,8 @@
 Should the admin be able to change the attendance in case the underlying face recognition algorithm is not reliable?
 Should the admin be able to add instructors and/or teaching assistants to a course after he has already created that course?
 Should the admin be able to add students to a course after he has already created that course? In that case, should the previous attendances (if any) of that student be marked as all absent?
+Should the admin be able to add user without any role (student, instructor, teaching assistant)?
+Should the passwords of all students be set to a default, or should we assume that the admin has some mechanism to create random passwords and email to students?
+Should the admin be able to change the related user of a student, or class_event_coordinator of an instructor, or class_event_coordinator of a teaching assistant, or user of a class event coordinator?
+Should the admin be able to delete users directly (or class event coordinators for that matter)?
+Should a trigger be placed to delete the user (or class event coordinator for that matter) in case it is not related to any student and any class event coordinator (or in case it is not related to any instructor or teaching assistant for that matter)?
