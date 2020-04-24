@@ -24,6 +24,7 @@ from .serializers import (
     TeachingAssistantClassEventCoordinatorUserSerializer,
     TeachingAssistantSerializer,
     CourseSerializer,
+    BasicClassEventSerializer,
     ClassEventForCourseSerializer,
     ClassEventOfStudentForCourseSerializer,
     CumulativeAttendanceForCourseSerializer,
@@ -264,6 +265,34 @@ class ListCumulativeAttendanceForCourseView(generics.ListAPIView):
         code = self.kwargs['code']
         queryset = CumulativeAttendance.objects.filter(course__code=code)
         return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        extra_data = {}
+
+        if queryset.exists():
+            cumulative_attendance_obj = queryset.first()
+            # these data elements should be common among all ClassEvent objects having same course attribute
+            last_class = BasicClassEventSerializer(cumulative_attendance_obj.last_class).data
+            extra_data['last_class'] = last_class
+            total_lectures = cumulative_attendance_obj.total_lectures
+            extra_data['total_lectures'] = total_lectures
+            total_tutorials = cumulative_attendance_obj.total_tutorials
+            extra_data['total_tutorials'] = total_tutorials
+            total_practicals = cumulative_attendance_obj.total_practicals
+            extra_data['total_practicals'] = total_practicals
+
+        response_data = []
+        response_data.append(extra_data)
+        response_data.append(serializer.data)
+        return Response(response_data)
 
 
 class MultipleFieldLookupMixin(object):

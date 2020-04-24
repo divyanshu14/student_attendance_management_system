@@ -267,8 +267,20 @@ class CourseSerializer(serializers.ModelSerializer):
 # -----------------------
 
 
-class ClassEventForCourseSerializer(serializers.ModelSerializer):
+class BasicClassEventSerializer(serializers.ModelSerializer):
     attendance_taken_by = ClassEventCoordinatorUserSerializer(read_only=True)
+
+    class Meta:
+        model = ClassEvent
+        fields = (
+            'timestamp',
+            'class_event_type',
+            'attendance_taken_by',
+        )
+        read_only_fields = ('class_event_type',)
+
+
+class ClassEventForCourseSerializer(BasicClassEventSerializer):
     present_students = StudentUserSerializer(many=True, read_only=True)
 
     class Meta:
@@ -279,6 +291,7 @@ class ClassEventForCourseSerializer(serializers.ModelSerializer):
             'attendance_taken_by',
             'present_students',
         )
+        read_only_fields = tuple()
 
     def create(self, validated_data):
         course = Course.objects.get(code=self.context['view'].kwargs['code'])
@@ -291,9 +304,8 @@ class ClassEventForCourseSerializer(serializers.ModelSerializer):
         return class_event
 
 
-class ClassEventOfStudentForCourseSerializer(serializers.ModelSerializer):
-    attendance_taken_by = ClassEventCoordinatorUserSerializer(read_only=True)
-    present = serializers.SerializerMethodField()
+class ClassEventOfStudentForCourseSerializer(BasicClassEventSerializer):
+    was_present = serializers.SerializerMethodField()
 
     class Meta:
         model = ClassEvent
@@ -301,11 +313,11 @@ class ClassEventOfStudentForCourseSerializer(serializers.ModelSerializer):
             'timestamp',
             'class_event_type',
             'attendance_taken_by',
-            'present',
+            'was_present',
         )
         read_only_fields = ('class_event_type',)
 
-    def get_present(self, obj):
+    def get_was_present(self, obj):
         return Student.objects.get(entry_number=self.context['view'].kwargs['entry_number']) in obj.present_students.all()
 
 
@@ -315,26 +327,18 @@ class ClassEventOfStudentForCourseSerializer(serializers.ModelSerializer):
 
 class CumulativeAttendanceForCourseSerializer(serializers.ModelSerializer):
     student = StudentUserSerializer(read_only=True)
-    last_class = ClassEventForCourseSerializer(read_only=True)
 
     class Meta:
         model = CumulativeAttendance
         fields = (
             'student',
-            'last_class',
             'was_present_last_class',
-            'total_lectures',
-            'total_tutorials',
-            'total_practicals',
             'total_lectures_present',
             'total_tutorials_present',
             'total_practicals_present',
         )
         read_only_fields = (
             'was_present_last_class',
-            'total_lectures',
-            'total_tutorials',
-            'total_practicals',
             'total_lectures_present',
             'total_tutorials_present',
             'total_practicals_present',
@@ -342,7 +346,7 @@ class CumulativeAttendanceForCourseSerializer(serializers.ModelSerializer):
 
 
 class CumulativeAttendanceOfStudentForCourseSerializer(serializers.ModelSerializer):
-    last_class = ClassEventOfStudentForCourseSerializer(read_only=True)
+    last_class = BasicClassEventSerializer(read_only=True)
 
     class Meta:
         model = CumulativeAttendance
