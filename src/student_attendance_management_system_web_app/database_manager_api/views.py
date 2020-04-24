@@ -5,8 +5,16 @@ from rest_framework.schemas import ManualSchema
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from django.shortcuts import get_object_or_404
 
-from database_manager.views import Student, Instructor, TeachingAssistant, Course, ClassEvent
+from database_manager.models import(
+    Student,
+    Instructor,
+    TeachingAssistant,
+    Course,
+    ClassEvent,
+    CumulativeAttendance,
+)
 from .serializers import (
     AuthTokenSerializer,
     StudentUserSerializer,
@@ -16,14 +24,24 @@ from .serializers import (
     TeachingAssistantClassEventCoordinatorUserSerializer,
     TeachingAssistantSerializer,
     CourseSerializer,
-    ClassEventSerializer,
+    ClassEventForCourseSerializer,
+    ClassEventOfStudentForCourseSerializer,
+    CumulativeAttendanceForCourseSerializer,
+    CumulativeAttendanceOfStudentForCourseSerializer,
 )
 from .permissions import (
     DjangoModelPermissionsWithViewPermissionForGET,
-    IsStudentForGivenCourse,
+    GivenCourseExists,
+    GivenStudentExists,
+    IsGivenStudentRegisteredInGivenCourse,
+    IsSameStudentAsGiven,
     IsInstructorForGivenCourse,
     IsTeachingAssistantForGivenCourse,
 )
+
+
+# Auth Token API
+# --------------
 
 
 class ObtainAuthToken(APIView):
@@ -180,9 +198,10 @@ class RetrieveUpdateDestroyCourseView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class ListClassEventForCourseView(generics.ListAPIView):
-    serializer_class = ClassEventSerializer
+    serializer_class = ClassEventForCourseSerializer
     permission_classes = (
         IsAuthenticated,
+        GivenCourseExists,
         IsInstructorForGivenCourse|IsTeachingAssistantForGivenCourse,
     )
 
@@ -199,8 +218,80 @@ class ListClassEventForCourseView(generics.ListAPIView):
 
 
 class CreateClassEventForCourseView(generics.CreateAPIView):
-    serializer_class = ClassEventSerializer
+    serializer_class = ClassEventForCourseSerializer
     permission_classes = (
         IsAuthenticated,
+        GivenCourseExists,
         IsInstructorForGivenCourse|IsTeachingAssistantForGivenCourse,
+    )
+
+
+class ListClassEventOfStudentForCourseView(generics.ListAPIView):
+    serializer_class = ClassEventOfStudentForCourseSerializer
+    permission_classes = (
+        IsAuthenticated,
+        GivenCourseExists,
+        GivenStudentExists,
+        IsGivenStudentRegisteredInGivenCourse,
+        IsSameStudentAsGiven|IsInstructorForGivenCourse|IsTeachingAssistantForGivenCourse,
+    )
+
+    def get_queryset(self):
+        code = self.kwargs['code']
+        queryset = ClassEvent.objects.filter(course__code=code)
+        class_event_type = self.request.query_params.get('class_event_type', None)
+        attendance_taker_email = self.request.query_params.get('attendance_taker_email', None)
+        if class_event_type is not None:
+            queryset = queryset.filter(class_event_type=class_event_type)
+        if attendance_taker_email is not None:
+            queryset = queryset.filter(attendance_taken_by__user__email=attendance_taker_email)
+        return queryset
+
+
+# Cumulative Attendance APIs
+# --------------------------
+
+
+class ListCumulativeAttendanceForCourseView(generics.ListAPIView):
+    serializer_class = CumulativeAttendanceForCourseSerializer
+    permission_classes = (
+        IsAuthenticated,
+        GivenCourseExists,
+        IsInstructorForGivenCourse|IsTeachingAssistantForGivenCourse,
+    )
+
+    def get_queryset(self):
+        code = self.kwargs['code']
+        queryset = CumulativeAttendance.objects.filter(course__code=code)
+        return queryset
+
+
+class MultipleFieldLookupMixin(object):
+    """
+    Apply this mixin to any view or viewset to get multiple field filtering
+    based on a `lookup_fields` attribute, instead of the default single field filtering.
+    """
+    def get_object(self):
+        queryset = self.get_queryset()             # Get the base queryset
+        queryset = self.filter_queryset(queryset)  # Apply any filter backends
+        filter = {}
+        for field, url_kwarg in zip(self.lookup_fields, self.lookup_url_kwargs):
+            if self.kwargs[url_kwarg]: # Ignore empty fields.
+                filter[field] = self.kwargs[url_kwarg]
+        obj = get_object_or_404(queryset, **filter)  # Lookup the object
+        self.check_object_permissions(self.request, obj)
+        return obj
+
+
+class RetrieveCumulativeAttendanceOfStudentForCourseView(MultipleFieldLookupMixin, generics.RetrieveAPIView):
+    serializer_class = CumulativeAttendanceOfStudentForCourseSerializer
+    queryset = CumulativeAttendance.objects.all()
+    lookup_fields = ['course__code', 'student__entry_number']
+    lookup_url_kwargs = ['code', 'entry_number']
+    permission_classes = (
+        IsAuthenticated,
+        GivenCourseExists,
+        GivenStudentExists,
+        IsGivenStudentRegisteredInGivenCourse,
+        IsSameStudentAsGiven|IsInstructorForGivenCourse|IsTeachingAssistantForGivenCourse,
     )

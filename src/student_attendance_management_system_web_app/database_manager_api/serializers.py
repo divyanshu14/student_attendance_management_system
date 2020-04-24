@@ -9,10 +9,15 @@ from database_manager.models import (
     TeachingAssistant,
     Course,
     ClassEvent,
+    CumulativeAttendance,
 )
 
 
 DEFAULT_PASSWORD = "new_pass_123"
+
+
+# Auth Token Serializer
+# ---------------------
 
 
 class AuthTokenSerializer(serializers.Serializer):
@@ -45,6 +50,10 @@ class AuthTokenSerializer(serializers.Serializer):
         return attrs
 
 
+# User Serializers
+# ----------------
+
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
@@ -65,6 +74,10 @@ class UserSerializer(serializers.ModelSerializer):
         instance.email = validated_data.get('email', instance.email)
         instance.save()
         return instance
+
+
+# Student Serializers
+# -------------------
 
 
 class StudentUserSerializer(serializers.ModelSerializer):
@@ -98,6 +111,10 @@ class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
         fields = ('user', 'entry_number',)
+
+
+# Class Event Coordinator Serializers
+# -----------------------------------
 
 
 class ClassEventCoordinatorUserSerializer(serializers.ModelSerializer):
@@ -145,6 +162,10 @@ class ClassEventCoordinatorNotTeachingAssistantSerializer(ClassEventCoordinatorS
     user = serializers.SlugRelatedField(slug_field='email', queryset=get_user_model().objects.filter(classeventcoordinator__teachingassistant__isnull=True))
 
 
+# Instructor Serializers
+# ----------------------
+
+
 class InstructorClassEventCoordinatorUserSerializer(serializers.ModelSerializer):
     class_event_coordinator = ClassEventCoordinatorUserSerializer()
 
@@ -180,6 +201,10 @@ class InstructorSerializer(serializers.ModelSerializer):
         class_event_coordinator = ClassEventCoordinatorNotInstructorSerializer().create(validated_data=class_event_coordinator_data)
         instructor = Instructor.objects.create(class_event_coordinator=class_event_coordinator, **validated_data)
         return instructor
+
+
+# Teaching Assistant Serializers
+# ------------------------------
 
 
 class TeachingAssistantClassEventCoordinatorUserSerializer(serializers.ModelSerializer):
@@ -219,6 +244,10 @@ class TeachingAssistantSerializer(serializers.ModelSerializer):
         return teaching_assistant
 
 
+# Course Serializer
+# -----------------
+
+
 class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
@@ -234,49 +263,105 @@ class CourseSerializer(serializers.ModelSerializer):
         )
 
 
-class CurrentClassEventCoordinatorDefault:
-    '''
-    Represents the `ClassEventCoordinator` object related to the current authenticated user.
-    Make sure that the logged in User has related classeventcoordinator property before
-    using this class as a default, otherwise
-    `database_manager.models.User.classeventcoordinator.RelatedObjectDoesNotExist` will be raised.
-    '''
-    requires_context = True
-
-    def __call__(self, serializer_field):
-        return serializer_field.context['request'].user.classeventcoordinator
-
-    def __repr__(self):
-        return '%s()' % self.__class__.__name__
+# Class Event Serializers
+# -----------------------
 
 
-class CurrentCourseDefault:
-    '''
-    Represents the `Course` object with code `code` as passed in the URL keyword argument.
-    Make sure that the `code` passed in the URL keyword argument is a valid one before
-    using this class as a default, otherwise `database_manager.models.Course.DoesNotExist`
-    will be raised.
-    '''
-    requires_context = True
-
-    def __call__(self, serializer_field):
-        return Course.objects.get(code=serializer_field.context['view'].kwargs['code'])
-
-    def __repr__(self):
-        return '%s()' % self.__class__.__name__
-
-
-class ClassEventSerializer(serializers.ModelSerializer):
-    course = serializers.HiddenField(default=CurrentCourseDefault())
-    attendance_taken_by = ClassEventCoordinatorUserSerializer(default=CurrentClassEventCoordinatorDefault(), read_only=True)
+class ClassEventForCourseSerializer(serializers.ModelSerializer):
+    attendance_taken_by = ClassEventCoordinatorUserSerializer(read_only=True)
     present_students = StudentUserSerializer(many=True, read_only=True)
 
     class Meta:
         model = ClassEvent
         fields = (
-            'course',
             'timestamp',
             'class_event_type',
             'attendance_taken_by',
             'present_students',
+        )
+
+    def create(self, validated_data):
+        course = Course.objects.get(code=self.context['view'].kwargs['code'])
+        attendance_taker = self.context['request'].user.classeventcoordinator
+        class_event = ClassEvent.objects.create(
+            course=course,
+            class_event_type=validated_data['class_event_type'],
+            attendance_taken_by=attendance_taker,
+        )
+        return class_event
+
+
+class ClassEventOfStudentForCourseSerializer(serializers.ModelSerializer):
+    attendance_taken_by = ClassEventCoordinatorUserSerializer(read_only=True)
+    present = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ClassEvent
+        fields = (
+            'timestamp',
+            'class_event_type',
+            'attendance_taken_by',
+            'present',
+        )
+        read_only_fields = ('class_event_type',)
+
+    def get_present(self, obj):
+        return Student.objects.get(entry_number=self.context['view'].kwargs['entry_number']) in obj.present_students.all()
+
+
+# Cumulative Attendance Serializers
+# ---------------------------------
+
+
+class CumulativeAttendanceForCourseSerializer(serializers.ModelSerializer):
+    student = StudentUserSerializer(read_only=True)
+    last_class = ClassEventForCourseSerializer(read_only=True)
+
+    class Meta:
+        model = CumulativeAttendance
+        fields = (
+            'student',
+            'last_class',
+            'was_present_last_class',
+            'total_lectures',
+            'total_tutorials',
+            'total_practicals',
+            'total_lectures_present',
+            'total_tutorials_present',
+            'total_practicals_present',
+        )
+        read_only_fields = (
+            'was_present_last_class',
+            'total_lectures',
+            'total_tutorials',
+            'total_practicals',
+            'total_lectures_present',
+            'total_tutorials_present',
+            'total_practicals_present',
+        )
+
+
+class CumulativeAttendanceOfStudentForCourseSerializer(serializers.ModelSerializer):
+    last_class = ClassEventOfStudentForCourseSerializer(read_only=True)
+
+    class Meta:
+        model = CumulativeAttendance
+        fields = (
+            'last_class',
+            'was_present_last_class',
+            'total_lectures',
+            'total_tutorials',
+            'total_practicals',
+            'total_lectures_present',
+            'total_tutorials_present',
+            'total_practicals_present',
+        )
+        read_only_fields = (
+            'was_present_last_class',
+            'total_lectures',
+            'total_tutorials',
+            'total_practicals',
+            'total_lectures_present',
+            'total_tutorials_present',
+            'total_practicals_present',
         )

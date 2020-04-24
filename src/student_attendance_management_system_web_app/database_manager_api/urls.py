@@ -22,4 +22,8 @@ urlpatterns = [
     # class event
     path('list_class_event_for_course/<str:code>/', views.ListClassEventForCourseView.as_view(), name='list_class_event_for_course'),
     path('create_class_event_for_course/<str:code>/', views.CreateClassEventForCourseView.as_view(), name='create_class_event_for_course'),
+    path('list_class_event_of_student_for_course/<str:code>/<str:entry_number>/', views.ListClassEventOfStudentForCourseView.as_view(), name='list_class_event_of_student_for_course'),
+    # cumulative attendance
+    path('list_cumulative_attendance_for_course/<str:code>/', views.ListCumulativeAttendanceForCourseView.as_view(), name='list_cumulative_attendance_for_course'),
+    path('retrieve_cumulative_attendance_of_student_for_course/<str:code>/<str:entry_number>/', views.RetrieveCumulativeAttendanceOfStudentForCourseView.as_view(), name='retrieve_cumulative_attendance_of_student_for_course'),
 ]
