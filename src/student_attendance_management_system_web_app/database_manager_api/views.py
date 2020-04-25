@@ -17,6 +17,7 @@ from database_manager.models import(
 )
 from .serializers import (
     AuthTokenSerializer,
+    UserSerializer,
     StudentUserSerializer,
     StudentSerializer,
     InstructorClassEventCoordinatorUserSerializer,
@@ -24,6 +25,8 @@ from .serializers import (
     TeachingAssistantClassEventCoordinatorUserSerializer,
     TeachingAssistantSerializer,
     CourseSerializer,
+    CreateUpdateCourseSerializer,
+    RestrictedCourseSerializer,
     BasicClassEventSerializer,
     ClassEventForCourseSerializer,
     ClassEventOfStudentForCourseSerializer,
@@ -36,6 +39,7 @@ from .permissions import (
     GivenStudentExists,
     IsGivenStudentRegisteredInGivenCourse,
     IsSameStudentAsGiven,
+    IsStudentForGivenCourse,
     IsInstructorForGivenCourse,
     IsTeachingAssistantForGivenCourse,
 )
@@ -88,6 +92,46 @@ class ObtainAuthToken(APIView):
 obtain_auth_token = ObtainAuthToken.as_view()
 
 
+# User Data API
+# -------------
+
+
+class GetUserDataView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, format=None):
+        user = UserSerializer(request.user).data
+        is_admin = hasattr(request.user, 'admin')
+        is_student = hasattr(request.user, 'student')
+        is_instructor, is_teaching_assistant = False, False
+        if hasattr(request.user, 'classeventcoordinator'):
+            is_instructor = hasattr(request.user.classeventcoordinator, 'instructor')
+            is_teaching_assistant = hasattr(request.user.classeventcoordinator, 'teachingassistant')
+        user_permissions = [str(permission) for permission in request.user.user_permissions.all()]
+        role_permissions = []
+        for group in request.user.groups.all():
+            role_permissions.extend([str(permission) for permission in group.permissions.all()])
+        response_data = {
+            'user': user,
+            'is_admin': is_admin,
+            'is_student': is_student,
+            'is_instructor': is_instructor,
+            'is_teaching_assistant': is_teaching_assistant,
+            'user_permissions': user_permissions,
+            'role_permissions': role_permissions,
+        }
+        if is_student:
+            student_for_courses = RestrictedCourseSerializer(Course.objects.filter(registered_students=request.user.student), many=True).data
+            response_data['student_for_courses'] = student_for_courses
+        if is_instructor:
+            instructor_for_courses = CourseSerializer(Course.objects.filter(instructors=request.user.classeventcoordinator.instructor), many=True).data
+            response_data['instructor_for_courses'] = instructor_for_courses
+        if is_teaching_assistant:
+            teaching_assistant_for_courses = CourseSerializer(Course.objects.filter(teaching_assistants=request.user.classeventcoordinator.teachingassistant), many=True).data
+            response_data['teaching_assistant_for_courses'] = teaching_assistant_for_courses
+        return Response(response_data)
+
+
 # Student APIs for max depth
 # --------------------------
 
@@ -95,14 +139,14 @@ obtain_auth_token = ObtainAuthToken.as_view()
 class ListCreateStudentUserView(generics.ListCreateAPIView):
     serializer_class = StudentUserSerializer
     queryset = Student.objects.all()
-    permission_classes = (DjangoModelPermissionsWithViewPermissionForGET,)
+    permission_classes = (IsAuthenticated, DjangoModelPermissionsWithViewPermissionForGET,)
 
 
 class RetrieveUpdateDestroyStudentUserView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = StudentUserSerializer
     queryset = Student.objects.all()
     lookup_field = 'entry_number'
-    permission_classes = (DjangoModelPermissionsWithViewPermissionForGET,)
+    permission_classes = (IsAuthenticated, DjangoModelPermissionsWithViewPermissionForGET,)
 
 
 # Student APIs for min depth
@@ -112,7 +156,7 @@ class RetrieveUpdateDestroyStudentUserView(generics.RetrieveUpdateDestroyAPIView
 class CreateStudentView(generics.CreateAPIView):
     serializer_class = StudentSerializer
     queryset = Student.objects.none()   # Required for DjangoModelPermissionsWithViewPermissionForGET
-    permission_classes = (DjangoModelPermissionsWithViewPermissionForGET,)
+    permission_classes = (IsAuthenticated, DjangoModelPermissionsWithViewPermissionForGET,)
 
 
 # Instructor APIs for max depth
@@ -122,14 +166,14 @@ class CreateStudentView(generics.CreateAPIView):
 class ListCreateInstructorClassEventCoordinatorUserView(generics.ListCreateAPIView):
     serializer_class = InstructorClassEventCoordinatorUserSerializer
     queryset = Instructor.objects.all()
-    permission_classes = (DjangoModelPermissionsWithViewPermissionForGET,)
+    permission_classes = (IsAuthenticated, DjangoModelPermissionsWithViewPermissionForGET,)
 
 
 class RetrieveUpdateDestroyInstructorClassEventCoordinatorUserView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = InstructorClassEventCoordinatorUserSerializer
     queryset = Instructor.objects.all()
     lookup_field = 'instructor_id'
-    permission_classes = (DjangoModelPermissionsWithViewPermissionForGET,)
+    permission_classes = (IsAuthenticated, DjangoModelPermissionsWithViewPermissionForGET,)
 
 
 # Instructor APIs for medium and min depth
@@ -143,7 +187,7 @@ class CreateInstructorView(generics.CreateAPIView):
     '''
     serializer_class = InstructorSerializer
     queryset = Instructor.objects.none()    # Required for DjangoModelPermissionsWithViewPermissionForGET
-    permission_classes = (DjangoModelPermissionsWithViewPermissionForGET,)
+    permission_classes = (IsAuthenticated, DjangoModelPermissionsWithViewPermissionForGET,)
 
 
 # Teaching Assistant APIs for max depth
@@ -153,14 +197,14 @@ class CreateInstructorView(generics.CreateAPIView):
 class ListCreateTeachingAssistantClassEventCoordinatorUserView(generics.ListCreateAPIView):
     serializer_class = TeachingAssistantClassEventCoordinatorUserSerializer
     queryset = TeachingAssistant.objects.all()
-    permission_classes = (DjangoModelPermissionsWithViewPermissionForGET,)
+    permission_classes = (IsAuthenticated, DjangoModelPermissionsWithViewPermissionForGET,)
 
 
 class RetrieveUpdateDestroyTeachingAssistantClassEventCoordinatorUserView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = TeachingAssistantClassEventCoordinatorUserSerializer
     queryset = TeachingAssistant.objects.all()
     lookup_field = 'teaching_assistant_id'
-    permission_classes = (DjangoModelPermissionsWithViewPermissionForGET,)
+    permission_classes = (IsAuthenticated, DjangoModelPermissionsWithViewPermissionForGET,)
 
 
 # Teaching Assistant APIs for medium and min depth
@@ -174,24 +218,58 @@ class CreateTeachingAssistantView(generics.CreateAPIView):
     '''
     serializer_class = TeachingAssistantSerializer
     queryset = TeachingAssistant.objects.none()    # Required for DjangoModelPermissionsWithViewPermissionForGET
-    permission_classes = (DjangoModelPermissionsWithViewPermissionForGET,)
+    permission_classes = (IsAuthenticated, DjangoModelPermissionsWithViewPermissionForGET,)
 
 
 # Course APIs
 # -----------
 
 
-class ListCreateCourseView(generics.ListCreateAPIView):
+class ListCourseView(generics.ListAPIView):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
-    permission_classes = (DjangoModelPermissionsWithViewPermissionForGET,)
+    permission_classes = (IsAuthenticated, DjangoModelPermissionsWithViewPermissionForGET,)
 
 
-class RetrieveUpdateDestroyCourseView(generics.RetrieveUpdateDestroyAPIView):
+class CreateCourseView(generics.CreateAPIView):
+    # cannot create new instructors, teaching_assistants and registered_students
+    serializer_class = CreateUpdateCourseSerializer
+    queryset = Course.objects.all()
+    permission_classes = (IsAuthenticated, DjangoModelPermissionsWithViewPermissionForGET,)
+
+
+class RetrieveCourseView(generics.RetrieveAPIView):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
     lookup_field = 'code'
-    permission_classes = (DjangoModelPermissionsWithViewPermissionForGET,)
+    permission_classes = (
+        IsAuthenticated,
+        DjangoModelPermissionsWithViewPermissionForGET|IsInstructorForGivenCourse|IsTeachingAssistantForGivenCourse,
+    )
+
+
+class RestrictedRetrieveCourseView(generics.RetrieveAPIView):
+    serializer_class = RestrictedCourseSerializer
+    queryset = Course.objects.all()
+    lookup_field = 'code'
+    permission_classes = (
+        IsAuthenticated,
+        DjangoModelPermissionsWithViewPermissionForGET|IsStudentForGivenCourse|IsInstructorForGivenCourse|IsTeachingAssistantForGivenCourse,
+    )
+
+
+class UpdateCourseView(generics.UpdateAPIView):
+    # cannot update instructors, teaching_assistants and registered_students
+    serializer_class = CreateUpdateCourseSerializer
+    queryset = Course.objects.all()
+    permission_classes = (IsAuthenticated, DjangoModelPermissionsWithViewPermissionForGET,)
+
+
+class DestroyCourseView(generics.DestroyAPIView):
+    serializer_class = CourseSerializer
+    queryset = Course.objects.all()
+    lookup_field = 'code'
+    permission_classes = (IsAuthenticated, DjangoModelPermissionsWithViewPermissionForGET,)
 
 
 # Class Event APIs

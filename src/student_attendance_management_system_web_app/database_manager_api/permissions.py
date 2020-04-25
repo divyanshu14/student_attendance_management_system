@@ -75,6 +75,20 @@ class IsSameStudentAsGiven(BasePermission):
         )
 
 
+class IsStudentForGivenCourse(BasePermission):
+    '''
+    Allows access only to users who actually are `Student` registered
+    for the course whose code is passed as URL argument.
+    '''
+    def has_permission(self, request, view):
+        return bool(
+            request.user and
+            hasattr(request.user, 'student') and
+            Course.objects.filter(code=view.kwargs['code']).exists() and
+            (request.user.student in Course.objects.get(code=view.kwargs['code']).registered_students.all())
+        )
+
+
 class IsInstructorForGivenCourse(BasePermission):
     '''
     Allows access only to users who actually are `Instructor` registered

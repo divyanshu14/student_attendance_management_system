@@ -303,7 +303,7 @@ class Course(models.Model):
     instructors = models.ManyToManyField(Instructor)
     teaching_assistants = models.ManyToManyField(TeachingAssistant, blank=True)
     # lab_attendants = models.ManyToManyField(LabAttendant, blank=True)
-    registered_students = models.ManyToManyField(Student, blank=True)
+    registered_students = models.ManyToManyField(Student)
 
     def __str__(self):
         return str(self.code) + ' - ' + str(self.name)

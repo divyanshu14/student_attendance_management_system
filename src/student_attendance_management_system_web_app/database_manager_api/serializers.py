@@ -50,8 +50,8 @@ class AuthTokenSerializer(serializers.Serializer):
         return attrs
 
 
-# User Serializers
-# ----------------
+# User Serializer
+# ---------------
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -244,11 +244,15 @@ class TeachingAssistantSerializer(serializers.ModelSerializer):
         return teaching_assistant
 
 
-# Course Serializer
-# -----------------
+# Course Serializers
+# ------------------
 
 
 class CourseSerializer(serializers.ModelSerializer):
+    instructors = InstructorClassEventCoordinatorUserSerializer(many=True, read_only=True)
+    teaching_assistants = TeachingAssistantClassEventCoordinatorUserSerializer(many=True, read_only=True)
+    registered_students = StudentUserSerializer(many=True, read_only=True)
+
     class Meta:
         model = Course
         fields = (
@@ -260,6 +264,42 @@ class CourseSerializer(serializers.ModelSerializer):
             'instructors',
             'teaching_assistants',
             'registered_students',
+        )
+
+
+class CreateUpdateCourseSerializer(serializers.ModelSerializer):
+    instructors = serializers.SlugRelatedField(many=True, slug_field='instructor_id', queryset=Instructor.objects.all(), allow_empty=False)
+    teaching_assistants = serializers.SlugRelatedField(many=True, slug_field='teaching_assistant_id', queryset=TeachingAssistant.objects.all())
+    registered_students = serializers.SlugRelatedField(many=True, slug_field='entry_number', queryset=Student.objects.all(), allow_empty=False)
+
+    class Meta:
+        model = Course
+        fields = (
+            'name',
+            'code',
+            'relative_attendance_for_one_lecture',
+            'relative_attendance_for_one_tutorial',
+            'relative_attendance_for_one_practical',
+            'instructors',
+            'teaching_assistants',
+            'registered_students',
+        )
+
+
+class RestrictedCourseSerializer(serializers.ModelSerializer):
+    instructors = InstructorClassEventCoordinatorUserSerializer(many=True, read_only=True)
+    teaching_assistants = TeachingAssistantClassEventCoordinatorUserSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Course
+        fields = (
+            'name',
+            'code',
+            'relative_attendance_for_one_lecture',
+            'relative_attendance_for_one_tutorial',
+            'relative_attendance_for_one_practical',
+            'instructors',
+            'teaching_assistants',
         )
 
 
