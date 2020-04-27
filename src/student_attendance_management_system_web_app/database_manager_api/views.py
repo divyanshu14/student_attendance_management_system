@@ -18,6 +18,7 @@ from database_manager.models import(
 from .serializers import (
     AuthTokenSerializer,
     UserSerializer,
+    AdminSerializer,
     StudentUserSerializer,
     StudentSerializer,
     InstructorClassEventCoordinatorUserSerializer,
@@ -27,6 +28,7 @@ from .serializers import (
     CourseSerializer,
     CreateUpdateCourseSerializer,
     RestrictedCourseSerializer,
+    NameCodeCourseSerializer,
     BasicClassEventSerializer,
     ClassEventForCourseSerializer,
     ClassEventOfStudentForCourseSerializer,
@@ -113,21 +115,26 @@ class GetUserDataView(APIView):
             role_permissions.extend([str(permission) for permission in group.permissions.all()])
         response_data = {
             'user': user,
-            'is_admin': is_admin,
-            'is_student': is_student,
-            'is_instructor': is_instructor,
-            'is_teaching_assistant': is_teaching_assistant,
+            # 'is_admin': is_admin,
+            # 'is_student': is_student,
+            # 'is_instructor': is_instructor,
+            # 'is_teaching_assistant': is_teaching_assistant,
             'user_permissions': user_permissions,
             'role_permissions': role_permissions,
         }
+        if is_admin:
+            response_data['user']['admin'] = AdminSerializer(request.user.admin).data
         if is_student:
-            student_for_courses = RestrictedCourseSerializer(Course.objects.filter(registered_students=request.user.student), many=True).data
+            response_data['user']['student'] = StudentSerializer(request.user.student).data
+            student_for_courses = NameCodeCourseSerializer(Course.objects.filter(registered_students=request.user.student), many=True).data
             response_data['student_for_courses'] = student_for_courses
         if is_instructor:
-            instructor_for_courses = CourseSerializer(Course.objects.filter(instructors=request.user.classeventcoordinator.instructor), many=True).data
+            response_data['user']['instructor'] = InstructorSerializer(request.user.classeventcoordinator.instructor).data
+            instructor_for_courses = NameCodeCourseSerializer(Course.objects.filter(instructors=request.user.classeventcoordinator.instructor), many=True).data
             response_data['instructor_for_courses'] = instructor_for_courses
         if is_teaching_assistant:
-            teaching_assistant_for_courses = CourseSerializer(Course.objects.filter(teaching_assistants=request.user.classeventcoordinator.teachingassistant), many=True).data
+            response_data['user']['teachingassistant'] = TeachingAssistantSerializer(request.user.classeventcoordinator.teachingassistant).data
+            teaching_assistant_for_courses = NameCodeCourseSerializer(Course.objects.filter(teaching_assistants=request.user.classeventcoordinator.teachingassistant), many=True).data
             response_data['teaching_assistant_for_courses'] = teaching_assistant_for_courses
         return Response(response_data)
 
@@ -244,18 +251,34 @@ class RetrieveCourseView(generics.RetrieveAPIView):
     lookup_field = 'code'
     permission_classes = (
         IsAuthenticated,
-        DjangoModelPermissionsWithViewPermissionForGET|IsInstructorForGivenCourse|IsTeachingAssistantForGivenCourse,
+        DjangoModelPermissionsWithViewPermissionForGET|IsInstructorForGivenCourse|IsTeachingAssistantForGivenCourse|IsStudentForGivenCourse,
     )
 
-
-class RestrictedRetrieveCourseView(generics.RetrieveAPIView):
-    serializer_class = RestrictedCourseSerializer
-    queryset = Course.objects.all()
-    lookup_field = 'code'
-    permission_classes = (
-        IsAuthenticated,
-        DjangoModelPermissionsWithViewPermissionForGET|IsStudentForGivenCourse|IsInstructorForGivenCourse|IsTeachingAssistantForGivenCourse,
-    )
+    def get_serializer_class(self):
+        is_instructor_for_given_course = bool(
+            self.request.user and
+            hasattr(self.request.user, 'classeventcoordinator') and
+            hasattr(self.request.user.classeventcoordinator, 'instructor') and
+            Course.objects.filter(code=self.kwargs['code']).exists() and
+            (self.request.user.classeventcoordinator.instructor in Course.objects.get(code=self.kwargs['code']).instructors.all())
+        )
+        is_teaching_assistant_for_given_course = bool(
+            self.request.user and
+            hasattr(self.request.user, 'classeventcoordinator') and
+            hasattr(self.request.user.classeventcoordinator, 'teachingassistant') and
+            Course.objects.filter(code=self.kwargs['code']).exists() and
+            (self.request.user.classeventcoordinator.teachingassistant in Course.objects.get(code=self.kwargs['code']).teaching_assistants.all())
+        )
+        is_student_for_given_course = bool(
+            self.request.user and
+            hasattr(self.request.user, 'student') and
+            Course.objects.filter(code=self.kwargs['code']).exists() and
+            (self.request.user.student in Course.objects.get(code=self.kwargs['code']).registered_students.all())
+        )
+        if self.request.user.has_perm('database_manager.view_course') or is_instructor_for_given_course or is_teaching_assistant_for_given_course:
+            return CourseSerializer
+        elif is_student_for_given_course:
+            return RestrictedCourseSerializer
 
 
 class UpdateCourseView(generics.UpdateAPIView):

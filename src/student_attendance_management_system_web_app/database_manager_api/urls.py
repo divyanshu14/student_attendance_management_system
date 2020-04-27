@@ -22,7 +22,6 @@ urlpatterns = [
     path('list_course/', views.ListCourseView.as_view(), name='list_course'),
     path('create_course/', views.CreateCourseView.as_view(), name='create_course'),
     path('retrieve_course/<str:code>/', views.RetrieveCourseView.as_view(), name='retrieve_course'),
-    path('restricted_retrieve_course/<str:code>/', views.RestrictedRetrieveCourseView.as_view(), name='restricted_retrieve_course'),
     path('update_course/<str:code>/', views.UpdateCourseView.as_view(), name='update_course'),
     path('destroy_course/<str:code>/', views.DestroyCourseView.as_view(), name='destroy_course'),
     # class event

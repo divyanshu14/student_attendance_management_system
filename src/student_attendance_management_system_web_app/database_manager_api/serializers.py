@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 from database_manager.models import (
+    Admin,
     Student,
     ClassEventCoordinator,
     Instructor,
@@ -74,6 +75,20 @@ class UserSerializer(serializers.ModelSerializer):
         instance.email = validated_data.get('email', instance.email)
         instance.save()
         return instance
+
+
+# Admin Serializer
+# ----------------
+
+
+class AdminSerializer(serializers.ModelSerializer):
+    # If we don't specify this, API will expect primary key instead of email thereby raising
+    # "Incorrect type. Expected pk value, received str." if we provide email.
+    user = serializers.SlugRelatedField(slug_field='email', queryset=get_user_model().objects.filter(student__isnull=True))
+
+    class Meta:
+        model = Admin
+        fields = ('user', 'admin_id',)
 
 
 # Student Serializers
@@ -301,6 +316,12 @@ class RestrictedCourseSerializer(serializers.ModelSerializer):
             'instructors',
             'teaching_assistants',
         )
+
+
+class NameCodeCourseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Course
+        fields = ('name', 'code',)
 
 
 # Class Event Serializers
