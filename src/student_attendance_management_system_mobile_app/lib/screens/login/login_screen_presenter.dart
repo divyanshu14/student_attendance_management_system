@@ -16,10 +16,10 @@ class LoginScreenPresenter {
 
   doLogin(String username, String password) {
     _api.login(username, password).then((value) {
-      log('success');
+      log('Login Successful');
       _view.onLoginSuccess();
-    }).catchError((Exception error) {
-      log('Login Login unsuccessful');
+    }).catchError((Object error) {
+      log('Login unsuccessful');
     _view.onLoginError(error.toString());
     } );
   }

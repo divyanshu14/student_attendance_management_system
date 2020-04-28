@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:sams/theme/app_theme.dart';
 
-class Rate extends StatelessWidget {
+class RateScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

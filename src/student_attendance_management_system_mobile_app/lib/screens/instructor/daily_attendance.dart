@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sams/theme/app_theme.dart';
-import 'package:sams/ui/custom_drawer/calendar/calendar_popup_view.dart';
+import 'package:sams/ui/calendar/calendar_popup_view.dart';
 
 class DailyAttendance extends StatefulWidget {
   @override

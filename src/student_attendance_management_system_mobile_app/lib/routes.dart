@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
-// import 'package:sams/screens/home/home_screen.dart';
+import 'package:sams/onStartup.dart';
+import 'package:sams/screens/dashboard/navigation_home_screen.dart';
 import 'package:sams/screens/login/login_screen.dart';
+import 'package:sams/utils/constants.dart';
 
-final routes = {
-  '/login':         (BuildContext context) => new LoginScreen(),
-  // '/home':         (BuildContext context) => new HomeScreen(),
-  '/':          (BuildContext context) => new LoginScreen(),
-};
+class Router {
+  Route<dynamic> generateRoute(RouteSettings settings) {
+    switch(settings.name){
+      case Constants.STARTUP_ROUTE: return MaterialPageRoute(builder: (_) => OnStartup());
+      case Constants.LOGIN_ROUTE: return MaterialPageRoute(builder: (_)=> LoginScreen());
+      case Constants.DASHBOARD_ROUTE: return MaterialPageRoute(builder: (_)=> NavigationHomeScreen());
+      default:
+      return MaterialPageRoute(builder: (_)=> OnStartup());
+    }
+  }
+}

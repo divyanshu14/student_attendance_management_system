@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:sams/models/course.dart';
 import 'package:sams/ui/course_card.dart';
 
-class HomePage extends StatefulWidget {
+class CoursesDashboard extends StatefulWidget {
   // const InstructorHomePage({Key key}) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _CoursesDashboardState createState() => _CoursesDashboardState();
 }
 
-class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+class _CoursesDashboardState extends State<CoursesDashboard> with TickerProviderStateMixin {
   List<Course> courseList = [
     Course(name: 'Software Engineering',code: 'CS302',),
     Course(name: 'Computer Networks',code: 'CS303',),

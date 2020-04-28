@@ -1,10 +1,9 @@
 import 'package:sams/theme/app_theme.dart';
 import 'package:sams/ui/custom_drawer/drawer_user_controller.dart';
-import 'package:sams/ui/custom_drawer/home_drawer.dart';
+import 'package:sams/screens/dashboard/home_drawer.dart';
 import 'package:sams/screens/more/about.dart';
 import 'package:sams/screens/more/feedback.dart';
-import 'package:sams/screens/common/home_screen.dart';
-// import 'package:sams/invite_friend_screen.dart';
+import 'package:sams/screens/dashboard/courses_dashboard.dart';
 import 'package:flutter/material.dart';
 
 class NavigationHomeScreen extends StatefulWidget {
@@ -16,11 +15,14 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
   Widget screenView;
   DrawerIndex drawerIndex;
   AnimationController sliderAnimationController;
+  final CoursesDashboard coursesDashboard= CoursesDashboard();
+  final AboutScreen aboutScreen= AboutScreen();
+  final FeedbackScreen feedbackScreen = FeedbackScreen();
 
   @override
   void initState() {
     drawerIndex = DrawerIndex.HOME;
-    screenView = new HomePage();
+    screenView = coursesDashboard;
     super.initState();
   }
 
@@ -54,22 +56,16 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
       drawerIndex = drawerIndexdata;
       if (drawerIndex == DrawerIndex.HOME) {
         setState(() {
-          screenView = HomePage();
+          screenView = coursesDashboard;
         });
       } else if (drawerIndex == DrawerIndex.About) {
         setState(() {
-          screenView = About();
+          screenView = aboutScreen;
         });
       } else if (drawerIndex == DrawerIndex.FeedBack) {
         setState(() {
-          screenView = FeedbackScreen();
+          screenView = feedbackScreen;
         });
-      } else if (drawerIndex == DrawerIndex.Invite) {
-        // setState(() {
-        //   screenView = InviteFriend();
-        // });
-      } else {
-        //do in your way......
       }
     }
   }

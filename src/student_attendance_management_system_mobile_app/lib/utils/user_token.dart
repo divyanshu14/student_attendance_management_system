@@ -9,7 +9,12 @@ class UserToken {
   static Future<bool> fetchToken()async {
     final SharedPreferences _prefs = await SharedPreferences.getInstance() ;
     _token=_prefs.getString(Constants.TOKEN);
-    return _token==null;
+    return _token!=null;
+  }
+
+  static Future<bool> removeToken()async{
+    final SharedPreferences _prefs=await SharedPreferences.getInstance();
+    return _prefs.remove(Constants.TOKEN);
   }
 
   static Future <bool> setToken(String token) async{

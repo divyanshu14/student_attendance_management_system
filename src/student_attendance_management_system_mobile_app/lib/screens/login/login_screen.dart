@@ -1,10 +1,8 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:sams/screens/common/home_screen.dart';
 import 'package:sams/screens/login/forget_password.dart';
-import 'package:sams/screens/root/navigation_home_screen.dart';
 import 'package:sams/theme/app_theme.dart';
+import 'package:sams/utils/constants.dart';
 
 import 'login_screen_presenter.dart';
 
@@ -24,13 +22,11 @@ class _LoginScreenState extends State<LoginScreen> implements LoginScreenContrac
 
   _LoginScreenState() {
     _presenter = new LoginScreenPresenter(this);
-    // var authStateProvider = new AuthStateProvider();
-    // authStateProvider.subscribe(this);
   }
 
   void _submit() {
     final form = _formKey.currentState;
-    log('submit');
+    log('sending credentials');
     if (form.validate()) {
       setState(() => _isLoading = true);
       form.save();
@@ -45,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> implements LoginScreenContrac
 
   @override
   void onLoginError(String errorTxt) {
-    _showSnackBar("Invalid Credentials");
+    _showSnackBar("Unable To Login");
     setState(() => _isLoading = false);
   }
 
@@ -53,23 +49,13 @@ class _LoginScreenState extends State<LoginScreen> implements LoginScreenContrac
   void onLoginSuccess() async {
     _showSnackBar('Successful');
     setState(() => _isLoading = false);
-    Navigator.push(context, MaterialPageRoute(builder: (context)=>NavigationHomeScreen()));
-
-    // var db = new DatabaseHelper();
-    // await db.saveUser(user);
-    // var authStateProvider = new AuthStateProvider();
-    // authStateProvider.notify(AuthState.LOGGED_IN);
+    Navigator.pushNamedAndRemoveUntil(context, Constants.DASHBOARD_ROUTE, ModalRoute.withName(Constants.STARTUP_ROUTE));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      // appBar: AppBar(
-      //   backgroundColor: Colors.transparent,
-      //   elevation: 0.0,
-        
-      // ),
       body: Container(
         width: double.infinity,
         child: Form(
@@ -211,13 +197,13 @@ class _LoginScreenState extends State<LoginScreen> implements LoginScreenContrac
               Radius.circular(32.0),
             ),
             onTap: () {
-              // if (_formKey.currentState.validate()) {
-              //   // Scaffold
-              //   //     .of(context)
-              //   //     .showSnackBar(SnackBar(content: Text('Processing Data')));
-              //   // Navigator.push(context, MaterialPageRoute(builder: (context)=>NavigationHomeScreen()));
-              // }
+              if (_formKey.currentState.validate()) {
                _submit();
+                // Scaffold
+                //     .of(context)
+                //     .showSnackBar(SnackBar(content: Text('Processing Data')));
+                // Navigator.push(context, MaterialPageRoute(builder: (context)=>NavigationHomeScreen()));
+              }
                          
             },
             child: Padding(

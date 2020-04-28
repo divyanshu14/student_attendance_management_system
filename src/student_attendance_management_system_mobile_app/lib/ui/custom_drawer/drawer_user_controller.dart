@@ -1,5 +1,5 @@
 import 'package:sams/theme/app_theme.dart';
-import 'package:sams/ui/custom_drawer/home_drawer.dart';
+import 'package:sams/screens/dashboard/home_drawer.dart';
 import 'package:flutter/material.dart';
 
 class DrawerUserController extends StatefulWidget {

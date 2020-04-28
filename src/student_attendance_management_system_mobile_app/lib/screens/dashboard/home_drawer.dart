@@ -1,6 +1,8 @@
 import 'package:sams/screens/login/login_screen.dart';
 import 'package:sams/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:sams/utils/constants.dart';
+import 'package:sams/utils/user_token.dart';
 
 class HomeDrawer extends StatefulWidget {
   const HomeDrawer(
@@ -44,6 +46,14 @@ class _HomeDrawerState extends State<HomeDrawer> {
         icon: Icon(Icons.info),
       ),
     ];
+  }
+
+  void signOut()async{
+    Future<bool> result= UserToken.removeToken();
+    result.then((value){
+      if(value)Navigator.pushNamedAndRemoveUntil(context, Constants.LOGIN_ROUTE, ModalRoute.withName(Constants.STARTUP_ROUTE));
+    });
+     
   }
 
   @override
@@ -152,9 +162,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   Icons.power_settings_new,
                   color: Colors.red,
                 ),
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
-                },
+                onTap: signOut,
               ),
               SizedBox(
                 height: MediaQuery.of(context).padding.bottom,

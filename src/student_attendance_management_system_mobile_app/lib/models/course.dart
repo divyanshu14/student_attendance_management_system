@@ -1,7 +1,7 @@
 
-import 'package:sams/models/student.dart';
+// import 'package:sams/models/student.dart';
 
-import 'instructor.dart';
+// import 'instructor.dart';
 
 class Course{
   final String name;
@@ -9,9 +9,9 @@ class Course{
   // final int lectureAttendance;
   // final int practicalAttendance;
   // final int tutoiralAttendace;
-  List<Instructor> instructorsList;
-  List<Student> studentList;
-  List<Instructor> teachingAssistantList;
+  // List<Instructor> instructorsList;
+  // List<Student> studentList;
+  // List<Instructor> teachingAssistantList;
 
   Course({this.name,this.code});
   // Course({this.name,this.code,this.lectureAttendance,this.practicalAttendance,this.tutoiralAttendace});
