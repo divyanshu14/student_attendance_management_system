@@ -105,37 +105,40 @@ class GetUserDataView(APIView):
         user = UserSerializer(request.user).data
         is_admin = hasattr(request.user, 'admin')
         is_student = hasattr(request.user, 'student')
-        is_instructor, is_teaching_assistant = False, False
-        if hasattr(request.user, 'classeventcoordinator'):
+        is_classeventcoordinator = hasattr(request.user, 'classeventcoordinator')
+        is_instructor, is_teachingassistant = False, False
+        if is_classeventcoordinator:
             is_instructor = hasattr(request.user.classeventcoordinator, 'instructor')
-            is_teaching_assistant = hasattr(request.user.classeventcoordinator, 'teachingassistant')
+            is_teachingassistant = hasattr(request.user.classeventcoordinator, 'teachingassistant')
         user_permissions = [str(permission) for permission in request.user.user_permissions.all()]
         role_permissions = []
         for group in request.user.groups.all():
             role_permissions.extend([str(permission) for permission in group.permissions.all()])
         response_data = {
             'user': user,
-            # 'is_admin': is_admin,
-            # 'is_student': is_student,
-            # 'is_instructor': is_instructor,
-            # 'is_teaching_assistant': is_teaching_assistant,
             'user_permissions': user_permissions,
             'role_permissions': role_permissions,
         }
         if is_admin:
             response_data['user']['admin'] = AdminSerializer(request.user.admin).data
+            del response_data['user']['admin']['user']
         if is_student:
             response_data['user']['student'] = StudentSerializer(request.user.student).data
+            del response_data['user']['student']['user']
             student_for_courses = NameCodeCourseSerializer(Course.objects.filter(registered_students=request.user.student), many=True).data
             response_data['student_for_courses'] = student_for_courses
-        if is_instructor:
-            response_data['user']['instructor'] = InstructorSerializer(request.user.classeventcoordinator.instructor).data
-            instructor_for_courses = NameCodeCourseSerializer(Course.objects.filter(instructors=request.user.classeventcoordinator.instructor), many=True).data
-            response_data['instructor_for_courses'] = instructor_for_courses
-        if is_teaching_assistant:
-            response_data['user']['teachingassistant'] = TeachingAssistantSerializer(request.user.classeventcoordinator.teachingassistant).data
-            teaching_assistant_for_courses = NameCodeCourseSerializer(Course.objects.filter(teaching_assistants=request.user.classeventcoordinator.teachingassistant), many=True).data
-            response_data['teaching_assistant_for_courses'] = teaching_assistant_for_courses
+        if is_classeventcoordinator:
+            response_data['user']['classeventcoordinator'] = {}
+            if is_instructor:
+                response_data['user']['classeventcoordinator']['instructor'] = InstructorSerializer(request.user.classeventcoordinator.instructor).data
+                del response_data['user']['classeventcoordinator']['instructor']['class_event_coordinator']
+                instructor_for_courses = NameCodeCourseSerializer(Course.objects.filter(instructors=request.user.classeventcoordinator.instructor), many=True).data
+                response_data['instructor_for_courses'] = instructor_for_courses
+            if is_teachingassistant:
+                response_data['user']['classeventcoordinator']['teachingassistant'] = TeachingAssistantSerializer(request.user.classeventcoordinator.teachingassistant).data
+                del response_data['user']['classeventcoordinator']['teachingassistant']['class_event_coordinator']
+                teaching_assistant_for_courses = NameCodeCourseSerializer(Course.objects.filter(teaching_assistants=request.user.classeventcoordinator.teachingassistant), many=True).data
+                response_data['teaching_assistant_for_courses'] = teaching_assistant_for_courses
         return Response(response_data)
 
 
