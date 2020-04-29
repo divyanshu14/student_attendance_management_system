@@ -1,9 +1,14 @@
 import 'dart:io';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sams/blocs/authentication/authentication_bloc.dart';
+import 'package:sams/blocs/authentication/authentication_event.dart';
+import 'package:sams/onStartup.dart';
 import 'package:sams/routes.dart';
 import 'package:sams/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sams/utils/constants.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,16 +27,20 @@ class MyApp extends StatelessWidget {
       systemNavigationBarDividerColor: Colors.transparent,
       systemNavigationBarIconBrightness: Brightness.dark,
     ));
-    return MaterialApp(
-      title: Constants.APP_TITLE,
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.cyan,
-        textTheme: AppTheme.textTheme,
-      ),
-      onGenerateRoute: Router().generateRoute,
-      initialRoute: Constants.STARTUP_ROUTE,
-
+    return BlocProvider<AuthenticationBloc>(
+      create: (context){
+        return AuthenticationBloc()..add(AppStarted());
+      },
+      child:  MaterialApp(
+        title: Constants.APP_TITLE,
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.cyan,
+          textTheme: AppTheme.textTheme,
+        ),
+        // onGenerateRoute: Router().generateRoute,
+        home: OnStartup(),
+      )
     );
   }
 }

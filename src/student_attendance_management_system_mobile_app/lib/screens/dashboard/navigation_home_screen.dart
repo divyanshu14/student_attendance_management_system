@@ -3,7 +3,7 @@ import 'package:sams/ui/custom_drawer/drawer_user_controller.dart';
 import 'package:sams/screens/dashboard/home_drawer.dart';
 import 'package:sams/screens/more/about.dart';
 import 'package:sams/screens/more/feedback.dart';
-import 'package:sams/screens/dashboard/courses_dashboard.dart';
+import 'package:sams/screens/dashboard/dashboard_home.dart';
 import 'package:flutter/material.dart';
 
 class NavigationHomeScreen extends StatefulWidget {
@@ -15,14 +15,14 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
   Widget screenView;
   DrawerIndex drawerIndex;
   AnimationController sliderAnimationController;
-  final CoursesDashboard coursesDashboard= CoursesDashboard();
+  final DashboardHome dashboardHome= DashboardHome();
   final AboutScreen aboutScreen= AboutScreen();
   final FeedbackScreen feedbackScreen = FeedbackScreen();
 
   @override
   void initState() {
     drawerIndex = DrawerIndex.HOME;
-    screenView = coursesDashboard;
+    screenView = dashboardHome;
     super.initState();
   }
 
@@ -56,7 +56,7 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
       drawerIndex = drawerIndexdata;
       if (drawerIndex == DrawerIndex.HOME) {
         setState(() {
-          screenView = coursesDashboard;
+          screenView = dashboardHome;
         });
       } else if (drawerIndex == DrawerIndex.About) {
         setState(() {

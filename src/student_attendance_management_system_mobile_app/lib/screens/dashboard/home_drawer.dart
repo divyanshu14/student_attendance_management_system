@@ -1,8 +1,11 @@
-import 'package:sams/screens/login/login_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sams/blocs/authentication/authentication_bloc.dart';
+import 'package:sams/blocs/authentication/authentication_event.dart';
+// import 'package:sams/screens/login/login_screen.dart';
 import 'package:sams/theme/app_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:sams/utils/constants.dart';
-import 'package:sams/utils/user_token.dart';
+// import 'package:sams/utils/constants.dart';
+// import 'package:sams/utils/user_token.dart';
 
 class HomeDrawer extends StatefulWidget {
   const HomeDrawer(
@@ -49,11 +52,11 @@ class _HomeDrawerState extends State<HomeDrawer> {
   }
 
   void signOut()async{
-    Future<bool> result= UserToken.removeToken();
-    result.then((value){
-      if(value)Navigator.pushNamedAndRemoveUntil(context, Constants.LOGIN_ROUTE, ModalRoute.withName(Constants.STARTUP_ROUTE));
-    });
-     
+    // Future<bool> result= UserToken.removeToken();
+    // result.then((value){
+    //   if(value)Navigator.pushNamedAndRemoveUntil(context, Constants.LOGIN_ROUTE, ModalRoute.withName(Constants.STARTUP_ROUTE));
+    // });
+    BlocProvider.of<AuthenticationBloc>(context).add(LoggedOut());
   }
 
   @override

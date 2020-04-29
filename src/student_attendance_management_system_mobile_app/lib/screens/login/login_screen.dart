@@ -1,85 +1,126 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sams/blocs/login/login_bloc.dart';
+import 'package:sams/blocs/login/login_events.dart';
+import 'package:sams/blocs/login/login_state.dart';
 import 'package:sams/screens/login/forget_password.dart';
 import 'package:sams/theme/app_theme.dart';
 import 'package:sams/utils/constants.dart';
 
 import 'login_screen_presenter.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginForm extends StatefulWidget {
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _LoginFormState createState() => _LoginFormState();
 }
 
-class _LoginScreenState extends State<LoginScreen> implements LoginScreenContract{
+class _LoginFormState extends State<LoginForm> {
 
-  bool _isLoading=false;
-  LoginScreenPresenter _presenter;
-  final scaffoldKey = new GlobalKey<ScaffoldState>();
   final _formKey = new GlobalKey<FormState>();
-  String _username,_password;
+  String _email,_password;
 
 
-  _LoginScreenState() {
-    _presenter = new LoginScreenPresenter(this);
-  }
+  // _LoginScreenState() {
+  //   _presenter = new LoginScreenPresenter(this);
+  // }
 
-  void _submit() {
-    final form = _formKey.currentState;
-    log('sending credentials');
-    if (form.validate()) {
-      setState(() => _isLoading = true);
-      form.save();
-      _presenter.doLogin(_username, _password);
-    }
-  }
+  // void _submit() {
+  //   final form = _formKey.currentState;
+  //   log('sending credentials');
+  //   if (form.validate()) {
+  //     setState(() => _isLoading = true);
+  //     form.save();
+  //     // _presenter.doLogin(_username, _password);
+  //   }
+  // }
+
+
+  // @override
+  // void onLoginError(String errorTxt) {
+  //   _showSnackBar("Unable To Login");
+  //   setState(() => _isLoading = false);
+  // }
+
+  // @override
+  // void onLoginSuccess() async {
+  //   _showSnackBar('Successful');
+  //   setState(() => _isLoading = false);
+  //   Navigator.pushNamedAndRemoveUntil(context, Constants.DASHBOARD_ROUTE, ModalRoute.withName(Constants.STARTUP_ROUTE));
+  // }
 
   void _showSnackBar(String text) {
-    scaffoldKey.currentState
+    Scaffold.of(context)
         .showSnackBar(new SnackBar(content: new Text(text), duration: Duration(seconds: 1), backgroundColor: AppTheme.buildLightTheme().primaryColor,));
   }
 
-  @override
-  void onLoginError(String errorTxt) {
-    _showSnackBar("Unable To Login");
-    setState(() => _isLoading = false);
-  }
+  void _onLoginButtonPressed() {
+    _formKey.currentState.save();
+      BlocProvider.of<LoginBloc>(context).add(
+        LoginButtonPressed(
+          email: _email,
+          password: _password,
+        ),
+      );
+    }
 
-  @override
-  void onLoginSuccess() async {
-    _showSnackBar('Successful');
-    setState(() => _isLoading = false);
-    Navigator.pushNamedAndRemoveUntil(context, Constants.DASHBOARD_ROUTE, ModalRoute.withName(Constants.STARTUP_ROUTE));
-  }
 
-  @override
+@override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: scaffoldKey,
-      body: Container(
-        width: double.infinity,
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
+    return BlocListener<LoginBloc, LoginState>(
+      listener: (context, state) {
+        if (state is LoginFailure) {
+          _showSnackBar(state.error);
+        }
+      },
+      child: BlocBuilder<LoginBloc, LoginState>(
+        builder: (context, state) {
+          return Form(
+            key: _formKey,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(top :100.0,right: 40,left:40,bottom:100),
-                  child: Image.asset('assets/logo.png'),
-                  ),
+              children: [
                 _getUserIdField(context),
                 _getPasswordField(context),
                 _getLoginButton(context),  
-                _getForgetButton(context),
-                ],
+                Container(
+                  child: state is LoginLoading
+                      ? CircularProgressIndicator()
+                      : null,
+                ),
+              ],
             ),
-          ),
-        ),
-      )
+          );
+        },
+      ),
     );
   }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     key: scaffoldKey,
+  //     body: Container(
+  //       width: double.infinity,
+  //       child: Form(
+  //         key: _formKey,
+  //         child: SingleChildScrollView(
+  //           child: Column(
+  //             mainAxisAlignment: MainAxisAlignment.center,
+  //             crossAxisAlignment: CrossAxisAlignment.center,
+  //             children: <Widget>[
+  //               Padding(
+  //                 padding: EdgeInsets.only(top :100.0,right: 40,left:40,bottom:100),
+  //                 child: Image.asset('assets/logo.png'),
+  //                 ),
+  //               
+  //               _getForgetButton(context),
+  //               ],
+  //           ),
+  //         ),
+  //       ),
+  //     )
+  //   );
+  // }
 
   Widget _getPasswordField(BuildContext context){
     return Padding(
@@ -167,7 +208,7 @@ class _LoginScreenState extends State<LoginScreen> implements LoginScreenContrac
               }
               return null;
             },
-            onSaved: (value)=>_username=value,
+            onSaved: (value)=>_email=value,
           ),
         ),
       ),
@@ -198,11 +239,8 @@ class _LoginScreenState extends State<LoginScreen> implements LoginScreenContrac
             ),
             onTap: () {
               if (_formKey.currentState.validate()) {
-               _submit();
-                // Scaffold
-                //     .of(context)
-                //     .showSnackBar(SnackBar(content: Text('Processing Data')));
-                // Navigator.push(context, MaterialPageRoute(builder: (context)=>NavigationHomeScreen()));
+
+               _onLoginButtonPressed();
               }
                          
             },

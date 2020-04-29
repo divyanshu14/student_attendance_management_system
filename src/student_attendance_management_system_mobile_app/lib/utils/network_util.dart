@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'package:http/http.dart' as http;
 
 // TODO: implement custom exception handling for different status codes.
@@ -21,6 +22,9 @@ class NetworkUtil {
         throw new Exception("Error while fetching data");
       }
       return _decoder.convert(responseBody);
+    })
+    .catchError((error){
+      throw Exception("Unable to Connect");
     });
   }
 
