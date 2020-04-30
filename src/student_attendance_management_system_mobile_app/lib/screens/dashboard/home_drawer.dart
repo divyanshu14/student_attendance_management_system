@@ -1,11 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sams/blocs/authentication/authentication_bloc.dart';
 import 'package:sams/blocs/authentication/authentication_event.dart';
-// import 'package:sams/screens/login/login_screen.dart';
+import 'package:sams/blocs/user_data/user_data_bloc.dart';
+import 'package:sams/blocs/user_data/user_data_state.dart';
 import 'package:sams/theme/app_theme.dart';
 import 'package:flutter/material.dart';
-// import 'package:sams/utils/constants.dart';
-// import 'package:sams/utils/user_token.dart';
 
 class HomeDrawer extends StatefulWidget {
   const HomeDrawer(
@@ -25,6 +24,12 @@ class HomeDrawer extends StatefulWidget {
 
 class _HomeDrawerState extends State<HomeDrawer> {
   List<DrawerList> drawerList;
+  final TextStyle userNameTextStyle = TextStyle(
+    fontWeight: FontWeight.w600,
+    color: AppTheme.grey,
+    fontSize: 18,
+  );
+
   @override
   void initState() {
     setdDrawerListArray();
@@ -57,6 +62,15 @@ class _HomeDrawerState extends State<HomeDrawer> {
     //   if(value)Navigator.pushNamedAndRemoveUntil(context, Constants.LOGIN_ROUTE, ModalRoute.withName(Constants.STARTUP_ROUTE));
     // });
     BlocProvider.of<AuthenticationBloc>(context).add(LoggedOut());
+  }
+
+
+
+  Widget userNameText(String name){
+    return Text(
+      name,
+      style: userNameTextStyle,
+    );
   }
 
   @override
@@ -114,13 +128,16 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 8, left: 4),
-                    child: Text(
-                      'Welcome Name',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: AppTheme.grey,
-                        fontSize: 18,
-                      ),
+                    child: BlocBuilder<UserDataBloc,UserDataState>(
+                      builder: (context,state){
+                        if (state is UserDataSuccess){
+                          return userNameText('Welcome '+state.userInfo.user.firstName);
+                        }
+                        if(state is UserDataFailure){
+                          return userNameText("failed");
+                        }
+                        else return userNameText("Loading...");
+                      }
                     ),
                   ),
                 ],

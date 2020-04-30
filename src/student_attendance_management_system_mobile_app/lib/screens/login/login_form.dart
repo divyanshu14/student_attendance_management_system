@@ -1,14 +1,10 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sams/blocs/login/login_bloc.dart';
 import 'package:sams/blocs/login/login_events.dart';
 import 'package:sams/blocs/login/login_state.dart';
-import 'package:sams/screens/login/forget_password.dart';
 import 'package:sams/theme/app_theme.dart';
-import 'package:sams/utils/constants.dart';
 
-import 'login_screen_presenter.dart';
 
 class LoginForm extends StatefulWidget {
   @override
@@ -19,53 +15,25 @@ class _LoginFormState extends State<LoginForm> {
 
   final _formKey = new GlobalKey<FormState>();
   String _email,_password;
-
-
-  // _LoginScreenState() {
-  //   _presenter = new LoginScreenPresenter(this);
-  // }
-
-  // void _submit() {
-  //   final form = _formKey.currentState;
-  //   log('sending credentials');
-  //   if (form.validate()) {
-  //     setState(() => _isLoading = true);
-  //     form.save();
-  //     // _presenter.doLogin(_username, _password);
-  //   }
-  // }
-
-
-  // @override
-  // void onLoginError(String errorTxt) {
-  //   _showSnackBar("Unable To Login");
-  //   setState(() => _isLoading = false);
-  // }
-
-  // @override
-  // void onLoginSuccess() async {
-  //   _showSnackBar('Successful');
-  //   setState(() => _isLoading = false);
-  //   Navigator.pushNamedAndRemoveUntil(context, Constants.DASHBOARD_ROUTE, ModalRoute.withName(Constants.STARTUP_ROUTE));
-  // }
+  String initialPassword ='new_pass_123';
+  String initialUserId='2017csb1062@iitrpr.ac.in';
 
   void _showSnackBar(String text) {
     Scaffold.of(context)
-        .showSnackBar(new SnackBar(content: new Text(text), duration: Duration(seconds: 1), backgroundColor: AppTheme.buildLightTheme().primaryColor,));
+      .showSnackBar(new SnackBar(content: new Text(text), duration: Duration(seconds: 1), backgroundColor: AppTheme.buildLightTheme().primaryColor,));
   }
 
   void _onLoginButtonPressed() {
     _formKey.currentState.save();
-      BlocProvider.of<LoginBloc>(context).add(
-        LoginButtonPressed(
-          email: _email,
-          password: _password,
-        ),
-      );
-    }
+    BlocProvider.of<LoginBloc>(context).add(
+      LoginButtonPressed(
+        email: _email,
+        password: _password,
+      ),
+    );
+  }
 
-
-@override
+  @override
   Widget build(BuildContext context) {
     return BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
@@ -95,33 +63,6 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     key: scaffoldKey,
-  //     body: Container(
-  //       width: double.infinity,
-  //       child: Form(
-  //         key: _formKey,
-  //         child: SingleChildScrollView(
-  //           child: Column(
-  //             mainAxisAlignment: MainAxisAlignment.center,
-  //             crossAxisAlignment: CrossAxisAlignment.center,
-  //             children: <Widget>[
-  //               Padding(
-  //                 padding: EdgeInsets.only(top :100.0,right: 40,left:40,bottom:100),
-  //                 child: Image.asset('assets/logo.png'),
-  //                 ),
-  //               
-  //               _getForgetButton(context),
-  //               ],
-  //           ),
-  //         ),
-  //       ),
-  //     )
-  //   );
-  // }
-
   Widget _getPasswordField(BuildContext context){
     return Padding(
       padding: const EdgeInsets.only(
@@ -143,8 +84,8 @@ class _LoginFormState extends State<LoginForm> {
           padding: const EdgeInsets.only(
               left: 16, right: 16, top: 4, bottom: 4),
           child: TextFormField(
+            initialValue: initialPassword,
             obscureText: true,
-            onChanged: (String txt) {},
             style: const TextStyle(
               fontSize: 18,
             ),
@@ -161,10 +102,8 @@ class _LoginFormState extends State<LoginForm> {
               return null;
             },
             keyboardType: TextInputType.visiblePassword,
-
             onSaved: (value)=>_password=value,
           ),
-
         ),
       ),
     );
@@ -191,7 +130,7 @@ class _LoginFormState extends State<LoginForm> {
           padding: const EdgeInsets.only(
               left: 16, right: 16, top: 4, bottom: 4),
           child: TextFormField(
-            onChanged: (String txt) {},
+            initialValue: initialUserId,
             style: const TextStyle(
               fontSize: 18,
             ),
@@ -254,31 +193,6 @@ class _LoginFormState extends State<LoginForm> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _getForgetButton(BuildContext context){
-    return Padding(
-      padding: EdgeInsets.all(20),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.transparent,
-
-        ),
-        child: InkWell(
-          highlightColor: AppTheme.buildLightTheme().highlightColor,
-          splashColor: AppTheme.buildLightTheme().splashColor,
-          child: Text(
-            'Forgot Password ?',
-            style: AppTheme.body1
-          ),
-          onTap: (){
-              FocusScope.of(context).requestFocus(FocusNode());
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>ForgetPassword()));
-          },
-        ),
-      ),
-
     );
   }
 }

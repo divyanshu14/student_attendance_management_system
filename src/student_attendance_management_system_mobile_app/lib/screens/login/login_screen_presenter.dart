@@ -1,37 +1,10 @@
-// import 'dart:developer';
-
-// import 'package:sams/services/rest_ds.dart';
-
-// // handles logic behind login screen
-
-// abstract class LoginScreenContract {
-//   void onLoginSuccess();
-//   void onLoginError(String errorTxt);
-// }
-
-// class LoginScreenPresenter {
-//   LoginScreenContract _view;
-
-//   LoginScreenPresenter(this._view);
-
-//   doLogin(String username, String password) {
-//     RestDatasource.login(username, password).then((value) {
-//       log('Login Successful');
-//       _view.onLoginSuccess();
-//     }).catchError((Object error) {
-//       log('Login unsuccessful');
-//     _view.onLoginError(error.toString());
-//     } );
-//   }
-// }
-
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sams/blocs/authentication/authentication_bloc.dart';
 import 'package:sams/blocs/login/login_bloc.dart';
 import 'package:sams/screens/login/forget_password.dart';
-import 'package:sams/screens/login/login_screen.dart';
+import 'package:sams/screens/login/login_form.dart';
 import 'package:sams/theme/app_theme.dart';
 
 
@@ -52,7 +25,7 @@ class LoginPage extends StatelessWidget {
                 padding: EdgeInsets.only(top :100.0,right: 40,left:40,bottom:100),
                 child: Image.asset('assets/logo.png'),
                 ),
-            BlocProvider(
+            BlocProvider<LoginBloc>(
               create: (context) {
                 return LoginBloc(
                   authenticationBloc: BlocProvider.of<AuthenticationBloc>(context),
@@ -66,9 +39,8 @@ class LoginPage extends StatelessWidget {
       ),
     );
   }
-}
 
-Widget _getForgetButton(BuildContext context){
+  Widget _getForgetButton(BuildContext context){
     return Padding(
       padding: EdgeInsets.all(20),
       child: Container(
@@ -89,6 +61,6 @@ Widget _getForgetButton(BuildContext context){
           },
         ),
       ),
-
     );
   }
+}

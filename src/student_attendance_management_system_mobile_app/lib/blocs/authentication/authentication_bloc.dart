@@ -12,9 +12,8 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
 
   
 @override
-Stream<AuthenticationState> mapEventToState(
-  AuthenticationEvent event,
-) async* {
+Stream<AuthenticationState> mapEventToState( AuthenticationEvent event,) async* {
+  
   if (event is AppStarted) {
     final bool hasToken = await UserToken.fetchToken();
 

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:meta/meta.dart';
 import 'package:bloc/bloc.dart';
@@ -29,7 +28,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           event.email,
           event.password,
         );
-
         authenticationBloc.add(LoggedIn(token: token));
         yield LoginInitial();
       } catch (error) {

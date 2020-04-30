@@ -1,3 +1,6 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sams/blocs/user_data/user_data_bloc.dart';
+import 'package:sams/blocs/user_data/user_data_state.dart';
 import 'package:sams/models/user.dart';
 import 'package:sams/services/rest_ds.dart';
 import 'package:sams/theme/app_theme.dart';
@@ -13,11 +16,11 @@ class DashboardHome extends StatefulWidget {
 }
 
 class _DashboardHomeState extends State<DashboardHome> with TickerProviderStateMixin {
-  List<Course> courseList = [
-    Course(name: 'Software Engineering',code: 'CS302',),
-    Course(name: 'Computer Networks',code: 'CS303',),
-    Course(name: 'Database Managemnet Systems',code: 'CS301',),
-  ];
+  // List<Course> courseList = [
+  //   Course(name: 'Software Engineering',code: 'CS302',),
+  //   Course(name: 'Computer Networks',code: 'CS303',),
+  //   Course(name: 'Database Managemnet Systems',code: 'CS301',),
+  // ];
   AnimationController animationController;
   Future<User> user;
   bool multiple = true;
@@ -57,15 +60,13 @@ class _DashboardHomeState extends State<DashboardHome> with TickerProviderStateM
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   appBar(),
-                  Expanded(
-                    child: FutureBuilder<bool>(
-                      future: getData(),
-                      builder:
-                          (BuildContext context, AsyncSnapshot<bool> snapshot) {
-                        if (!snapshot.hasData) {
-                          return const SizedBox();
-                        } else {
-                          return GridView(
+                  BlocBuilder<UserDataBloc,UserDataState>(
+                    builder:
+                        (BuildContext context, UserDataState state) {
+                      if (state is UserDataSuccess){
+                        List<Course> courseList=state.userInfo.studentForCourses;
+                        return Expanded(
+                          child: GridView(
                             padding: const EdgeInsets.only(
                                 top: 0, left: 12, right: 12),
                             physics: const BouncingScrollPhysics(),
@@ -97,10 +98,13 @@ class _DashboardHomeState extends State<DashboardHome> with TickerProviderStateM
                               crossAxisSpacing: 12.0,
                               childAspectRatio: 1.5,
                             ),
-                          );
-                        }
-                      },
-                    ),
+                          ),
+                        );
+                      }
+                      else {
+                        return Center(child: Container(child: CircularProgressIndicator()));
+                      }
+                    },
                   ),
                 ],
               ),

@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sams/blocs/authentication/authentication_bloc.dart';
 import 'package:sams/blocs/authentication/authentication_event.dart';
 import 'package:sams/onStartup.dart';
-import 'package:sams/routes.dart';
 import 'package:sams/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -34,11 +33,7 @@ class MyApp extends StatelessWidget {
       child:  MaterialApp(
         title: Constants.APP_TITLE,
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.cyan,
-          textTheme: AppTheme.textTheme,
-        ),
-        // onGenerateRoute: Router().generateRoute,
+        theme: AppTheme.buildLightTheme(),
         home: OnStartup(),
       )
     );

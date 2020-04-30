@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:sams/models/user.dart';
+import 'package:sams/models/user_info.dart';
 import 'package:sams/services/user_token.dart';
 import 'package:sams/models/course.dart';
 import 'package:sams/utils/network_util.dart';
@@ -31,13 +32,13 @@ class RestDatasource {
     ;
   }
 
-  Future<User> getUserData(){
+  Future<UserInfo> getUserData(){
     return NetworkUtil.get(USER_DATA_URL,
     headers: {
       "Authorization" : "Token "+UserToken.token,
     }
     ).then((response){
-      return User.fromJson(response["user"]);
+      return UserInfo.fromJson(response);
     }).catchError((error){
       throw error;
     });

@@ -1,3 +1,6 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sams/blocs/user_data/user_data_bloc.dart';
+import 'package:sams/blocs/user_data/user_data_event.dart';
 import 'package:sams/theme/app_theme.dart';
 import 'package:sams/ui/custom_drawer/drawer_user_controller.dart';
 import 'package:sams/screens/dashboard/home_drawer.dart';
@@ -28,24 +31,22 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: AppTheme.nearlyWhite,
-      child: SafeArea(
-        top: false,
-        bottom: false,
-        child: Scaffold(
-          backgroundColor: AppTheme.buildLightTheme().scaffoldBackgroundColor,
-          body: DrawerUserController(
-            screenIndex: drawerIndex,
-            drawerWidth: MediaQuery.of(context).size.width * 0.75,
-            animationController: (AnimationController animationController) {
-              sliderAnimationController = animationController;
-            },
-            onDrawerCall: (DrawerIndex drawerIndexdata) {
-              changeIndex(drawerIndexdata);
-            },
-            screenView: screenView,
-          ),
+    return Scaffold(
+      backgroundColor: AppTheme.buildLightTheme().scaffoldBackgroundColor,
+      body: BlocProvider<UserDataBloc>(
+        create: (context) {
+          return UserDataBloc()..add(UserDataInitiate());
+        },
+        child: DrawerUserController(
+          screenIndex: drawerIndex,
+          drawerWidth: MediaQuery.of(context).size.width * 0.75,
+          animationController: (AnimationController animationController) {
+            sliderAnimationController = animationController;
+          },
+          onDrawerCall: (DrawerIndex drawerIndexdata) {
+            changeIndex(drawerIndexdata);
+          },
+          screenView: screenView,
         ),
       ),
     );
