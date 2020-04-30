@@ -156,7 +156,7 @@ class AppTheme {
       indicatorColor: Colors.white,
       splashColor: Colors.white24,
       splashFactory: InkRipple.splashFactory,
-      accentColor: secondaryColor,
+      accentColor: primaryColor,
       cardColor: Colors.white,
       canvasColor: Colors.white,
       backgroundColor: const Color(0xFFFFFEFA),

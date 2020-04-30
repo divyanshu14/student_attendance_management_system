@@ -2,19 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:sams/screens/login/set_password.dart';
 import 'package:sams/theme/app_theme.dart';
 
-class ForgetPassword extends StatefulWidget {
-  @override
-  _ForgetPasswordState createState() => _ForgetPasswordState();
-}
-
-class _ForgetPasswordState extends State<ForgetPassword> {
+class ForgetPassword extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: Colors.transparent,
-      //   elevation: 0.0,
-      // ),
+      appBar: null,
       body: Container(
         width: double.infinity,
         child: SingleChildScrollView(
@@ -116,6 +108,6 @@ Widget _getConfirmButton(BuildContext context){
     ),
   );
 
-}
+  }
 }
 

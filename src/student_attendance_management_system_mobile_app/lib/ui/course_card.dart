@@ -74,7 +74,10 @@ class CourseCard extends StatelessWidget {
           child: SizedBox(
             width: 80,
             height: 80,
-            child: Text(course.code,style: AppTheme.titleLight,),
+            child: Text(course.code.toUpperCase(),
+            style: AppTheme.titleLight,
+            
+            ),
           ),
         ),
         Container(

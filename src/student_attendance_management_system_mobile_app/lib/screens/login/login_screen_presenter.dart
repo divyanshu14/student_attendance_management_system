@@ -1,26 +1,66 @@
-import 'dart:developer';
+import 'package:flutter/material.dart';
 
-import 'package:sams/data/rest_ds.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sams/blocs/authentication/authentication_bloc.dart';
+import 'package:sams/blocs/login/login_bloc.dart';
+import 'package:sams/screens/login/forget_password.dart';
+import 'package:sams/screens/login/login_form.dart';
+import 'package:sams/theme/app_theme.dart';
 
-// handles logic behind login screen
 
-abstract class LoginScreenContract {
-  void onLoginSuccess();
-  void onLoginError(String errorTxt);
-}
+class LoginPage extends StatelessWidget {
 
-class LoginScreenPresenter {
-  LoginScreenContract _view;
-  RestDatasource _api = new RestDatasource();
-  LoginScreenPresenter(this._view);
+  LoginPage({Key key}): super(key: key);
 
-  doLogin(String username, String password) {
-    _api.login(username, password).then((value) {
-      log('success');
-      _view.onLoginSuccess();
-    }).catchError((Exception error) {
-      log('Login Login unsuccessful');
-    _view.onLoginError(error.toString());
-    } );
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: null,
+      body: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(top :100.0,right: 40,left:40,bottom:100),
+                child: Image.asset('assets/logo.png'),
+                ),
+            BlocProvider<LoginBloc>(
+              create: (context) {
+                return LoginBloc(
+                  authenticationBloc: BlocProvider.of<AuthenticationBloc>(context),
+                );
+              },
+              child: LoginForm(),
+            ),
+            _getForgetButton(context),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _getForgetButton(BuildContext context){
+    return Padding(
+      padding: EdgeInsets.all(20),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.transparent,
+
+        ),
+        child: InkWell(
+          highlightColor: AppTheme.buildLightTheme().highlightColor,
+          splashColor: AppTheme.buildLightTheme().splashColor,
+          child: Text(
+            'Forgot Password ?',
+            style: AppTheme.body1
+          ),
+          onTap: (){
+              FocusScope.of(context).requestFocus(FocusNode());
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>ForgetPassword()));
+          },
+        ),
+      ),
+    );
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sams/screens/root/navigation_home_screen.dart';
+import 'package:sams/screens/dashboard/navigation_home_screen.dart';
 import 'package:sams/theme/app_theme.dart';
 
 class SetPassword extends StatefulWidget {

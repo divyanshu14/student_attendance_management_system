@@ -3,7 +3,6 @@ import 'package:sams/screens/take_attendance/click_picture.dart';
 import 'package:sams/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:sams/models/course.dart';
-import 'package:sams/ui/course_card.dart';
 
 class InstructorCoursePage extends StatefulWidget {
   final Course course;
@@ -166,7 +165,7 @@ class _InstructorCoursePageState extends State<InstructorCoursePage> with Ticker
                 Padding(
                 padding: EdgeInsets.all(20),
                 child: Text(
-                  'Total students: '+ (widget.course.studentList?.length ?? '0') ,
+                  'Total students: ' ,
                   style: AppTheme.body1,
                 ),
                   ),

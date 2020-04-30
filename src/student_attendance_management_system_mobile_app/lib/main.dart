@@ -1,10 +1,13 @@
 import 'dart:io';
-import 'package:camera/camera.dart';
-import 'package:sams/screens/login/login_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sams/blocs/authentication/authentication_bloc.dart';
+import 'package:sams/blocs/authentication/authentication_event.dart';
+import 'package:sams/onStartup.dart';
 import 'package:sams/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sams/routes.dart';
+import 'package:sams/utils/constants.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,15 +26,16 @@ class MyApp extends StatelessWidget {
       systemNavigationBarDividerColor: Colors.transparent,
       systemNavigationBarIconBrightness: Brightness.dark,
     ));
-    return MaterialApp(
-      title: 'SAMS',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.cyan,
-        textTheme: AppTheme.textTheme,
-      ),
-      home: new LoginScreen()
-      // routes: routes,
+    return BlocProvider<AuthenticationBloc>(
+      create: (context){
+        return AuthenticationBloc()..add(AppStarted());
+      },
+      child:  MaterialApp(
+        title: Constants.APP_TITLE,
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.buildLightTheme(),
+        home: OnStartup(),
+      )
     );
   }
 }
