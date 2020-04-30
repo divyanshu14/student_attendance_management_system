@@ -288,6 +288,7 @@ class UpdateCourseView(generics.UpdateAPIView):
     # cannot update instructors, teaching_assistants and registered_students
     serializer_class = CreateUpdateCourseSerializer
     queryset = Course.objects.all()
+    lookup_field = 'code'
     permission_classes = (IsAuthenticated, DjangoModelPermissionsWithViewPermissionForGET,)
 
 
@@ -367,7 +368,7 @@ class ListCumulativeAttendanceForCourseView(generics.ListAPIView):
 
     def get_queryset(self):
         code = self.kwargs['code']
-        queryset = CumulativeAttendance.objects.filter(course__code=code)
+        queryset = CumulativeAttendance.objects.filter(last_class__course__code=code)
         return queryset
 
     def list(self, request, *args, **kwargs):
@@ -379,23 +380,13 @@ class ListCumulativeAttendanceForCourseView(generics.ListAPIView):
             return self.get_paginated_response(serializer.data)
 
         serializer = self.get_serializer(queryset, many=True)
-        extra_data = {}
+        response_data = {'cumulative_attendance': serializer.data}
 
         if queryset.exists():
             cumulative_attendance_obj = queryset.first()
-            # these data elements should be common among all ClassEvent objects having same course attribute
             last_class = BasicClassEventSerializer(cumulative_attendance_obj.last_class).data
-            extra_data['last_class'] = last_class
-            total_lectures = cumulative_attendance_obj.total_lectures
-            extra_data['total_lectures'] = total_lectures
-            total_tutorials = cumulative_attendance_obj.total_tutorials
-            extra_data['total_tutorials'] = total_tutorials
-            total_practicals = cumulative_attendance_obj.total_practicals
-            extra_data['total_practicals'] = total_practicals
+            response_data['last_class'] = last_class
 
-        response_data = []
-        response_data.append(extra_data)
-        response_data.append(serializer.data)
         return Response(response_data)
 
 
@@ -419,7 +410,7 @@ class MultipleFieldLookupMixin(object):
 class RetrieveCumulativeAttendanceOfStudentForCourseView(MultipleFieldLookupMixin, generics.RetrieveAPIView):
     serializer_class = CumulativeAttendanceOfStudentForCourseSerializer
     queryset = CumulativeAttendance.objects.all()
-    lookup_fields = ['course__code', 'student__entry_number']
+    lookup_fields = ['last_class__course__code', 'student__entry_number']
     lookup_url_kwargs = ['code', 'entry_number']
     permission_classes = (
         IsAuthenticated,

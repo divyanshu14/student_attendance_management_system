@@ -144,10 +144,12 @@ class Admin(models.Model):
         '''
         Avoid bulk saving to ensure that this method gets called.
         '''
+        is_new_entry = self.pk
         self.admin_id = self.admin_id.lower()
         ret = super().save(*args, **kwargs)
-        admins_group = Group.objects.get(name='Admins')
-        self.user.groups.add(admins_group)
+        if not is_new_entry:
+            admins_group = Group.objects.get(name='Admins')
+            self.user.groups.add(admins_group)
         return ret
 
     def delete(self, *args, **kwargs):
@@ -174,10 +176,12 @@ class Student(models.Model):
         '''
         Avoid bulk saving to ensure that this method gets called.
         '''
+        is_new_entry = self.pk
         self.entry_number = self.entry_number.lower()
         ret = super().save(*args, **kwargs)
-        students_group = Group.objects.get(name='Students')
-        self.user.groups.add(students_group)
+        if is_new_entry:
+            students_group = Group.objects.get(name='Students')
+            self.user.groups.add(students_group)
         return ret
 
     def delete(self, *args, **kwargs):
@@ -215,10 +219,12 @@ class Instructor(models.Model):
         '''
         Avoid bulk saving to ensure that this method gets called.
         '''
+        is_new_entry = self.pk
         self.instructor_id = self.instructor_id.lower()
         ret = super().save(*args, **kwargs)
-        instructors_group = Group.objects.get(name='Instructors')
-        self.class_event_coordinator.user.groups.add(instructors_group)
+        if is_new_entry:
+            instructors_group = Group.objects.get(name='Instructors')
+            self.class_event_coordinator.user.groups.add(instructors_group)
         return ret
 
     def delete(self, *args, **kwargs):
@@ -245,10 +251,12 @@ class TeachingAssistant(models.Model):
         '''
         Avoid bulk saving to ensure that this method gets called.
         '''
+        is_new_entry = self.pk
         self.teaching_assistant_id = self.teaching_assistant_id.lower()
         ret = super().save(*args, **kwargs)
-        teaching_assistants_group = Group.objects.get(name='Teaching Assistants')
-        self.class_event_coordinator.user.groups.add(teaching_assistants_group)
+        if is_new_entry:
+            teaching_assistants_group = Group.objects.get(name='Teaching Assistants')
+            self.class_event_coordinator.user.groups.add(teaching_assistants_group)
         return ret
 
     def delete(self, *args, **kwargs):
@@ -275,10 +283,12 @@ class TeachingAssistant(models.Model):
 #         '''
 #         Avoid bulk saving to ensure that this method gets called.
 #         '''
+#         is_new_entry = self.pk
 #         self.lab_attendant_id = self.lab_attendant_id.lower()
 #         ret = super().save(*args, **kwargs)
-#         lab_attendants_group = Group.objects.get(name='Lab Attendants')
-#         self.class_event_coordinator.user.groups.add(lab_attendants_group)
+#         if is_new_entry:
+#             lab_attendants_group = Group.objects.get(name='Lab Attendants')
+#             self.class_event_coordinator.user.groups.add(lab_attendants_group)
 #         return ret
 
 #     def delete(self, *args, **kwargs):
@@ -304,6 +314,12 @@ class Course(models.Model):
     teaching_assistants = models.ManyToManyField(TeachingAssistant, blank=True)
     # lab_attendants = models.ManyToManyField(LabAttendant, blank=True)
     registered_students = models.ManyToManyField(Student)
+    acad_year_start = models.IntegerField(editable=False)
+    acad_year_end = models.IntegerField(editable=False)
+    semester = models.IntegerField(editable=False)
+    total_lectures_held = models.IntegerField(default=0, editable=False)
+    total_tutorials_held = models.IntegerField(default=0, editable=False)
+    total_practicals_held = models.IntegerField(default=0, editable=False)
 
     def __str__(self):
         return str(self.code) + ' - ' + str(self.name)
@@ -326,12 +342,20 @@ class ClassEvent(models.Model):
         ('P', 'Practical')
     )
     class_event_type = models.CharField(max_length=2, choices=CLASS_EVENT_TYPES)
-    attendance_taken_by = models.ForeignKey(ClassEventCoordinator, on_delete=models.CASCADE)
+    attendance_taker = models.ForeignKey(ClassEventCoordinator, on_delete=models.CASCADE)
     # LOGIC : enfore that the user must be a Student registered for that Course
     present_students = models.ManyToManyField(Student, blank=True)
 
     def __str__(self):
         return str(self.course) + ' - ' + str(self.timestamp)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.course.total_lectures_held = self.course.total_lectures_held + 1
+            self.course.total_tutorials_held = self.course.total_tutorials_held + 1
+            self.course.total_practicals_held = self.course.total_practicals_held + 1
+            self.course.save()
+        super().save(*args, **kwargs)
 
 
 class CumulativeAttendance(models.Model):
@@ -340,22 +364,14 @@ class CumulativeAttendance(models.Model):
     This is a read-only table for users.
     '''
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
     last_class = models.ForeignKey(ClassEvent, on_delete=models.CASCADE)
     was_present_last_class = models.BooleanField()
-    total_lectures = models.IntegerField()
-    total_tutorials = models.IntegerField()
-    total_practicals = models.IntegerField()
     total_lectures_present = models.IntegerField()
     total_tutorials_present = models.IntegerField()
     total_practicals_present = models.IntegerField()
 
     def __str__(self):
-        return str(self.student) + ' - ' + str(self.course)
+        return str(self.student) + ' - ' + str(self.last_class)
 
     class Meta:
         verbose_name_plural = 'Cumulative Attendance'
-        constraints = [
-            models.UniqueConstraint(
-                fields=['student', 'course'], name='Unique Student Registration in Course')
-        ]
