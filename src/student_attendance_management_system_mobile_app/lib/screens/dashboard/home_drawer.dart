@@ -57,10 +57,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
   }
 
   void signOut()async{
-    // Future<bool> result= UserToken.removeToken();
-    // result.then((value){
-    //   if(value)Navigator.pushNamedAndRemoveUntil(context, Constants.LOGIN_ROUTE, ModalRoute.withName(Constants.STARTUP_ROUTE));
-    // });
+
     BlocProvider.of<AuthenticationBloc>(context).add(LoggedOut());
   }
 

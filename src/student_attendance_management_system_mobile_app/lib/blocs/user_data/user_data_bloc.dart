@@ -22,10 +22,11 @@ class UserDataBloc extends Bloc<UserDataEvent, UserDataState> {
         yield UserDataLoading();
         try{
           UserInfo userInfo=await api.getUserData();
-          await Future<dynamic>.delayed(const Duration(milliseconds: 5000));
+          await Future<dynamic>.delayed(const Duration(milliseconds: 1000));
           yield UserDataSuccess(userInfo: userInfo);
         }
         catch(error){
+          log(error.toString());
           yield UserDataFailure(error: error);
         }
       }

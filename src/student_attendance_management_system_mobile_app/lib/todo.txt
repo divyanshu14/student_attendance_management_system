@@ -1,0 +1,8 @@
+TODO:
+1. Instructor Course Page
+2. Student Course Page
+3. Changing Course Card Data
+4. Reset Password change
+5. Remove delay added in blocs
+6. No Internet State
+

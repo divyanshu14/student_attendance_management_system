@@ -1,26 +1,18 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sams/blocs/user_data/user_data_bloc.dart';
 import 'package:sams/blocs/user_data/user_data_state.dart';
-import 'package:sams/models/user.dart';
-import 'package:sams/services/rest_ds.dart';
+import 'package:sams/models/user_info.dart';
 import 'package:sams/theme/app_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:sams/models/course.dart';
 import 'package:sams/ui/course_card.dart';
 
 class DashboardHome extends StatefulWidget {
-  // const InstructorHomePage({Key key}) : super(key: key);
-
   @override
   _DashboardHomeState createState() => _DashboardHomeState();
 }
 
 class _DashboardHomeState extends State<DashboardHome> with TickerProviderStateMixin {
-  // List<Course> courseList = [
-  //   Course(name: 'Software Engineering',code: 'CS302',),
-  //   Course(name: 'Computer Networks',code: 'CS303',),
-  //   Course(name: 'Database Managemnet Systems',code: 'CS301',),
-  // ];
+
   AnimationController animationController;
   Future<User> user;
   bool multiple = true;
@@ -47,70 +39,33 @@ class _DashboardHomeState extends State<DashboardHome> with TickerProviderStateM
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.buildLightTheme().scaffoldBackgroundColor,
-      body: FutureBuilder<bool>(
-        future: getData(),
-        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-          if (!snapshot.hasData) {
-            return const SizedBox();
-          } else {
-            return Padding(
-              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+      body: Padding(
+        padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+        child: BlocBuilder<UserDataBloc,UserDataState>(
+        builder:(BuildContext context, UserDataState state) {
+            if (state is UserDataSuccess){
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   appBar(),
-                  BlocBuilder<UserDataBloc,UserDataState>(
-                    builder:
-                        (BuildContext context, UserDataState state) {
-                      if (state is UserDataSuccess){
-                        List<Course> courseList=state.userInfo.studentForCourses;
-                        return Expanded(
-                          child: GridView(
-                            padding: const EdgeInsets.only(
-                                top: 0, left: 12, right: 12),
-                            physics: const BouncingScrollPhysics(),
-                            scrollDirection: Axis.vertical,
-                            children: List<Widget>.generate(
-                              courseList.length,
-                              (int index) {
-                                final int count = courseList.length;
-                                final Animation<double> animation =
-                                    Tween<double>(begin: 0.0, end: 1.0).animate(
-                                  CurvedAnimation(
-                                    parent: animationController,
-                                    curve: Interval((1 / count) * index, 1.0,
-                                        curve: Curves.fastOutSlowIn),
-                                  ),
-                                );
-                                animationController.forward();
-                                return CourseListView(
-                                  animation: animation,
-                                  animationController: animationController,
-                                  course: courseList[index],
-                                );
-                              },
-                            ),
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: multiple ? 2 : 1,
-                              mainAxisSpacing: 12.0,
-                              crossAxisSpacing: 12.0,
-                              childAspectRatio: 1.5,
-                            ),
-                          ),
-                        );
-                      }
-                      else {
-                        return Center(child: Container(child: CircularProgressIndicator()));
-                      }
-                    },
-                  ),
+                  courseListPresenter(state.userInfo.studentForCourses,'student'),
+                  courseListPresenter(state.userInfo.instructorForCourses,'instructor'),
+                  courseListPresenter(state.userInfo.teachingAssistantForCourses,'teachingAssitant')
                 ],
-              ),
-            );
+              );
+            } 
+            else {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  appBar(),
+                  Center(child: CircularProgressIndicator(),)
+                ],
+              );
+            }
           }
-        },
+        )
       ),
     );
   }
@@ -167,11 +122,55 @@ class _DashboardHomeState extends State<DashboardHome> with TickerProviderStateM
       ),
     );
   }
+
+  Widget courseListPresenter(List<Course> courseList, String role){
+          if (courseList ==null||courseList.length==0){
+            return Divider();
+          }
+          return Expanded(
+            child: GridView(
+              padding: const EdgeInsets.only(
+                  top: 0, left: 12, right: 12),
+              physics: const BouncingScrollPhysics(),
+              scrollDirection: Axis.vertical,
+              children: List<Widget>.generate(
+                courseList.length,
+                (int index) {
+                  final int count = courseList.length;
+                  final Animation<double> animation =
+                      Tween<double>(begin: 0.0, end: 1.0).animate(
+                    CurvedAnimation(
+                      parent: animationController,
+                      curve: Interval((1 / count) * index, 1.0,
+                          curve: Curves.fastOutSlowIn),
+                    ),
+                  );
+                  animationController.forward();
+                  return CourseListView(
+                    animation: animation,
+                    animationController: animationController,
+                    course: courseList[index],
+                    role: role,
+                  );
+                },
+              ),
+              gridDelegate:
+                  SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: multiple ? 2 : 1,
+                mainAxisSpacing: 12.0,
+                crossAxisSpacing: 12.0,
+                childAspectRatio: 1.5,
+              ),
+            ),
+          );            
+  }
+
 }
 
 class CourseListView extends StatelessWidget {
   const CourseListView(
       {Key key,
+      this.role,
       this.course,
       this.callBack,
       this.animationController,
@@ -182,6 +181,7 @@ class CourseListView extends StatelessWidget {
   final VoidCallback callBack;
   final AnimationController animationController;
   final Animation<dynamic> animation;
+  final String role;
 
   @override
   Widget build(BuildContext context) {
@@ -193,14 +193,10 @@ class CourseListView extends StatelessWidget {
           child: Transform(
             transform: Matrix4.translationValues(
                 0.0, 50 * (1.0 - animation.value), 0.0),
-            child: CourseCard(course),
-            // child: AspectRatio(
-            //   aspectRatio: 1.5,
-            //   child: ClipRRect(
-            //     borderRadius: const BorderRadius.all(Radius.circular(4.0)),
-            //     child: CourseCard(course),
-            //   ),
-            // ),
+            child: CourseCard(
+              course: course,
+              role: role,
+            ),
           ),
         );
       },

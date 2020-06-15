@@ -1,12 +1,14 @@
 
 import 'package:flutter/material.dart';
-import 'package:sams/models/course.dart';
-import 'package:sams/screens/instructor/course_screen.dart';
+import 'package:sams/models/user_info.dart';
+import 'package:sams/screens/instructor/instructor_course_screen.dart';
+import 'package:sams/screens/student_pages/student_course_screen.dart';
 import 'package:sams/theme/app_theme.dart';
 
 class CourseCard extends StatelessWidget {
   final Course course;
-  CourseCard(this.course);
+  final String role;
+  CourseCard({@required this.course,@required this.role});
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -102,8 +104,19 @@ class CourseCard extends StatelessWidget {
             ),
             onTap: () {
                   // FocusScope.of(context).requestFocus(FocusNode());
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>InstructorCoursePage(course)));
-
+                  switch (role) {
+                    case 'student':{
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>StudentCoursePage(course:course)));
+                      break;}
+                    case 'instructor':{
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>InstructorCoursePage(course: course)));
+                      break;
+                    }
+                    case 'teachingAssisstant':{
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>InstructorCoursePage(course: course)));
+                      break;
+                    }
+                  }
             },
           ),
         ),
